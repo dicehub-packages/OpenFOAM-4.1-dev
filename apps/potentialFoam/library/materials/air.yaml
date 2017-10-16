@@ -1,0 +1,11 @@
+name: Air
+density: 1.205
+dynamicViscosity: 0.000019137
+kinematicViscosity: 0.0000158813
+specificHeatCapacity: 1006
+turbulentPrandtlNumber: 0.85
+thermalConductivity: 0.024
+referenseAbsPressure: 101325
+referenceTemperature: 300
+thermalExpansionCoefficient: 0.00333
+laminarPrandtlNumber: 0.9

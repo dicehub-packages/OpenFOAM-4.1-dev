@@ -28,7 +28,7 @@ from dice_tools.helpers import  run_process
 
 # DICE Libs
 # =========
-from dice_foam import FoamApp
+from common.foam_app import FoamApp
 from common.foam_result import Result
 from common.basic_app import BasicApp
 
@@ -43,8 +43,8 @@ class fluentMeshToFoam(
     Converts a Fluent mesh (in ASCII format) to foam format including 
     multiple region and region boundary.
     """
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.__result = Result(self)
         self.__load_config_files()
         self.update_result()

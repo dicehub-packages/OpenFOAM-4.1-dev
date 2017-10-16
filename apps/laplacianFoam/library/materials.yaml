@@ -1,0 +1,16 @@
+name: Materials
+
+entity name: name
+
+properties:
+  - string name:
+      name: Name
+  - number thermalConductivity:
+      name: Termal Conductivity [W/m*K]
+  - number density:
+      name: Density [Kg/m^3]
+  - number specificHeatCapacity:
+      name: Specific Heat Capacity [J/KG*K]
+  - number thermalDiffusivity:
+      name: Thermal diffusivity
+      eval: thermalConductivity/(density*specificHeatCapacity)

@@ -1,0 +1,256 @@
+name: Materials v4
+
+entity name: name
+
+properties:
+  - string name:
+      name: Name
+  - string comment:
+      name: Comment
+  - number density:
+      name: Density [Kg/m^3]
+  - number dynamicViscosity:
+      name: Dynamic Viscosity [Pa*s]
+  - number kinematicViscosity:
+      name: Kinematic Viscosity [m^2/s]
+  - number specificHeatCapacity:
+      name: Specific Heat Capacity [J/KG*K]
+  - number turbulentPrandtlNumber:
+      name: Turbulent Prandtl Number
+  - number thermalConductivity:
+      name: Termal Conductivity [W/m*K]
+  - number referenseAbsPressure:
+      name: Reference (absolute) Pressure [Pa]
+  - number referenceTemperature:
+      name: Reference Temperature [K]
+  - number thermalExpansionCoefficient:
+      name: Termal Expansion Coefficient [K^-1]
+  - number laminarPrandtlNumber:
+      name: Laminar Prandtl Number
+  - number thermalDiffusivity:
+      name: Thermal diffusivity
+      eval: thermalConductivity/(density*specificHeatCapacity)
+  - string energyForm:
+      name: Form of energy
+      default: sensibleEnthalpy
+      oneOf:
+        - sensibleEnthalpy:
+            name: Sensible enthalpy
+        - sensibleInternalEnergy:
+            name: Sensible internal energy
+        - absoluteEnthalpy:
+            name: Absolute enthalpy
+
+  - section:
+      name: Equation of state
+      properties:
+        - string equationOfState:
+            name: Equation of state
+            default: rhoConst
+            oneOf:
+              - rhoConst:
+                  name: Constant density
+              - perfectGas:
+                  name: Perfect gas
+              - incompressiblePerfectGas:
+                  name: Perfect gas for an incompressible fluid
+              - perfectFluid:
+                  name: Perfect fluid
+              - linear:
+                  name: Linear equation of state
+              - adiabaticPerfectFluid:
+                  name: Adiabatic perfect fluid
+              - PengRobinsonGas:
+                  name: Peng Robinson
+              - icoPolynomial:
+                  name: Incompressible, polynomial
+
+        - section:
+            name: Density coefficients (a1..a8)
+            visible: equationOfState == "icoPolynomial"
+            properties:
+              - number densityCoefficients1:
+                  name: a1
+              - number densityCoefficients2:
+                  name: a2
+              - number densityCoefficients3:
+                  name: a3
+              - number densityCoefficients4:
+                  name: a4
+              - number densityCoefficients5:
+                  name: a5
+              - number densityCoefficients6:
+                  name: a6
+              - number densityCoefficients7:
+                  name: a7
+              - number densityCoefficients8:
+                  name: a8
+
+
+  - section:
+      name: Thermophysical model
+      properties:
+        - string thermophysicalModel:
+            name: Thermophysical model
+            default: psiThermo
+            oneOf:
+              - psiThermo:
+                  name: For fixed composition, based on compressibility
+              - rhoThermo:
+                  name: For fixed composition, based on density
+              - psiReactionThermo:
+                  name: For reacting mixture, based on compressibility
+              - psiuReactionThermo:
+                  name: For combustion, based on compressibility of unburnt gas
+              - rhoReactionThermo:
+                  name: For reacting mixture, based on density
+              - multiphaseMixtureThermo:
+                  name: For multiple phases
+
+  - section:
+      name: Transport model
+      properties:
+        - string transportModel:
+            name: Transport model
+            default: const
+            oneOf:
+              - const:
+                  name: Constant
+              - Sutherland:
+                  name: Sutherland
+              - polynomial:
+                  name: Polynomial
+              - logPolynomial:
+                  name: Log polynomial
+
+        - section:
+            name: Thermal conductivity Coefficients
+            visible: transportModel == "polynomial" or transportModel == "logPolynomial"
+            properties:
+              - number thermalConductivityCoeffs1:
+                  name: a1
+              - number thermalConductivityCoeffs2:
+                  name: a2
+              - number thermalConductivityCoeffs3:
+                  name: a3
+              - number thermalConductivityCoeffs4:
+                  name: a4
+              - number thermalConductivityCoeffs5:
+                  name: a5
+              - number thermalConductivityCoeffs6:
+                  name: a6
+              - number thermalConductivityCoeffs7:
+                  name: a7
+              - number thermalConductivityCoeffs8:
+                  name: a8
+
+        - section:
+            name: Dynamic Viscosity Coefficients
+            visible: transportModel == "polynomial" or transportModel == "logPolynomial"
+            properties:
+              - number dynamicViscosityCoeffs1:
+                  name: a1
+              - number dynamicViscosityCoeffs2:
+                  name: a2
+              - number dynamicViscosityCoeffs3:
+                  name: a3
+              - number dynamicViscosityCoeffs4:
+                  name: a4
+              - number dynamicViscosityCoeffs5:
+                  name: a5
+              - number dynamicViscosityCoeffs6:
+                  name: a6
+              - number dynamicViscosityCoeffs7:
+                  name: a7
+              - number dynamicViscosityCoeffs8:
+                  name: a8
+
+  - section:
+      name: Thermodynamic model
+      properties:
+        - string thermodynamicModel:
+            name: Thermodynamic model
+            oneOf:
+              - hConst:
+                  name: hConst
+              - eConst:
+                  name: eConst
+              - janaf:
+                  name: janaf
+              - hPolynomial:
+                  name: hPolynomial
+        - number lowerTemperatureLimit:
+            name: Lower temperature limit [K]
+        - number upperTemperatureLimit:
+            name: Upper temperature limit [K]
+        - number commonTemperature:
+            name: Common temperature [K]
+
+        - section:
+            name: High Temperature Coefficients
+            visible: thermodynamicModel == "janaf"
+            properties:
+              - number highTemperatureCoefficients1:
+                  name: a1
+              - number highTemperatureCoefficients2:
+                  name: a2
+              - number highTemperatureCoefficients3:
+                  name: a3           
+              - number highTemperatureCoefficients4:
+                  name: a4
+              - number highTemperatureCoefficients5:
+                  name: a5
+              - number highTemperatureCoefficients6:
+                  name: a6           
+
+        - section:
+            name: Low Temperature Coefficients
+            visible: thermodynamicModel == "janaf"
+            properties:
+              - number lowTemperatureCoefficients1:
+                  name: a1
+              - number lowTemperatureCoefficients2:
+                  name: a2
+              - number lowTemperatureCoefficients3:
+                  name: a3           
+              - number lowTemperatureCoefficients4:
+                  name: a4
+              - number lowTemperatureCoefficients5:
+                  name: a5
+              - number lowTemperatureCoefficients6:
+                  name: a6   
+
+        - section:
+            name: Temperature Coefficients
+            visible: thermodynamicModel == "hPolynomial"
+            properties:
+              - number temperatureCoefficients1:
+                  name: a1
+              - number temperatureCoefficients2:
+                  name: a2
+              - number temperatureCoefficients3:
+                  name: a3
+              - number temperatureCoefficients4:
+                  name: a4
+              - number temperatureCoefficients5:
+                  name: a5
+              - number temperatureCoefficients6:
+                  name: a6
+              - number temperatureCoefficients7:
+                  name: a7
+              - number temperatureCoefficients8:
+                  name: a8
+
+  - section:
+      name: Specie model
+      properties:
+        - string specieModel:
+            name: Specie model
+            default: specie
+            oneOf:
+              - specie:
+                  name: Specie
+        - number nMoles:
+            name: Number of moles of component
+        - number molWeight:
+            name: Grams per mole of specie

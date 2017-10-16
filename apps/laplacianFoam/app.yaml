@@ -1,0 +1,17 @@
+name: laplacianFoam
+icon: view/config/content/1_Overview/images/laplacianFoam.svg
+
+inputs:
+  foam_mesh: 1
+
+outputs:
+  - foam_mesh
+
+settings:
+  "use_docker": true
+  "docker_cmd": "docker run --rm -v {dice_workflow}:/dice_workflow:Z -w /dice_workflow openfoamplus/of_v1606plus_centos66 /bin/bash -c \"source /opt/OpenFOAM/OpenFOAM-v1606+/etc/bashrc && foamExec {command}\""
+  "foam_cmd": "/usr/bin/foamExec"
+  "use_mpi": false
+  "docker_cmd_mpi": "docker run --rm -v {dice_workflow}:/dice_workflow:Z -w /dice_workflow openfoamplus/of_v1606plus_centos66 /bin/bash -c \"source /opt/OpenFOAM/OpenFOAM-v1606+/etc/bashrc && mpirun {command}\""
+  "foam_cmd_mpi": "/usr/bin/foamExec"
+  "mpi_cpu_count": 1

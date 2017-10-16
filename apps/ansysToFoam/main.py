@@ -28,7 +28,7 @@ from dice_tools.helpers import run_process
 
 # DICE Libs
 # =========
-from dice_foam import FoamApp
+from common.foam_app import FoamApp
 from common.foam_result import Result
 from common.basic_app import BasicApp
 
@@ -43,11 +43,11 @@ class ansysToFoam(
     Converts an ANSYS input mesh file, exported from I-DEAS,
     to OpenFOAM format.
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
         """
         Constructor of ansysToFoam
         """
-        super().__init__()
+        super().__init__(**kwargs)
         self.__result = Result(self)
         self.update_result()
         self.__load_config_files()

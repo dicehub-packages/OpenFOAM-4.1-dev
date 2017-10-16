@@ -26,18 +26,23 @@ class PythonScript(Application):
 
     def behaviour_changed(self, behaviour):
         self.__behaviour = behaviour
+        self.behaviour_changed_signal()
 
     def input_types_changed(self, input_types):
         self.__inputs = input_types
+        self.input_type_changed()
 
     def internal_input_types_changed(self, input_types):
         self.__internal_inputs = input_types
+        self.internal_input_type_changed()
 
     def output_types_changed(self, output_types):
         self.__outputs = output_types
+        self.output_type_changed()
 
     def internal_output_types_changed(self, output_types):
         self.__internal_outputs = output_types
+        self.internal_output_type_changed()
 
     saveRequest = diceSignal()
 
@@ -49,7 +54,9 @@ class PythonScript(Application):
     def script(self, value):
         self.__script = value
 
-    @diceProperty('QString', name='inputType')
+    input_type_changed = diceSignal()
+
+    @diceProperty('QString', name='inputType', notify=input_type_changed)
     def input_type(self):
         for v in self.__inputs:
             return v
@@ -61,8 +68,11 @@ class PythonScript(Application):
             self.__inputs = {value: 1}
         else:
             self.__inputs = {}
+        self.input_type_changed()
 
-    @diceProperty('QString', name='outputType')
+    output_type_changed = diceSignal()
+
+    @diceProperty('QString', name='outputType', notify=output_type_changed)
     def output_type(self):
         for v in self.__outputs:
             return v
@@ -74,9 +84,11 @@ class PythonScript(Application):
             self.__outputs = [value]
         else:
             self.__outputs = []
+        self.output_type_changed()
 
+    internal_input_type_changed = diceSignal()
 
-    @diceProperty('QString', name='internalInputType')
+    @diceProperty('QString', name='internalInputType', notify=internal_input_type_changed)
     def internal_input_type(self):
         for v in self.__internal_inputs:
             return v
@@ -88,8 +100,11 @@ class PythonScript(Application):
             self.__internal_inputs = {value: 1}
         else:
             self.__internal_inputs = {}
+        self.internal_input_type_changed()
 
-    @diceProperty('QString', name='internalOutputType')
+    internal_output_type_changed = diceSignal()
+
+    @diceProperty('QString', name='internalOutputType', notify=internal_output_type_changed)
     def internal_output_type(self):
         for v in self.__internal_outputs:
             return v
@@ -101,15 +116,18 @@ class PythonScript(Application):
             self.__internal_outputs = [value]
         else:
             self.__internal_outputs = []
+        self.internal_output_type_changed()
 
+    behaviour_changed_signal = diceSignal()
 
-    @diceProperty('QString', name='behaviour')
+    @diceProperty('QString', name='behaviour', notify=behaviour_changed_signal)
     def behaviour(self):
         return self.__behaviour
 
     @behaviour.setter
     def behaviour(self, value):
         self.__behaviour = value
+        self.behaviour_changed_signal()
 
     @diceSlot('QString')
     def save(self, script):

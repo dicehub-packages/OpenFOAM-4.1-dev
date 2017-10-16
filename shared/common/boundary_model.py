@@ -484,7 +484,7 @@ class BoundaryApp:
         wizard.subscribe(self, self.__boundaries_model)
         wizard.subscribe(self.w_geometry_object_clicked)
 
-    def load_boundary(self, boundary_props):
+    def load_boundary(self, boundary_props, input_data):
 
         self.__boundaries_model.root_elements.clear()
 
@@ -495,7 +495,7 @@ class BoundaryApp:
         config_boundary_path = self.config_path("constant", "polyMesh")
         has_input = True
 
-        self.__input_data = self.get_input()
+        self.__input_data = input_data
         foam_mesh = self.__input_data.get('foam_mesh', {})
         for app, paths in foam_mesh.items():
             for path in paths:
