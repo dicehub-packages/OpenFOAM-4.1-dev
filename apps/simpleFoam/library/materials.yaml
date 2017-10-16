@@ -1,0 +1,10 @@
+name: Materials
+
+entity name: name
+
+properties:
+  - string name:
+      name: Name
+  - number kinematicViscosity:
+      name: Kinematic Viscosity [m^2/s]
+
