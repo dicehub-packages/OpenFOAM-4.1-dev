@@ -2,5 +2,4 @@ numpy
 nine
 numpy-stl
 vtk
-ply
 matplotlib
