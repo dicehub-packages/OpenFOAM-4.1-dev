@@ -11,5 +11,6 @@ https://github.com/dicehub/dice_vtk/archive/17.10.0.zip \
 numpy-stl==2.3.2 \
 http://backup1.foxcloud.net/mcubcsro/public/dice/wheels/pythonocc_core-0.18.0-cp36-cp36m-linux_x86_64.whl \
 http://backup1.foxcloud.net/mcubcsro/public/dice/wheels/vtk-8.0.0-cp36-cp36m-linux_x86_64.whl \
-matplotlib
+matplotlib==2.0.0 \
+https://github.com/dicehub/dice_plot/archive/17.10.0.zip
 

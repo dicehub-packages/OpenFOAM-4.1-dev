@@ -9,4 +9,5 @@ http://backup1.foxcloud.net/mcubcsro/public/dice/wheels/pythonocc_core-0.18.0-cp
 http://backup1.foxcloud.net/mcubcsro/public/dice/wheels/vtk-8.0.0-cp36-cp36m-win_amd64.whl ^
 https://github.com/dicehub/dice_tools/archive/17.10.0.zip ^
 https://github.com/dicehub/dice_vtk/archive/17.10.0.zip ^
-matplotlib==2.0.0
+matplotlib==2.0.0 ^
+https://github.com/dicehub/dice_plot/archive/17.10.0.zip
