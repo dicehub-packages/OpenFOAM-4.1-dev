@@ -3,3 +3,5 @@ nine
 numpy-stl
 vtk
 matplotlib
+dice_vtk
+dice_plot
