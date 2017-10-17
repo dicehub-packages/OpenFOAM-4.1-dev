@@ -136,10 +136,6 @@ class potentialFoamApp(
         control_dict = ParsedParameterFile(self.config_path('system/controlDict'))
         fv_solutions = ParsedParameterFile(self.config_path('system/fvSolution'))
 
-        control_dict = ParsedParameterFile(
-            self.config_path('system/controlDict')
-        )
-
         transport_props = ParsedParameterFile(
             self.config_path('constant/transportProperties')
         )
@@ -223,7 +219,7 @@ class potentialFoamApp(
     @prepare.after('simpleFoam')
     def run_simpleFoam(self):
         self.read_settings()
-        application = self.control_dict['application']
+        application = self['foam:system/controlDict application']
         path = self.run_path(relative=True)
         if "win" in sys.platform and self.__use_docker:
             path = path.replace('\\', '/')

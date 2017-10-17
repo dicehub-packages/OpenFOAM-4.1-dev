@@ -129,7 +129,7 @@ class potentialFoamApp(
     @prepare.after('potentialFoam')
     def run_potentialFoam(self):
         self.read_settings()
-        application = self.control_dict['application']
+        application = self['foam:system/controlDict application']
         return 0 == self.execute_command(
                 application,
                 # "-withFunctionObjects", "-writep",
