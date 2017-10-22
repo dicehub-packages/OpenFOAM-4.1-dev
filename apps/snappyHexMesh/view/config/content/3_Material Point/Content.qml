@@ -1,7 +1,6 @@
 import QtQuick 2.7 as QQ
 
 import DICE.App 1.0
-import DICE.App.Foam 1.0
 
 Body {
     Card {
@@ -12,7 +11,7 @@ Body {
             yLabel: "Y"
             zLabel: "Z"
             target: app.materialPoint
-            property: 'location'   
+            property: 'location'
         }
         QQ.Row {
             spacing: 10

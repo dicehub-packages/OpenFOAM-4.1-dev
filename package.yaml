@@ -19,6 +19,8 @@ apps:
   Solvers:
     Incompressible:
       - apps/simpleFoam
+    Multiphase:
+      - apps/interFoam
   Utilities:
     Mesh:
       - apps/fluentMeshToFoam

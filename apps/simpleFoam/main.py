@@ -195,6 +195,7 @@ class potentialFoamApp(
         cmd_pattern = self.__cmd_pattern
 
         params = dict(dice_workflow=self.workflow_path(),
+                docker_name=self.instance_id,
                 user=os.environ.get('USER'),
                 user_name=os.environ.get('USERNAME'),
                 command = ' '.join(args))

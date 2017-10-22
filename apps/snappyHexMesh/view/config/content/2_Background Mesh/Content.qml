@@ -1,4 +1,3 @@
-import QtQuick.Controls 1.4
 import QtQuick 2.6
 
 import DICE.App 1.0
@@ -33,7 +32,7 @@ Body {
             target: app.boundingBox
             property: 'additionalSpacing'           
         }
-        FlatButton {
+        Button {
             width: parent.width
             text: qsTr("Calculate Automatically")
             onClicked: {
@@ -51,7 +50,8 @@ Body {
             property: "sizeOrNumber"
         }
         VectorField {
-            // readOnly: toggleSizeOrNumber.checked
+            readOnly: !toggleSizeOrNumber.checked
+            enabled: readOnly
             xLabel: "Cells in X"
             yLabel: "Cells in Y"
             zLabel: "Cells in Z"
@@ -60,7 +60,8 @@ Body {
             property: 'cellsNum'    
         }
         VectorField {
-            // readOnly: !toggleSizeOrNumber.checked
+            readOnly: toggleSizeOrNumber.checked
+            enabled: readOnly
             xLabel: "Δs in X [m]"
             yLabel: "Δs in Y [m]"
             zLabel: "Δs in Z [m]"
@@ -68,100 +69,4 @@ Body {
             property: 'cellsSize'   
         }
     }
-    // Card {
-    //     title: qsTr("Boundaries")
-    //     ListView {
-    //         width: parent.width
-    //         height: contentHeight
-    //         model: app.boundingBox.boundariesModel
-    //         // delegate: Text{text:'blahhhh';height: 80;width: parent.width}
-    //         delegate: Row {
-    //             height: 80
-    //             width: parent.width
-    //             BodyText{text:name;height: 80;width: parent.width/2}
-    //             InputField {
-    //                 width: parent.width/2
-    //                 label: qsTr('Name')
-    //                 text: name
-    //                 floating: false
-    //                 onEditingFinished: {
-    //                     name = text;
-    //                     text = Qt.binding(function() {return name});
-    //                 }
-    //                 onActiveFocusChanged: {
-    //                     if (activeFocus)
-    //                         app.boundingBox.highlightFace(index)
-    //                 }
-    //             }
-
-                // DropDown {
-                //     width: parent.width/2
-
-                //     Component.onCompleted: {
-                //         for (var i = 0; i < types.count; ++i) {
-                //             if (types.get(i).text == type) {
-                //                 currentIndex = i
-                //                 break
-                //             }
-                //         }
-                //     }
-                //     // activeFocusOnPress: true
-                //     onActiveFocusChanged: {
-                //         if (activeFocus)
-                //             app.boundingBox.highlightFace(index)
-                //     }
-
-                //     model: ListModel {
-                //         id: types
-                //         ListElement {
-                //             text: qsTr("patch")
-                //         }
-                //         ListElement {
-                //             text: qsTr("wall")
-                //         }
-                //         ListElement {
-                //             text: qsTr("symmetryPlane")
-                //         }
-                //         ListElement {
-                //             text: qsTr("symmetry")
-                //         }
-                //         ListElement {
-                //             text: qsTr("empty")
-                //         }
-                //         ListElement {
-                //             text: qsTr("wedge")
-                //         }
-                //         ListElement {
-                //             text: qsTr("cyclic")
-                //         }
-                //         ListElement {
-                //             text: qsTr("cyclicAMI")
-                //         }
-                //         ListElement {
-                //             text: qsTr("processor")
-                //         }
-                //     }
-
-                //     onCurrentIndexChanged: {
-                //         type = types.get(currentIndex).text
-                //     }
-                // }
-        //     }
-        // }
-
-
-//        TreeView {
-//            id: boundaries
-//            width: parent.width
-//            model: PythonListModel {
-//                loadMethod: "get_boundaries"
-//                changedCallback: "boundariesChanged"
-//            }
-//        }
-//        DropDown {
-//            label: "Type"
-//            getModelMethod: "boundary_types"
-//            modelPath: !!boundaries.currentNode ? "constant/polyMesh/blockMeshDict boundary " + boundaries.currentNode.model.index + " type": undefined
-//        }
-    // }
 }

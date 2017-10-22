@@ -25,10 +25,11 @@ Body {
 
         Row {
         	width: parent.width
-        	Text {
-        		text: qsTr('Method')
-        	}
-        	ComboBox {
+            Caption {
+                text: qsTr("Method")
+                width: parent.width/2
+            }
+            DiceComboBox {
 	            id: methodDropDown
 	            model: [ "hierarchical", "simple" ]
 	            currentIndex: -1
@@ -61,10 +62,11 @@ Body {
         Row {
         	width: parent.width
         	visible: methodDropDown.currentText === "hierarchical"
-        	Text {
-        		text: qsTr('Order')
-        	}
-        	ComboBox {
+            Caption {
+                text: qsTr("Order")
+                width: parent.width/2
+            }
+            DiceComboBox {
 	            id: orderDropDown
 	            model: ["xyz", "yxz", "yzx", "xzy", "zxy", "zyx"]
 	            currentIndex: -1
