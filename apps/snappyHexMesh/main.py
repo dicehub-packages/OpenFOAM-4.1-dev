@@ -313,6 +313,7 @@ class snappyHexMesh(
         self.foam_file('system/controlDict', self.__control_dict)
         self.foam_file('system/meshQualityDict', self.__mesh_quality_dict)
         self.foam_file('system/decomposeParDict', self._decompose_par_dict)
+        self.foam_file('system/surfaceFeatureExtractDict', self._surface_feature_extract_dict)
 
     @diceSync('refinement:')
     def __refinement_sync(self, path):
@@ -531,7 +532,7 @@ class snappyHexMesh(
         self.read_settings()
         if self.__use_mpi:
             for i in range(self.__cpu_count):
-                self.rmtree(self.current_run_path("processor"+str(i)))
+                self.rmtree(self.run_path("processor"+str(i)))
         self.set_output('foam_mesh', [self.run_path(relative=True)])
         return True
 

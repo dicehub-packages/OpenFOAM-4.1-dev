@@ -155,10 +155,10 @@ class Surface(RegionRefinement):
 
     @property
     def file_index(self):
-        file_dict_value = '"{0}.eMesh"'.format(self.file_name)
+        file_name_e_mesh = '"{0}.eMesh"'.format(self.file_name)
         features = self.app['foam:system/snappyHexMeshDict castellatedMeshControls features']
         for index, feature_dict in enumerate(features):
-            if f_dict["file"] == file_dict_value:
+            if f_dict["file"] == file_name_e_mesh:
                 return index
 
     @modelRole('featureLevel')
@@ -190,7 +190,7 @@ class Surface(RegionRefinement):
 
     @has_feature.setter
     def has_feature(self, value):
-        file_dict_value = '"{0}.eMesh"'.format(self.file_name)
+        file_name_e_mesh = '"{0}.eMesh"'.format(self.file_name)
         features_path = 'foam:system/snappyHexMeshDict castellatedMeshControls features'
         extract_path = 'foam:system/surfaceFeatureExtractDict ' + self.name
         features = self.app[features_path]

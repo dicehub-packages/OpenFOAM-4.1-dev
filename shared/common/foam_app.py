@@ -44,7 +44,10 @@ class FoamApp:
             key = int(key)
 
         if value is None:
-            del item[key]
+            try:
+                del item[key]
+            except (IndexError, KeyError):
+                pass
         else:
             item[key] = self.__convert_to(value, value_type)
             
