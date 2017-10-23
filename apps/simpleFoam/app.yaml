@@ -3,12 +3,12 @@ icon: view/config/content/1_Overview/images/simpleFoam.svg
 
 inputs:
   foam_mesh: 1
-     
+  
 settings:
   "use_docker": true
-  "docker_cmd": "docker run --rm -v {dice_workflow}:/dice_workflow:Z -w /dice_workflow openfoamplus/of_v1606plus_centos66 /bin/bash -c \"source /opt/OpenFOAM/OpenFOAM-v1606+/etc/bashrc && foamExec {command}\""
+  "docker_cmd": "docker run --name {docker_name} --rm -v {dice_workflow}:/usr/share/openfoam/data:Z dicehub/openfoam:4.1 \"{command}\""
   "foam_cmd": "/usr/bin/foamExec"
   "use_mpi": false
-  "docker_cmd_mpi": "docker run --rm -v {dice_workflow}:/dice_workflow:Z -w /dice_workflow openfoamplus/of_v1606plus_centos66 /bin/bash -c \"source /opt/OpenFOAM/OpenFOAM-v1606+/etc/bashrc && mpirun {command}\""
+  "docker_cmd_mpi": "docker run --name {docker_name} --rm -v {dice_workflow}:/usr/share/openfoam/data:Z dicehub/openfoam:4.1 \"mpirun -np $NP {command} -parallel\""
   "foam_cmd_mpi": "/usr/bin/foamExec"
   "mpi_cpu_count": 1
