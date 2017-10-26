@@ -14,7 +14,7 @@ Column {
         path: "refinement:SurfaceRegion.has_layers_addition"
     }
 
-    ValueField {
+    DiceValueField {
         enabled: modelData.hasLayersAddition
         width: parent.width
         label: qsTr("Number of Layers")

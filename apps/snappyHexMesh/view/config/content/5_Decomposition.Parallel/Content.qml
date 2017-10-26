@@ -1,23 +1,21 @@
-import QtQuick.Controls 1.4
-import QtQuick 2.5
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 
 import DICE.App 1.0
 
 Body {
     Card {
-
         title: qsTr('Decomposition')
         spacing: 30
 
-        ToggleButton {
-            label: qsTr("Activate Parallel Run")
+        DiceSwitch {
+            text: qsTr("Activate Parallel Run")
             path: "config:parallelRun"
         }
 
         Subheader{ text: qsTr("Decomposition Options") }
 
-        ValueField {
+        DiceValueField {
             label: qsTr("Number of Subdomains")
             path: "foam:system/decomposeParDict numberOfSubdomains"
             dataType: "int"
@@ -33,7 +31,8 @@ Body {
 	            id: methodDropDown
 	            model: [ "hierarchical", "simple" ]
 	            currentIndex: -1
-	            ValueConnector {
+                width: parent.width/2
+                DiceValueConnector {
 	            	id: methodValue
 	            	path: "foam:system/decomposeParDict method"
 	            	onReady: {
@@ -44,9 +43,9 @@ Body {
         	}
         }
 
-        Subheader { text: qsTr("Coeffs") }
+        Subheader { text: qsTr("Coefficients") }
 
-        VectorField {
+        DiceVectorField {
             xLabel: "n_x"
             yLabel: "n_y"
             zLabel: "n_z"
@@ -54,7 +53,7 @@ Body {
         	dataType: 'int'
         }
 
-        ValueField {
+        DiceValueField {
             label: qsTr("Delta")
             path: "foam:system/decomposeParDict " + methodDropDown.currentText + "Coeffs delta"
         }
@@ -70,7 +69,8 @@ Body {
 	            id: orderDropDown
 	            model: ["xyz", "yxz", "yzx", "xzy", "zxy", "zyx"]
 	            currentIndex: -1
-	            ValueConnector {
+                width: parent.width/2
+                DiceValueConnector {
 	            	id: methodValue2
 	            	path: "foam:system/decomposeParDict hierarchicalCoeffs order"
 	            	onReady: {

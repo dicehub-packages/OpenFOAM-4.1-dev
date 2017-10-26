@@ -1,28 +1,27 @@
-import QtQuick.Controls 1.4
-import QtQuick 2.5
-import QtQml.Models 2.2
-import QtQuick.Layouts 1.3
+import QtQuick 2.9
 
 import DICE.App 1.0
-import DICE.Components 1.0
 
 Column {
     width: parent.width
-    height: visible ? childrenRect.height : 0
+//    height: visible ? childrenRect.height : 0
 
-    DropDown2 {
+    Subheader {
+        text: "Region Mode"
+    }
+
+    DiceComboBox {
         id: dropDown
-        label: qsTr("Region Mode")
         path: "refinement:RegionRefinement.region_mode"
         modelPath: "refinement:RegionRefinement.region_modes_list"
     }
 
-    ValueConnector {
+    DiceValueConnector {
         id: levelCount
         path: "refinement:RegionRefinement.levels_count"
     }
 
-    ValueConnector {
+    DiceValueConnector {
         id: canAddLevel
         path: "refinement:RegionRefinement.can_add_level"
     }
@@ -32,7 +31,7 @@ Column {
         delegate: Row {
             spacing: 10
             width: parent.width
-            VectorField2D2 {
+            DiceVectorField2D2 {
                 width: parent.width-30
                 xLabel: "Distance [m]"
                 yLabel: "Level"
@@ -41,7 +40,7 @@ Column {
                 yDataType: "int"
                 path: "refinement:RegionRefinement.level."+index
             }
-            FlatButton {
+            DiceButton {
                 width: 20
                 anchors.verticalCenter: parent.verticalCenter
                 text: "-"
@@ -52,7 +51,7 @@ Column {
         }
     }
 
-    FlatButton {
+    DiceButton {
         width: parent.width
         text: "Add level"
         enabled: canAddLevel.value

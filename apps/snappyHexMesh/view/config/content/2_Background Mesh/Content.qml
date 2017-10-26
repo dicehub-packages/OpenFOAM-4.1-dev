@@ -1,10 +1,11 @@
 import QtQuick 2.9
+
 import DICE.App 1.0
 
 Body {
     Card {
         title: "Bounding Box"
-        VectorField {
+        DiceVectorField {
             id: bbMin
             xLabel: "min X"
             yLabel: "min Y"
@@ -12,7 +13,7 @@ Body {
             target: app.boundingBox
             property: 'boundingBoxMin'
         }
-        VectorField {
+        DiceVectorField {
             id: bbMax
             xLabel: "max X"
             yLabel: "max Y"
@@ -24,7 +25,7 @@ Body {
             text: qsTr("Additional spacing [%]")
             horizontalAlignment: "AlignHCenter"
         }
-        VectorField {
+        DiceVectorField {
             id: spacingInput
             xLabel: "Spacing X [%]"
             yLabel: "Spacing Y [%]"
@@ -32,7 +33,7 @@ Body {
             target: app.boundingBox
             property: 'additionalSpacing'           
         }
-        Button {
+        DiceButton {
             id: calculateBoundingBoxButton
             width: parent.width
             text: qsTr("Calculate Automatically")
@@ -55,7 +56,7 @@ Body {
             target: app.boundingBox
             property: "sizeOrNumber"
         }
-        VectorField {
+        DiceVectorField {
             readOnly: toggleSizeOrNumber.checked
             enabled: !readOnly
             xLabel: "Cells in X"
@@ -65,7 +66,7 @@ Body {
             target: app.boundingBox
             property: 'cellsNum'    
         }
-        VectorField {
+        DiceVectorField {
             readOnly: !toggleSizeOrNumber.checked
             enabled: !readOnly
             xLabel: "Δs in X [m]"

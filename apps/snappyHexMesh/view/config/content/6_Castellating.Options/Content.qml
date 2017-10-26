@@ -8,18 +8,12 @@ Body {
         title: qsTr("Castellating")
         spacing: 30
 
-        Switch {
+        DiceSwitch {
             text: "Enable CastellatedMesh"
-        }
-
-        ToggleButton {
-            label: qsTr("Activate CastellatedMesh Generation")
-            uncheckedText: qsTr("No")
-            checkedText: qsTr("Yes")
             path: "foam:system/snappyHexMeshDict castellatedMesh"
         }
         Subheader { text: qsTr("Settings for the castellatedMesh generation") }
-        ValueField {
+        DiceValueField {
             label: qsTr("Resolve Feature Angle [°]")
             path: "foam:system/snappyHexMeshDict castellatedMeshControls resolveFeatureAngle"
             dataType: "int"
@@ -31,53 +25,54 @@ Body {
                 checked: typeof gapLevelIncrement.value !== 'undefined'
                 onClicked: gapLevelIncrement.setValue(checked? 0: undefined)
             }
-            ValueField {
+            DiceValueField {
                 id: gapLevelIncrement
                 enabled: gapLevelIncrementOption.checked
                 label: qsTr("Gap Level Increment")
                 path: "foam:system/snappyHexMeshDict castellatedMeshControls gapLevelIncrement"
                 dataType: "int"
+                width: parent.width - gapLevelIncrementOption.width
             }
         }
         Row {
             width: parent.width
-            CheckBox{
+
+            CheckBox {
                 id: planarAngleOption
                 checked: typeof planarAngle.value !== 'undefined'
                 onClicked: planarAngle.setValue(checked? 0: undefined)
             }
-            ValueField {
+            DiceValueField {
                 id: planarAngle
                 enabled: planarAngleOption.checked
                 label: qsTr("Planar Angle [°]")
                 path: "foam:system/snappyHexMeshDict castellatedMeshControls planarAngle"
                 dataType: "int"
+                width: parent.width - planarAngleOption.width
             }
         }
-        ValueField {
+        DiceValueField {
             label: qsTr("Maximum Local Cells")
             path: "foam:system/snappyHexMeshDict castellatedMeshControls maxLocalCells"
             dataType: "int"
         }
-        ValueField {
+        DiceValueField {
             label: qsTr("Maximum Global Cells")
             path: "foam:system/snappyHexMeshDict castellatedMeshControls maxGlobalCells"
             dataType: "int"
         }
-        ValueField {
+        DiceValueField {
             label: qsTr("Minimum Refinement Cells")
             path: "foam:system/snappyHexMeshDict castellatedMeshControls minRefinementCells"
             dataType: "int"
         }
-        ValueField {
+        DiceValueField {
             label: qsTr("Number of Cells between Levels")
             path: "foam:system/snappyHexMeshDict castellatedMeshControls nCellsBetweenLevels"
             dataType: "int"
         }
-        ToggleButton {
-            label: qsTr("Allow Free Standing Zone Faces")
-            uncheckedText: "No"
-            checkedText: "Yes"
+        DiceSwitch {
+            text: qsTr("Allow Free Standing Zone Faces")
             path: "foam:system/snappyHexMeshDict castellatedMeshControls allowFreeStandingZoneFaces"
         }
     }

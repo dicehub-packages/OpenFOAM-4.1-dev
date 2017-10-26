@@ -20,7 +20,7 @@ Body {
     Card {
         title: "Scripts"
 
-        FlatButton {
+        DiceButton {
             width: parent.width
             text: qsTr("Initialization")
             onClicked: {
@@ -28,7 +28,7 @@ Body {
             }
         }
 
-        FlatButton {
+        DiceButton {
             width: parent.width
             text: qsTr("Pre-run")
             onClicked: {
@@ -36,7 +36,7 @@ Body {
             }
         }
 
-        FlatButton {
+        DiceButton {
             width: parent.width
             text: qsTr("Post-run")
             onClicked: {

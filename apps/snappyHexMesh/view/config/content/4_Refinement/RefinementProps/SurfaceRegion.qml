@@ -1,9 +1,6 @@
-import QtQuick 2.5
-import QtQuick.Controls 2.0
+import QtQuick 2.9
+
 import DICE.App 1.0
-import QtQuick.Controls.Material 2.0
-import QtQuick.Controls.Styles 1.3
-import QtQuick.Controls.Private 1.0
 
 Column {
     height: childrenRect.height
@@ -15,7 +12,7 @@ Column {
         path: "refinement:SurfaceRegion.parent_level"
     }
 
-    VectorField2D2 {
+    DiceVectorField2D2 {
     	enabled: !toggleParentLevel.checked
         xLabel: "Min Level"
         yLabel: "Max Level"

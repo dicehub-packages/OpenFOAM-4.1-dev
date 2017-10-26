@@ -14,7 +14,7 @@ Column {
         visible: modelData.modelData == "p - Pressure"
         path: "foam:0/p internalField %field"
     }
-    VectorField {
+    DiceVectorField {
         visible: modelData.modelData == "U - Velocity"
         path: "foam:0/U internalField %field_vector"
     }

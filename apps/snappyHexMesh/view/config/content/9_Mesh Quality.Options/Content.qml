@@ -1,7 +1,6 @@
-import QtQuick 2.5
+import QtQuick 2.9
 
 import DICE.App 1.0
-import DICE.App.Foam 1.0
 
 Body {
     Card {
@@ -11,51 +10,51 @@ Body {
 
         Item {width:1; height:1}
 
-        ValueField {
+        DiceValueField {
             label: "Maximum non-orthogonality allowed [°]"
             path: "foam:system/meshQualityDict maxNonOrtho"
             dataType: "int"
         }
-        ValueField {
-            label: "Max Internal Skewness allowed [°]"
+        DiceValueField {
+            label: "Maximum Internal Skewness allowed [°]"
             path: "foam:system/meshQualityDict maxInternalSkewness"
             dataType: "int"
         }
-        ValueField {
-            label: "Max Concaveness allowed [°]"
+        DiceValueField {
+            label: "Maximum Concaveness allowed [°]"
             path: "foam:system/meshQualityDict maxConcave"
             dataType: "int"
         }
-        ValueField {
+        DiceValueField {
             label: "Minimum pyramid volume"
             path: "foam:system/meshQualityDict minVol"
         }
-        ValueField {
+        DiceValueField {
             label: "Minimum quality of the tet"
             path: "foam:system/meshQualityDict minTetQuality"
         }
-        ValueField {
-            label: "minArea"
+        DiceValueField {
+            label: "Minimum Area"
             path: "foam:system/meshQualityDict minArea"
         }
-        ValueField {
-            label: "minTwist"
+        DiceValueField {
+            label: "Minimum Twist"
             path: "foam:system/meshQualityDict minTwist"
         }
-        ValueField {
+        DiceValueField {
             label: "Minimum normalised cell determinant"
             path: "foam:system/meshQualityDict minDeterminant"
         }
-        ValueField {
-            label: "minFaceWeight"
+        DiceValueField {
+            label: "Minimal FaceWeight"
             path: "foam:system/meshQualityDict minFaceWeight"
         }
-        ValueField {
-            label: "minVolRatio"
+        DiceValueField {
+            label: "Minimum VolRatio"
             path: "foam:system/meshQualityDict minVolRatio"
         }
-        ValueField {
-            label: "minTriangleTwist"
+        DiceValueField {
+            label: "Minimum TriangleTwist"
             path: "foam:system/meshQualityDict minTriangleTwist"
         }
     }

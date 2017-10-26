@@ -10,9 +10,9 @@ Column {
     width: parent.width
     height: childrenRect.height
 
-    ToggleButton {
+    DiceSwitch {
         id: featureToggle
-        label: qsTr("Add Feature")
+        text: qsTr("Add Feature")
         path: "refinement:Surface.has_feature"
     }
 
@@ -22,7 +22,7 @@ Column {
 
         enabled: featureToggle.checked
         visible: enabled
-        height: enabled ? childrenRect.height : 0
+//        height: enabled ? childrenRect.height : 0
         width: parent.width
 
         Row {
@@ -36,7 +36,7 @@ Column {
                 verticalAlignment: Text.AlignVCenter
             }
 
-            ValueField {
+            DiceValueField {
                 width: (parent.width - parent.spacing)/2
                 label: ""
                 path: "refinement:Surface.feature_level"
@@ -55,26 +55,28 @@ Column {
                 verticalAlignment: Text.AlignVCenter
             }
 
-            ValueField {
+            DiceValueField {
                 width: (parent.width - parent.spacing)/2
                 label: ""
                 path: "refinement:Surface.included_angle"
             }
         }
 
-        DropDown2 {
-            label: qsTr("Extraction Method")
+        Subheader {
+            text: "Extraction Method"
+        }
+        DiceComboBox {
             model: ["extractFromSurface"]
             path: "refinement:Surface.extraction_method"
         }
 
-        ToggleButton {
-            label: qsTr("writeObj")
+        DiceSwitch {
+            text: qsTr("writeObj")
             path: "refinement:Surface.write_obj"
         }
 
-        ToggleButton {
-            label: qsTr("nonManifoldEdges")
+        DiceSwitch {
+            text: qsTr("nonManifoldEdges")
             path: "refinement:Surface.non_manifold_edges"
         }
 

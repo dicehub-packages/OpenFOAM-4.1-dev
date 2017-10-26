@@ -16,7 +16,7 @@ Column {
         path: "boundary:velocity_boundary_condition_type"
     }
 
-    VectorField2 {
+    DiceVectorField2 {
         enabled: (["Fixed Value"]).indexOf(velocityType.currentText) >= 0
         xLabel: "Velocity X"
         yLabel: "Velocity Y"

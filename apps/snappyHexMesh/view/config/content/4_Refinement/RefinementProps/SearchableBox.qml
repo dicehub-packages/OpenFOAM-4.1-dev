@@ -6,14 +6,14 @@ Column {
     width: parent.width
     height: childrenRect.height
     
-    VectorField {
+    DiceVectorField {
         path: "refinement:SearchableBox.min"
         xLabel: "minX"
         yLabel: "minY"
         zLabel: "minZ"
     }
     
-    VectorField {
+    DiceVectorField {
         path: "refinement:SearchableBox.max"
         xLabel: "maxX"
         yLabel: "maxY"

@@ -1,4 +1,4 @@
-import QtQuick 2.5
+import QtQuick 2.9
 
 import DICE.App 1.0
 
@@ -15,7 +15,7 @@ Column {
             path: "refinement:RegionLevel.region_mode"
         }
 
-        VectorField2D2 {
+        DiceVectorField2D2 {
             xLabel: "Distance [m]"
             yLabel: "Level"
             xDataType: "double"

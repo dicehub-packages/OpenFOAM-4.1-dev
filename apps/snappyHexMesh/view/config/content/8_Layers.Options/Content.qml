@@ -1,14 +1,11 @@
 import DICE.App 1.0
-import DICE.App.Foam 1.0
 
 Body {
     Card {
         title: qsTr('Layers')
         spacing: 30
-        ToggleButton {
-            label: "Add Layers"
-            uncheckedText: "No"
-            checkedText: "Yes"
+        DiceSwitch {
+            text: "Add Layers"
             path: "foam:system/snappyHexMeshDict addLayers"
         }
         Subheader { text: "Settings for Layer Addition" }
@@ -18,19 +15,19 @@ Body {
             checkedText: "Relative Sizes [-]"
             path: "foam:system/snappyHexMeshDict addLayersControls relativeSizes"
         }
-        ValueField {
+        DiceValueField {
             label: "Expansion Ratio"
             path: "foam:system/snappyHexMeshDict addLayersControls expansionRatio"
         }
-        ValueField {
+        DiceValueField {
             label: "Final Layer Thickness"
             path: "foam:system/snappyHexMeshDict addLayersControls finalLayerThickness"
         }
-        ValueField {
+        DiceValueField {
             label: "Minimum Thickness"
             path: "foam:system/snappyHexMeshDict addLayersControls minThickness"
         }
-        ValueField {
+        DiceValueField {
             label: "nGrow"
             path: "foam:system/snappyHexMeshDict addLayersControls nGrow"
             dataType: "int"
@@ -40,50 +37,50 @@ Body {
         spacing: 30
         title: qsTr('Advanced Settings')
 
-        ValueField {
+        DiceValueField {
             label: "Feature Angle [°]"
             path: "foam:system/snappyHexMeshDict addLayersControls featureAngle"
             dataType: "int"
         }
-        ValueField {
+        DiceValueField {
             label: "nRelaxIter"
             path: "foam:system/snappyHexMeshDict addLayersControls nRelaxIter"
             dataType: "int"
         }
-        ValueField {
+        DiceValueField {
             label: "nSmoothSurfaceNormals"
             path: "foam:system/snappyHexMeshDict addLayersControls nSmoothSurfaceNormals"
             dataType: "int"
         }
-        ValueField {
+        DiceValueField {
             label: "nSmoothNormals"
             path: "foam:system/snappyHexMeshDict addLayersControls nSmoothNormals"
             dataType: "int"
         }
-        ValueField {
+        DiceValueField {
             label: "nSmoothThickness"
             path: "foam:system/snappyHexMeshDict addLayersControls nSmoothThickness"
             dataType: "int"
         }
-        ValueField {
+        DiceValueField {
             label: "maxFaceThicknessRatio"
             path: "foam:system/snappyHexMeshDict addLayersControls maxFaceThicknessRatio"
         }
-        ValueField {
+        DiceValueField {
             label: "maxThicknessToMedialRatio"
             path: "foam:system/snappyHexMeshDict addLayersControls maxThicknessToMedialRatio"
         }
-        ValueField {
+        DiceValueField {
             label: "minMedianAxisAngle [°]"
             path: "foam:system/snappyHexMeshDict addLayersControls minMedianAxisAngle"
             dataType: "int"
         }
-        ValueField {
+        DiceValueField {
             label: "nBufferCellsNoExtrude"
             path: "foam:system/snappyHexMeshDict addLayersControls nBufferCellsNoExtrude"
             dataType: "int"
         }
-        ValueField {
+        DiceValueField {
             label: "nLayerIter"
             path: "foam:system/snappyHexMeshDict addLayersControls nLayerIter"
             dataType: "int"

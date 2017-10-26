@@ -1,7 +1,11 @@
 from dice_tools import wizard
 from dice_tools.helpers.xmodel import modelRole, modelMethod
 
+
 class Boundary:
+    """
+    Boundary for the blockMeshDict file.
+    """
 
     def __init__(self, app, face, index):
         self.app = app
@@ -10,11 +14,11 @@ class Boundary:
 
     @property
     def __name_path(self):
-        return 'foam:constant/polyMesh/blockMeshDict boundary %i'%self.index
+        return 'foam:system/blockMeshDict boundary %i'%self.index
 
     @property
     def __type_path(self):
-        return 'foam:constant/polyMesh/blockMeshDict boundary %i type'%(self.index+1)
+        return 'foam:system/blockMeshDict boundary %i type'%(self.index+1)
 
     @property
     def name(self):

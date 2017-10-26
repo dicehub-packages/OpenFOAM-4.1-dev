@@ -7,53 +7,48 @@ Body {
         
         title: qsTr('Snapping')
 
-        ToggleButton {
-            label: "Activate Snapping"
-            uncheckedText: "No"
-            checkedText: "Yes"
+        DiceSwitch {
+            text: "Activate Snapping"
             path: "foam:system/snappyHexMeshDict snap"
         }
 
-        Subheader { text: "Settings for the Snapping" }
+        Subheader {
+            text: "Settings for the Snapping"
+            horizontalAlignment: "AlignHCenter"
+        }
 
-        ToggleButton {
-            label: "Implicit Feature Snap"
-            uncheckedText: "Off"
-            checkedText: "On"
+        DiceSwitch {
+            text: "Implicit Feature Snap"
             path: "foam:system/snappyHexMeshDict snapControls implicitFeatureSnap"
         }
-        ToggleButton {
-            label: "Explicit Feature Snap"
-            uncheckedText: "Off"
-            checkedText: "On"
+        DiceSwitch {
+            text: "Explicit Feature Snap"
             path: "foam:system/snappyHexMeshDict snapControls explicitFeatureSnap"
         }
-        ToggleButton {
-            label: "Multi Region Feature Snap"
-            uncheckedText: "Off"
-            checkedText: "On"
+        DiceSwitch {
+            text: "Multi Region Feature Snap"
             path: "foam:system/snappyHexMeshDict snapControls multiRegionFeatureSnap"
         }
-        ValueField {
+        DiceValueField {
             label: "nSmoothPatch"
             path: "foam:system/snappyHexMeshDict snapControls nSmoothPatch"
             dataType: "int"
         }
-        ValueField {
+        DiceValueField {
             label: "tolerance"
             path: "foam:system/snappyHexMeshDict snapControls tolerance"
         }
-        ValueField {
+        DiceValueField {
             label: "nSolveIter"
             path: "foam:system/snappyHexMeshDict snapControls nSolveIter"
             dataType: "int"
         }
-        ValueField {
+        DiceValueField {
             label: "nRelaxIter"
             path: "foam:system/snappyHexMeshDict snapControls nRelaxIter"
             dataType: "int"
         }
-        ValueField {
+        DiceValueField {
             label: "nFeatureSnapIter"
             path: "foam:system/snappyHexMeshDict snapControls nFeatureSnapIter"
             dataType: "int"

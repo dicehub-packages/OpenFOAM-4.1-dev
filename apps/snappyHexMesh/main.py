@@ -283,7 +283,6 @@ class snappyHexMesh(
     def parameters(self):
         return self.__parameters
 
-
     def __load_config_files(self):
         """
         Loads config files for OpenFOAM with FoamParser.
@@ -291,7 +290,7 @@ class snappyHexMesh(
         # Parsed configuration files
         # ==========================
         self._block_mesh_dict = ParsedParameterFile(
-            self.config_path('constant/polyMesh/blockMeshDict')
+            self.config_path('system/blockMeshDict')
         )
         self._snappy_hex_mesh_dict = ParsedParameterFile(
             self.config_path('system/snappyHexMeshDict')
@@ -309,7 +308,7 @@ class snappyHexMesh(
             self.config_path('system/controlDict')
         )
 
-        self.foam_file('constant/polyMesh/blockMeshDict', self._block_mesh_dict)
+        self.foam_file('system/blockMeshDict', self._block_mesh_dict)
         self.foam_file('system/snappyHexMeshDict', self._snappy_hex_mesh_dict)
         self.foam_file('system/controlDict', self.__control_dict)
         self.foam_file('system/meshQualityDict', self.__mesh_quality_dict)
@@ -459,7 +458,6 @@ class snappyHexMesh(
                 "-case",
                 path
             )
-
 
     @diceTask('blockMesh', run_feature_extract)
     def run_block_mesh(self):
