@@ -45,6 +45,7 @@ from collections.abc import Sequence
 from modules.api.app_api import AppApi
 from common.basic_app import BasicApp
 
+
 class snappyHexMesh(
     Application,
     BasicApp,

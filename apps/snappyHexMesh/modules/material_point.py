@@ -1,6 +1,7 @@
 from dice_tools import DICEObject, diceProperty, diceSlot, wizard
 from dice_vtk.geometries import DynamicSphere
 
+
 class MaterialPoint(DICEObject):
 
     point_path = "foam:system/snappyHexMeshDict castellatedMeshControls locationInMesh"
@@ -29,7 +30,7 @@ class MaterialPoint(DICEObject):
 
     @diceSlot(name='resetToBoundingBox')
     def reset_vis_object(self):
-        self.__vis.position = self.__app.bounding_box.vis_obj.center
+        self.__vis.position = self.__app.bounding_box.vis_obj.position
         wizard.w_reset_camera_to_object([self.__vis], scale = 5)
         wizard.w_geometry_object_clicked(self.__vis, control_modifier = False)
 

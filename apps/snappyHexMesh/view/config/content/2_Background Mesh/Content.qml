@@ -1,5 +1,4 @@
-import QtQuick 2.6
-
+import QtQuick 2.9
 import DICE.App 1.0
 
 Body {
@@ -23,6 +22,7 @@ Body {
         }
         Caption {
             text: qsTr("Additional spacing [%]")
+            horizontalAlignment: "AlignHCenter"
         }
         VectorField {
             id: spacingInput
@@ -33,10 +33,16 @@ Body {
             property: 'additionalSpacing'           
         }
         Button {
+            id: calculateBoundingBoxButton
             width: parent.width
             text: qsTr("Calculate Automatically")
             onClicked: {
                 app.boundingBox.calculateBoundingBox()
+            }
+        }
+        Keys.onReturnPressed: {
+            if (spacingInput.focus) {
+                calculateBoundingBoxButton.clicked()
             }
         }
     }

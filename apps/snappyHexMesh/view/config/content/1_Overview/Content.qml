@@ -1,6 +1,4 @@
-import QtQuick 2.5
 import DICE.App 1.0
-import QtQuick.Layouts 1.3
 
 Body {
     Card {

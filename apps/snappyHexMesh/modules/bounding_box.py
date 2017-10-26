@@ -19,6 +19,7 @@ from contextlib import contextmanager
 import stl
 from .refinement_items import *
 
+
 class BoundingBox(DICEObject):
     """
     Initial background Mesh of hexahedral cells that fills a region
