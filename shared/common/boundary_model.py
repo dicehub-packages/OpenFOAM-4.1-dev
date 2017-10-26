@@ -6,6 +6,7 @@ from PyFoam.RunDictionary.ParsedParameterFile import ParsedBoundaryDict
 
 import os
 import random
+import shutil
 
 class BoundaryGroup(ModelItem):
 

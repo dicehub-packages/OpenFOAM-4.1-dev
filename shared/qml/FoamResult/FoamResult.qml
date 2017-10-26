@@ -58,10 +58,12 @@ SplitView {
 
             anchors.margins: 20
 
-            DropDown2 {
+            Subheader {
+                text: "Field"
+            }
+            DiceComboBox {
                 width: 200
                 target: app.result
-                label: "Field"
                 property: "currentField"
                 model: app.result.fieldNames
             }
@@ -74,7 +76,7 @@ SplitView {
                 property: "fieldRangeAuto"
             }
 
-            VectorField2D2 {
+            DiceVectorField2D2 {
                 height: 30
                 xLabel: "Min"
                 yLabel: "Max"

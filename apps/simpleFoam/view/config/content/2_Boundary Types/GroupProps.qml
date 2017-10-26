@@ -1,17 +1,17 @@
 import QtQuick 2.5
 
 import DICE.App 1.0
-import DICE.Components 1.0
 
 Column {
     spacing: 10
     width: parent.width
     height: childrenRect.height
 
-    DropDown2 {
+    Subheader {
+        text: "type"
+    }
+    DiceComboBox {
         id: typeDropDown
-        label: qsTr('Type')
-
         model: [
             "cyclic",
             "cyclicAMI",

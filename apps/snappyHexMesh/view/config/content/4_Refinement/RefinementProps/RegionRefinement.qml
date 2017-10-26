@@ -4,7 +4,6 @@ import DICE.App 1.0
 
 Column {
     width: parent.width
-//    height: visible ? childrenRect.height : 0
 
     Subheader {
         text: "Region Mode"

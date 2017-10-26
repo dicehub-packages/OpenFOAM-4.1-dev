@@ -3,14 +3,15 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 1.4
 
 import DICE.App 1.0
-import DICE.Components 1.0
+//import DICE.Components 1.0
 
 SplitBody {
 
     AppLayoutCard {
         width: parent.width
         height: parent.height/2
-        InputField {
+
+        DiceInputField {
             id: filterKeyword
             Layout.fillWidth: true
             label: "Filter"

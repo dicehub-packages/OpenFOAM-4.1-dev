@@ -1,26 +1,28 @@
-import QtQuick 2.5
+import QtQuick 2.9
 
 import DICE.App 1.0
-import DICE.Components 1.0
+import DICE.Components 1.0 as DC
 
 Column {
     spacing: 10
     width: parent.width
     height: childrenRect.height
 
-    ValueConnector {
+    DiceValueConnector {
         id: isCyclic
         path: 'boundary:is_cyclic'
     }
 
-    ValueConnector {
+    DiceValueConnector {
         id: neighbourPatch
         path: 'boundary:neighbour_patch'
     }
 
-    DropDown2 {
+    Subheader {
+        text: "Type"
+    }
+    DiceComboBox {
         id: typeDropDown
-        label: qsTr('Type')
         enabled: !isCyclic.value
         visible: enabled
         model: [
@@ -45,25 +47,27 @@ Column {
     Row {
         width: parent.width
         visible: !!neighbourPatch.value 
-        BasicText {
+        DC.BasicText {
             width: parent.width/2
             text: "Neighbour Patch:"
         }
-        BasicText {
+        DC.BasicText {
             width: parent.width/2
             text: !!neighbourPatch.value ? neighbourPatch.value : ""
         }
     }
 
-    DropDown2 {
+    Subheader {
+        text: "Transform"
+    }
+    DiceComboBox {
         enabled: !!isCyclic.value
         visible: enabled
-        label: "Transform"
         model: ["noOrdering", "translational", "rotational"]
         path: "boundary:transform"
     }
 
-    ValueField {
+    DiceValueField {
         enabled: !!isCyclic.value
         visible: enabled
         label: "Match Tolerance"
@@ -77,7 +81,7 @@ Column {
         path: "boundary:low_weight_correction_enable"
     }
 
-    ValueField {
+    DiceValueField {
         enabled: !!isCyclic.value && !!lowLevelCorrectionEnable.value
         visible: enabled
         label: "Low Weight Correction"

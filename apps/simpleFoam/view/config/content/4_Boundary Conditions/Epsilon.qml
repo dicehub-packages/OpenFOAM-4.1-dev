@@ -18,13 +18,13 @@ Column {
         path: "boundary:epsilon_boundary_condition_type"
     }
 
-    ValueField {
+    DiceValueField {
         enabled: (["Fixed Value"]).indexOf(epsilonType.currentText) >= 0
         label: "Value [m^2/s^3]"
         path: "boundary:epsilon_field_value"
     }
 
-    ValueField {
+    DiceValueField {
         enabled: (["Turbulent Mixing Length Inlet"
             ]).indexOf(epsilonType.currentText) >= 0
         label: "Mixing Length [m]"

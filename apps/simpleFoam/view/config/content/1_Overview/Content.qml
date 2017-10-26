@@ -17,7 +17,7 @@ Body {
         List {
             maxHeight: 300
             width: parent.width
-            modelData: app.input_types_model
+            modelData: appController.input_types_model
             delegate: ListItem {
                 text: input_type
             }
@@ -28,7 +28,7 @@ Body {
         List {
             maxHeight: 300
             width: parent.width
-            modelData: app.output_types_model
+            modelData: appController.output_types_model
             delegate: ListItem {
                 text: output_type
             }

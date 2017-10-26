@@ -18,13 +18,13 @@ Column {
         path: "boundary:k_boundary_condition_type"
     }
 
-    ValueField {
+    DiceValueField {
         enabled: (["Fixed Value"]).indexOf(kType.currentText) >= 0
         label: "Value [J/kg]"
         path: "boundary:k_field_value"
     }
 
-    ValueField {
+    DiceValueField {
         enabled: (["Turbulent Intensity Kinetic Energy Inlet"
             ]).indexOf(kType.currentText) >= 0
         label: "Intensity"
