@@ -50,8 +50,8 @@ Body {
             property: "sizeOrNumber"
         }
         VectorField {
-            readOnly: !toggleSizeOrNumber.checked
-            enabled: readOnly
+            readOnly: toggleSizeOrNumber.checked
+            enabled: !readOnly
             xLabel: "Cells in X"
             yLabel: "Cells in Y"
             zLabel: "Cells in Z"
@@ -60,8 +60,8 @@ Body {
             property: 'cellsNum'    
         }
         VectorField {
-            readOnly: toggleSizeOrNumber.checked
-            enabled: readOnly
+            readOnly: !toggleSizeOrNumber.checked
+            enabled: !readOnly
             xLabel: "Δs in X [m]"
             yLabel: "Δs in Y [m]"
             zLabel: "Δs in Z [m]"
