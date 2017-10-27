@@ -536,7 +536,7 @@ class BoundaryApp:
 
         wizard.w_idle()
         
-        self.__reader = FoamReader(self.config_path())
+        self.__reader = FoamReader(self.config_path(), cells=False)
 
         for v in self.__reader.patches:
             self.vis_add_object(v)
