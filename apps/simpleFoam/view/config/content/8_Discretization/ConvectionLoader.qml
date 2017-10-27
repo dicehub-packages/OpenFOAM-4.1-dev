@@ -31,5 +31,5 @@ ConvectionSettings {
                 return "grad(omega)"
         }
     }
-    vector: modelData.modelData == 'Velocity'
+    vector: modelData.modelData === 'Velocity'
 }

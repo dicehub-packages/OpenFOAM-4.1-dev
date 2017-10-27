@@ -8,7 +8,7 @@ Column {
 
     spacing: 5
 
-    ValueConnector {
+    DiceValueConnector {
         id: interpolationScheme
         path: "foam:system/fvSchemes interpolationSchemes default"
     }

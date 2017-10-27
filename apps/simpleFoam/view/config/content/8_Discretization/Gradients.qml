@@ -1,5 +1,5 @@
 import QtQuick 2.5
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.2
 
 import DICE.App 1.0
 import DICE.Components 1.0
@@ -9,22 +9,22 @@ Column {
 
     spacing: 5
 
-    ValueConnector {
+    DiceValueConnector {
         id: gradScheme
         path: "foam:system/fvSchemes gradSchemes grad(T)"
     }
 
-    ValueConnector {
+    DiceValueConnector {
         id: gradSchemeTuple
         path: "foam:system/fvSchemes gradSchemes grad(T) %tuple"
     }
 
-    ValueConnector {
+    DiceValueConnector {
         id: snGradScheme
         path: "foam:system/fvSchemes snGradSchemes default"
     }
 
-    ValueConnector {
+    DiceValueConnector {
         id: snGradSchemeTuple
         path: "foam:system/fvSchemes snGradSchemes default %tuple"
     }
@@ -91,7 +91,7 @@ Column {
         }
     }
 
-    ValueField {
+    DiceValueField {
         visible: limited.checked
         path: visible ? "foam:system/fvSchemes snGradSchemes default 2" : ""
     }

@@ -1,7 +1,7 @@
-import QtQuick 2.4
+import QtQuick 2.9
 
 import DICE.App 1.0
-import DICE.App.Foam 1.0
+//import DICE.App.Foam 1.0
 
 Column {
 
@@ -10,28 +10,28 @@ Column {
         width: parent.width
     }
 
-    ValueField {
-        visible: modelData.modelData == "p - Pressure"
+    DiceValueField {
+        visible: modelData.modelData === "p - Pressure"
         path: "foam:0/p internalField %field"
     }
     DiceVectorField {
-        visible: modelData.modelData == "U - Velocity"
+        visible: modelData.modelData === "U - Velocity"
         path: "foam:0/U internalField %field_vector"
     }
-    ValueField {
-        visible: modelData.modelData == "k"
+    DiceValueField {
+        visible: modelData.modelData === "k"
         path: "foam:0/k internalField %field"
     }
-    ValueField {
-        visible: modelData.modelData == "Omega"
+    DiceValueField {
+        visible: modelData.modelData === "Omega"
         path: "foam:0/omega internalField %field"
     }
-    ValueField {
-        visible: modelData.modelData == "Epsilon"
+    DiceValueField {
+        visible: modelData.modelData === "Epsilon"
         path: "foam:0/epsilon internalField %field"
     }
-    ValueField {
-        visible: modelData.modelData == "nut"
+    DiceValueField {
+        visible: modelData.modelData === "nut"
         path: "foam:0/nut internalField %field"
     }
 }

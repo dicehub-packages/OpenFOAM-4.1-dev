@@ -13,7 +13,7 @@ Column {
 
     spacing: 5
 
-    ValueConnector {
+    DiceValueConnector {
         id: divScheme
     }
 
@@ -82,7 +82,7 @@ Column {
         }
     }
 
-    ValueField {
+    DiceValueField {
         visible: limLinear.checked
         path: (divScheme.isValid && (divScheme.value.indexOf('limitedLinear') >= 0 ||
             divScheme.value.indexOf('limitedLinearV') >= 0)) ? (divScheme.path + " -1") : ""

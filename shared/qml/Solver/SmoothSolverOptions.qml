@@ -72,22 +72,22 @@ Column {
         path: root.path + " smoother"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Tolerance")
         path: root.path + " tolerance"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Relative Tolerance")
         path: root.path + " relTol"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Minimum Iterations")
         path: root.path + " minIter"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Maximum Iterations")
         path: root.path + " maxIter"
     }
