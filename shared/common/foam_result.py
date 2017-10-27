@@ -180,7 +180,7 @@ class Result(DICEObject):
         for obj in self.__scene.objects:
             if isinstance(obj, GeometryBase):
                 for m in obj.get_mappers():
-                            m.SelectColorArray(self.__current_field)
+                    m.SelectColorArray(self.__current_field)
 
     def update(self):
         if self.__app.progress < 0:

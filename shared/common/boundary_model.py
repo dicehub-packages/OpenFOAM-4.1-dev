@@ -560,6 +560,8 @@ class BoundaryApp:
                     random.uniform(0.6, 1.0), random.uniform(0.6, 1.0)]
                 v.opacity=0.8
                 v.color = color
+                for m in v.get_mappers():
+                    m.SelectColorArray("")
             else:
                 v.visible=False
 
