@@ -17,22 +17,22 @@ SplitView {
 
                 title: qsTr("Control")
                 spacing: 20
-                ValueField {
+                DiceValueField {
                     label: "Start Time"
                     path: "foam:system/controlDict startTime"
                 }
 
-                ValueField {
+                DiceValueField {
                     label: "End Time"
                     path: "foam:system/controlDict endTime"
                 }
 
-                ValueField {
+                DiceValueField {
                     label: "Time Step"
                     path: "foam:system/controlDict deltaT"
                 }
 
-                ValueField {
+                DiceValueField {
                     label: "Write Interval"
                     path: "foam:system/controlDict writeInterval"
                 }

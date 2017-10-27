@@ -1,7 +1,6 @@
 import QtQuick 2.5
 
 import DICE.App 1.0
-import DICE.Components 1.0
 
 Column {
     width: parent.width
@@ -9,12 +8,14 @@ Column {
 
     spacing: 20
 
-    DropDown2 {
+    Subheader {
+        text: "Type"
+    }
+    DiceComboBox {
         id: epsilonType
-        label: "Type"
         model: ["Fixed Value",
                 "Turbulent Mixing Length Inlet",
-                "Zero Gradient", "Symmetry"]
+                "Zero Gradient", "Symmetry", "Slip"]
         path: "boundary:epsilon_boundary_condition_type"
     }
 

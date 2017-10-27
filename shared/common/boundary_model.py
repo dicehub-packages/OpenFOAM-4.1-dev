@@ -289,6 +289,8 @@ class Boundary:
             return 'Turbulent Mixing Length Frequency Inlet'
         elif condition_type == 'symmetry':
             return 'Symmetry'
+        elif condition_type == 'slip':
+            return 'Slip'
             
     @omega_boundary_condition_type.setter
     def omega_boundary_condition_type(self, value):
@@ -312,6 +314,10 @@ class Boundary:
         elif value == 'Symmetry':
             self.app[path] = {
                 'type': 'symmetry'
+            }
+        elif value == 'Slip':
+            self.app[path] = {
+                'type': 'slip'
             }
 
     @property
@@ -348,6 +354,8 @@ class Boundary:
             return 'Turbulent Intensity Kinetic Energy Inlet'
         elif condition_type == 'symmetry':
             return 'Symmetry'
+        elif condition_type == 'slip':
+            return 'Slip'
 
     @k_boundary_condition_type.setter
     def k_boundary_condition_type(self, value):
@@ -371,6 +379,10 @@ class Boundary:
         elif value == 'Symmetry':
             self.app[path] = {
                 'type': 'symmetry'
+            }
+        elif value == 'Slip':
+            self.app[path] = {
+                'type': 'slip'
             }
 
     @property
@@ -407,6 +419,8 @@ class Boundary:
             return 'Turbulent Mixing Length Inlet'
         elif condition_type == 'symmetry':
             return 'Symmetry'
+        elif condition_type == 'slip':
+            return 'Slip'
 
     @epsilon_boundary_condition_type.setter
     def epsilon_boundary_condition_type(self, value):
@@ -430,6 +444,10 @@ class Boundary:
         elif value == 'Symmetry':
             self.app[path] = {
                 'type': 'symmetry'
+            }
+        elif value == 'Slip':
+            self.app[path] = {
+                'type': 'slip'
             }
 
     @property
