@@ -178,7 +178,6 @@ class Surface(RegionRefinement):
                 p = 'foam:system/snappyHexMeshDict castellatedMeshControls features %i level'%index
                 self.app[p] = value
 
-
     @property
     def has_feature(self):
         file_name_e_mesh = '"{0}.eMesh"'.format(self.file_name)
@@ -248,13 +247,11 @@ class Surface(RegionRefinement):
             path = 'foam:system/surfaceFeatureExtractDict ' + self.name + ' extractionMethod'
             return self.app[path]
 
-
     @extraction_method.setter
     def extraction_method(self, value):
         if self.has_feature:
             path = 'foam:system/surfaceFeatureExtractDict ' + self.name + ' extractionMethod'
             self.app[path] = value
-
 
     @property
     def write_obj(self):

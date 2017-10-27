@@ -8,7 +8,7 @@ Body {
     Card {
         title: qsTr("Turbulence model")
 
-        DropDown2 {
+        DiceComboBox {
             target: app
             visible: turbToggle.checked
             property: "turbulenceModel"
@@ -21,34 +21,34 @@ Body {
 
         Column {
             width: parent.width
-            visible: app.turbulenceModel == "kOmegaSST"
+            visible: app.turbulenceModel === "kOmegaSST"
             spacing: 20
 
             Subheader {
                 text: "kOmegaSSTCoeffs"
             }
 
-            ValueField {
+            DiceValueField {
                 label: "alphaK1"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs alphaK1"
             }
-            ValueField {
+            DiceValueField {
                 label: "alphaOmega2"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs alphaOmega2"
             }
-            ValueField {
+            DiceValueField {
                 label: "gamma2"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs gamma2"
             }
-            ValueField {
+            DiceValueField {
                 label: "alphaK2"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs alphaK2"
             }
-            ValueField {
+            DiceValueField {
                 label: "alphaOmega1"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs alphaOmega1"
             }
-            ValueField {
+            DiceValueField {
                 label: "gamma1"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs gamma1"
             }
@@ -56,27 +56,27 @@ Body {
                 label: "F3"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs F3"
             }
-            ValueField {
+            DiceValueField {
                 label: "c1"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs c1"
             }
-            ValueField {
+            DiceValueField {
                 label: "b1"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs b1"
             }
-            ValueField {
+            DiceValueField {
                 label: "a1"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs a1"
             }
-            ValueField {
+            DiceValueField {
                 label: "beta1"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs beta1"
             }
-            ValueField {
+            DiceValueField {
                 label: "beta2"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs beta2"
             }
-            ValueField {
+            DiceValueField {
                 label: "betaStar"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs betaStar"
             }

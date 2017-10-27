@@ -8,6 +8,7 @@ from dice_tools.helpers.xmodel import standard_model, modelRole
 from .refinement_items import *
 import copy
 
+
 class PropertyItem:
     def __init__(self, title, source):
         self.__title = title
@@ -20,6 +21,7 @@ class PropertyItem:
     @modelRole("source")
     def source(self):
         return self.__source
+
 
 class Refinement(DICEObject):
 

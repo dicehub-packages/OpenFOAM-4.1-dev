@@ -31,8 +31,7 @@ Column {
             "symmetryPlane",
             "symmetry",
             "empty",
-            "wedge",
-            "processor"
+            "wedge"
         ] 
         path: "boundary:boundary_type"
     }
