@@ -16,7 +16,7 @@ Column {
         id: omegaType
         model: ["Fixed Value",
                 "Turbulent Mixing Length Frequency Inlet",
-                "Zero Gradient"]
+                "Zero Gradient", "Symmetry"]
         path: "boundary:omega_boundary_condition_type"
     }
 

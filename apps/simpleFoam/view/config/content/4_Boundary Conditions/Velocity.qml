@@ -13,7 +13,7 @@ Column {
     }
     DiceComboBox {
         id: velocityType
-        model: ["Fixed Value", "Zero Gradient", "Inlet Outlet", "Slip"]
+        model: ["Fixed Value", "Zero Gradient", "Inlet Outlet", "Slip", "Symmetry"]
         path: "boundary:velocity_boundary_condition_type"
     }
 

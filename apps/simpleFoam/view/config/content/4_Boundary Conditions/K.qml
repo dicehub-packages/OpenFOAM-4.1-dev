@@ -14,7 +14,7 @@ Column {
         label: "Type"
         model: ["Fixed Value",
                 "Turbulent Intensity Kinetic Energy Inlet",
-                "Zero Gradient"]
+                "Zero Gradient", "Symmetry"]
         path: "boundary:k_boundary_condition_type"
     }
 

@@ -14,7 +14,7 @@ Column {
         label: "Type"
         model: ["Fixed Value",
                 "Turbulent Mixing Length Inlet",
-                "Zero Gradient"]
+                "Zero Gradient", "Symmetry"]
         path: "boundary:epsilon_boundary_condition_type"
     }
 

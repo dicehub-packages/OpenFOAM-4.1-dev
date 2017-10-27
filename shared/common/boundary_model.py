@@ -165,7 +165,9 @@ class Boundary:
             return 'Zero Gradient'
         elif condition_type == 'slip':
             return 'Slip'
-            
+        elif condition_type == 'symmetry':
+            return 'Symmetry'
+
     @pressure_boundary_condition_type.setter
     def pressure_boundary_condition_type(self, value):
         path = 'foam:0/p boundaryField ' + self.name
@@ -194,6 +196,10 @@ class Boundary:
             self.app[path] = {
                 'type': 'slip'
             }
+        elif value == 'Symmetry':
+            self.app[path] = {
+                'type': 'symmetry'
+            }
 
     @property
     def pressure_field_value(self):
@@ -218,6 +224,8 @@ class Boundary:
             return 'Inlet Outlet'
         elif condition_type == 'slip':
             return 'Slip'
+        elif condition_type == 'symmetry':
+            return 'Symmetry'
 
     @velocity_boundary_condition_type.setter
     def velocity_boundary_condition_type(self, value):
@@ -241,6 +249,10 @@ class Boundary:
         elif value == 'Slip':
             self.app[path] = {
                 'type': 'slip'
+            }
+        elif value == 'Symmetry':
+            self.app[path] = {
+                'type': 'symmetry'
             }
 
     @property
@@ -275,7 +287,9 @@ class Boundary:
             return 'Zero Gradient'
         elif condition_type == 'turbulentMixingLengthFrequencyInlet':
             return 'Turbulent Mixing Length Frequency Inlet'
-
+        elif condition_type == 'symmetry':
+            return 'Symmetry'
+            
     @omega_boundary_condition_type.setter
     def omega_boundary_condition_type(self, value):
         path = 'foam:0/omega boundaryField ' + self.name
@@ -294,6 +308,10 @@ class Boundary:
                 'type': 'turbulentMixingLengthFrequencyInlet',
                 'value': Field(default_value),
                 'mixingLength': 0.001
+            }
+        elif value == 'Symmetry':
+            self.app[path] = {
+                'type': 'symmetry'
             }
 
     @property
@@ -328,7 +346,9 @@ class Boundary:
             return 'Zero Gradient'
         elif condition_type == 'turbulentIntensityKineticEnergyInlet':
             return 'Turbulent Intensity Kinetic Energy Inlet'
-            
+        elif condition_type == 'symmetry':
+            return 'Symmetry'
+
     @k_boundary_condition_type.setter
     def k_boundary_condition_type(self, value):
         path = 'foam:0/k boundaryField ' + self.name
@@ -347,6 +367,10 @@ class Boundary:
                 'type': 'turbulentIntensityKineticEnergyInlet',
                 'value': Field(default_value),
                 'intensity': 0.05
+            }
+        elif value == 'Symmetry':
+            self.app[path] = {
+                'type': 'symmetry'
             }
 
     @property
@@ -381,6 +405,8 @@ class Boundary:
             return 'Zero Gradient'
         elif condition_type == 'turbulentMixingLengthDissipationRateInlet':
             return 'Turbulent Mixing Length Inlet'
+        elif condition_type == 'symmetry':
+            return 'Symmetry'
 
     @epsilon_boundary_condition_type.setter
     def epsilon_boundary_condition_type(self, value):
@@ -400,6 +426,10 @@ class Boundary:
                 'type': 'turbulentMixingLengthDissipationRateInlet',
                 'value': Field(default_value),
                 'mixingLength': 0.001
+            }
+        elif value == 'Symmetry':
+            self.app[path] = {
+                'type': 'symmetry'
             }
 
     @property
@@ -434,6 +464,8 @@ class Boundary:
             return "Zero Gradient"
         elif condition_type == "empty":
             return "Empty"
+        elif condition_type == 'symmetry':
+            return 'Symmetry'
 
     @temperature_boundary_condition_type.setter
     def temperature_boundary_condition_type(self, value):
@@ -452,7 +484,11 @@ class Boundary:
             self.app[path] = {
                 "type": "empty"
             }
-
+        elif value == 'Symmetry':
+            self.app[path] = {
+                'type': 'symmetry'
+            }
+            
     @property
     def temperature_boundary_condition_type_list(self):
         if self.boundary_type == "empty":

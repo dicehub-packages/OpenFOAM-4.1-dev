@@ -14,7 +14,7 @@ Column {
     }
     DiceComboBox {
         id: pressureType
-        model: ["Fixed Value", "Total Pressure", "Zero Gradient", "Slip"]
+        model: ["Fixed Value", "Total Pressure", "Zero Gradient", "Slip", "Symmetry"]
         path: "boundary:pressure_boundary_condition_type"
     }
     DiceValueField {
