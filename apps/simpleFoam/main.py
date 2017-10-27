@@ -4,7 +4,7 @@ from dice_tools import *
 from dice_tools.helpers.xmodel import *
 from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile, ParsedBoundaryDict
 from PyFoam.Basics.DataStructures import Field, Vector, DictProxy
-from dice_tools.helpers import FileOperations, JsonOrderedDict, run_process
+from dice_tools.helpers import JsonOrderedDict, run_process
 
 from dice_plot.plot import Plot
 import matplotlib.pyplot as plt
@@ -23,7 +23,7 @@ from common.basic_app import BasicApp
 
 import time
 
-class potentialFoamApp(
+class simpleFoamApp(
     Application,
     VisApp,
     FoamApp,
@@ -46,8 +46,16 @@ class potentialFoamApp(
 
 
         self.__result = Result(self)
+
+        wizard.subscribe(self.w_foam)
         self.update_result()
  
+    def w_foam(self, path):
+        if 'system/controlDict' in path:
+            src = self.config_path('system/controlDict')
+            dst = self.run_path('system/controlDict')
+            self.copy(src, dst)
+
     def update_result(self):
         self.__result.update()
 
