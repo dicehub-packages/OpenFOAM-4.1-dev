@@ -87,7 +87,7 @@ class Boundary:
                 self.app[self.path + ' lowWeightCorrection'] = 0.2
                 self.app[self.path + ' neighbourPatch'] = ''
 
-        self.app[self.path + 'type'] = value
+        self.app[self.path + ' type'] = value
 
 
     @modelRole('isVisible')
