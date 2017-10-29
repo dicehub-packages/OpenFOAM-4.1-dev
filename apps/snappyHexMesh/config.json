@@ -2,6 +2,7 @@
   "blockMesh-useCellSize": false,
   "blockMesh-spacing": [0, 0, 0],
   "parallelRun": false,
-  "dockerCmd": "docker run --rm openfoamplus/of_v1606plus_centos66 /opt/OpenFOAM/OpenFOAM-v1606+/bin/foamExec",
-  "openFOAMCmd": "/usr/bin/foamExec"
+  "dockerCmd": "docker run --name {docker_name} --rm -v {dice_workflow}:/usr/share/openfoam/data:Z dicehub/openfoam:4.1 \"{command}\"",
+  "dockerCmd": "docker run --name {docker_name} --rm -v {dice_workflow}:/usr/share/openfoam/data:Z dicehub/openfoam:4.1 \"mpirun {command}\"",
+  "openFOAMCmd": "/bin/bash -c \"source $OpenFOAM_BashRC && mpirun {command} -parallel\""
 }

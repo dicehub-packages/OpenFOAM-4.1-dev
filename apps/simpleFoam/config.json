@@ -1,2 +1,6 @@
 {
+  "parallelRun": false,
+  "dockerCmd": "docker run --name {docker_name} --rm -v {dice_workflow}:/usr/share/openfoam/data:Z dicehub/openfoam:4.1 \"{command}\"",
+  "dockerCmd": "docker run --name {docker_name} --rm -v {dice_workflow}:/usr/share/openfoam/data:Z dicehub/openfoam:4.1 \"mpirun {command}\"",
+  "openFOAMCmd": "/bin/bash -c \"source $OpenFOAM_BashRC && mpirun {command} -parallel\""
 }

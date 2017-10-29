@@ -37,7 +37,7 @@ SplitBody {
             if (!app.hasProps)
                 return []
             switch (app.turbulenceModel) {
-                case 'none':
+                case 'laminar':
                     return [
                         'Pressure',
                         'Velocity'

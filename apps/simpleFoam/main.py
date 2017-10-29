@@ -37,13 +37,13 @@ class simpleFoamApp(
         self.__plot = Plot(plt.figure())
         self.__plot_ax = self.__plot.figure.add_subplot(111)
         self.__plot.figure.patch.set_alpha(0)
+        self.__plot_ax.set_yscale('log')
         self.__plot_ax.set_axis_bgcolor('white')
         self.__plot_ax.set_title('Residuals')
         self.__plot_data = {}
         self.__plot_time = 0
 
         self.__load_config_files()
-
 
         self.__result = Result(self)
 
@@ -75,18 +75,54 @@ class simpleFoamApp(
 
     @diceProperty('QString', name='turbulenceModel',  notify=turbulence_model_changed)
     def turbulence_model(self):
-        if not self["foam:constant/turbulenceProperties RAS turbulence"]:
-            return "none"
-        return self["foam:constant/turbulenceProperties RAS RASModel"]
+        if self["foam:constant/turbulenceProperties simulationType"] == "laminar":
+            return "laminar"
+        elif self["foam:constant/turbulenceProperties simulationType"] == "RAS":
+            return self["foam:constant/turbulenceProperties RAS RASModel"]
 
     @turbulence_model.setter
-    def turbulence_model(self, value):
+    def turbulence_model(self, value):        
         if self.turbulence_model != value:
-            if value == "none":
-                self["foam:constant/turbulenceProperties RAS turbulence"] = False
-            else:
-                self["foam:constant/turbulenceProperties RAS turbulence"] = True
-                self["foam:constant/turbulenceProperties RAS RASModel"] = value
+            if value == "laminar":
+                self["foam:constant/turbulenceProperties simulationType"] = "laminar"
+                self["foam:constant/turbulenceProperties RAS"] = {}
+            elif value == "kOmegaSST":
+                self["foam:constant/turbulenceProperties simulationType"] = "RAS"
+                self["foam:constant/turbulenceProperties RAS"] = {
+                         'RASModel': 'kOmegaSST',
+                         'kOmegaSSTCoeffs': {
+                            'F3': False,
+                            'a1': 0.31,
+                            'alphaK1': 0.85,
+                            'alphaK2': 1.0,
+                            'alphaOmega1': 0.5,
+                            'alphaOmega2': 0.856,
+                            'b1': 1.0,
+                            'beta1': 0.075,
+                            'beta2': 0.0828,
+                            'betaStar': 0.09,
+                            'c1': 10.0,
+                            'gamma1': 0.5532,
+                            'gamma2': 0.4403
+                          },
+                         'printCoeffs': True,
+                         'turbulence': True
+                     }
+            elif value == "kEpsilon":
+                self["foam:constant/turbulenceProperties simulationType"] = "RAS"
+                self["foam:constant/turbulenceProperties RAS"] = {
+                         'RASModel': 'kEpsilon',
+                         'kEpsilonCoeffs': {
+                            "Cmu": 0.09,
+                            "C1": 1.44,
+                            "C2": 1.92,
+                            "C3": -0.33,
+                            "sigmak": 1,
+                            "sigmaEps": 1.3
+                         },
+                         'printCoeffs': True,
+                         'turbulence': True
+                     }
             self.turbulence_model_changed()
 
     def input_changed(self, input_data):
@@ -151,6 +187,9 @@ class simpleFoamApp(
         turbulence_props = ParsedParameterFile(
             self.config_path('constant/turbulenceProperties')
         )
+        self._decompose_par_dict = ParsedParameterFile(
+            self.config_path('system/decomposeParDict')
+        )
 
         # Registered files
         # ================
@@ -166,7 +205,8 @@ class simpleFoamApp(
         self.foam_file('system/fvSolution', fv_solutions)
         self.foam_file('system/fvSchemes', fv_schemes)
         self.foam_file('system/controlDict', control_dict)
-        
+        self.foam_file('system/decomposeParDict', self._decompose_par_dict)
+
         self.foam_file('constant/transportProperties', transport_props)
         self.foam_file('constant/turbulenceProperties', turbulence_props)
 
@@ -191,23 +231,35 @@ class simpleFoamApp(
         settings = app_settings()
         self.__use_docker = settings['use_docker']
         if self.__use_docker:
+            self.__cmd_pattern_mpi = settings['docker_cmd_mpi']
             self.__cmd_pattern = settings['docker_cmd']
         else:
+            self.__cmd_pattern_mpi = settings['foam_cmd_mpi']
             self.__cmd_pattern = settings['foam_cmd']
+        self.__cpu_count = self._decompose_par_dict['numberOfSubdomains']
+        self.__use_mpi = self.config['parallelRun']
         return True
 
+    def stop(self):
+        if self.running and self.__use_docker:
+            run_process('docker', 'rm', '-f', self.instance_id)
+        super().stop()
 
-    def execute_command(self, *args, **kwargs):
+    def execute_command(self, *args, allow_mpi = False, **kwargs):
         args = list(args)
-        # cmd_name = args[0] 
-        cmd_pattern = self.__cmd_pattern
+        cmd_name = args[0] 
+        if allow_mpi and self.__use_mpi:
+            args.insert(1, '-parallel')
+            args.insert(0, '-np %i'%self.__cpu_count)
+            cmd_pattern = self.__cmd_pattern_mpi
+        else:
+            cmd_pattern = self.__cmd_pattern
 
         params = dict(dice_workflow=self.workflow_path(),
                 docker_name=self.instance_id,
                 user=os.environ.get('USER'),
                 user_name=os.environ.get('USERNAME'),
-                command = ' '.join(args))
-
+                command=' '.join(args))
         if "win" not in sys.platform:
             params['user_id'] = os.getuid()
 
@@ -217,15 +269,34 @@ class simpleFoamApp(
         }
         run_kwargs.update(kwargs)
 
-        result = run_process(command=cmd_pattern, 
+        result = run_process(command=cmd_pattern,
             format_kwargs=params,
             cwd=self.workflow_path(),
-            stop=lambda: not self.running,
+            stop=self.stopped,
             **run_kwargs)
+
         return result
 
+    def decompose_par_enabled(self):
+        self.read_settings()
+        return self.__use_mpi
 
-    @prepare.after('simpleFoam')
+    @diceTask('decomposePar', prepare,
+        enabled=decompose_par_enabled)
+    def run_decompose_par(self):
+        """ Execute decomposePar command. """
+        path = self.run_path(relative=True)
+        if "win" in sys.platform and self.__use_docker:
+            path = path.replace('\\', '/')
+        return 0 == self.execute_command(
+                "decomposePar",
+                "-force",
+                "-case",
+                path
+            )
+
+    # @prepare.after('simpleFoam')
+    @diceTask('simpleFoam', run_decompose_par)
     def run_simpleFoam(self):
         self.read_settings()
         application = self['foam:system/controlDict application']
@@ -234,11 +305,39 @@ class simpleFoamApp(
             path = path.replace('\\', '/')
         return 0 == self.execute_command(
                 application,
-                # "-withFunctionObjects", "-writep",
                 "-case",
                 path,
-                stdout=self.plot_log
+                stdout=self.plot_log,
+                allow_mpi = True
             )
+
+    def reconstruct_par_enabled(self):
+        self.read_settings()
+        return self.__use_mpi
+
+    @diceTask('reconstructPar', run_simpleFoam,
+        enabled=reconstruct_par_enabled)
+    def run_reconstruct_par(self):
+        """ Execute mesher command. """
+        self.read_settings()
+        path = self.run_path(relative=True)
+        if "win" in sys.platform and self.__use_docker:
+            path = path.replace('\\', '/')
+        return 0 == self.execute_command(
+                "reconstructPar",
+                "-latestTime",
+                "-case",
+                path
+            )
+
+    @diceTask('cleanup', run_reconstruct_par)
+    def run_cleanup(self):
+        self.read_settings()
+        if self.__use_mpi:
+            for i in range(self.__cpu_count):
+                self.rmtree(self.run_path("processor"+str(i)))
+        self.set_output('foam_mesh', [self.run_path(relative=True)])
+        return True
 
     @diceSlot(name='selectMaterial')
     def select_material(self):
@@ -257,9 +356,14 @@ class simpleFoamApp(
         now = time.time()
         if force or (now - self.__plot_time) > 0.5:
             self.__plot_ax.cla()
+            self.__plot_ax.set_yscale('log')
+            self.__plot_ax.set_ylim(ymin=0)
+            self.__plot_ax.set_ylabel("Residuals (Log Scale)")
+            self.__plot_ax.set_xlabel("Time(s)/Iterations")
             for k, v in self.__plot_data.items():
                 self.__plot_ax.plot(*v, label=k)
             self.__plot_ax.legend(loc='upper right')
+            self.__plot_ax.grid()
             self.__plot.draw()
             self.__plot_time = now
 

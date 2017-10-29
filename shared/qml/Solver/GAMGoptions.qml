@@ -3,7 +3,6 @@ import DICE.App 1.0
 import DICE.App.Foam 1.0
 
 Column {
-
     width: parent.width
     spacing: 20
 
@@ -22,7 +21,7 @@ Column {
         }
     }
 
-    DropDown2 {
+    DiceInlineComboBox {
         id: agglomerator
         label: qsTr("Agglomerator")
         model: ["faceAreaPair"]
@@ -36,7 +35,7 @@ Column {
         dataType: "int"
     }
 
-    DropDown2 {
+    DiceInlineComboBox {
         id: gamgPreconditioner
         label: qsTr("Preconditioner")
         model: [
@@ -48,7 +47,7 @@ Column {
         ]
         path: root.path + " preconditioner"
         function valueFromText(txt) {
-            if (txt == 'GAMG') {
+            if (txt === 'GAMG') {
                 return {
                     "agglomerator": "faceAreaPair",
                     "cacheAgglomeration": true,
@@ -70,11 +69,17 @@ Column {
                     "directSolveCoarsest": false
                 };
             }
+            if (txt === 'none') {
+                return "no"
+            }
             return txt;
         }
         function textFromValue(val) {
             if (typeof val === 'object') {
                 return 'GAMG';
+            }
+            if (val === 'none') {
+                return 'no'
             }
             return val;
         }

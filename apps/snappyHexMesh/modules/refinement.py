@@ -318,7 +318,6 @@ class Refinement(DICEObject):
         return result
 
     def refinement_set(self, path, value):
-        print('zzzzzzzzzzzzzzzzzzzzzzz')
         if path.startswith('RegionRefinement.level.'):
             level = int(path.rsplit('.', maxsplit=1)[-1])
             for s in self.__model.selection:
@@ -345,6 +344,5 @@ class Refinement(DICEObject):
                 except TypeError:
                     print('invoke set',getattr(s, prop))
                     setattr(s, prop, value)
-                    print('gfhfgh->>',getattr(s, prop))
         signal('refinement*')
         return False

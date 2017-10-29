@@ -1,12 +1,11 @@
 import QtQuick 2.5
-import QtQuick.Controls 2.2
+import QtQuick.Controls 2.2 as QQC
 
 import DICE.App 1.0
-import DICE.Components 1.0
+
 
 Column {
     width: parent.width
-
     spacing: 5
 
     DiceValueConnector {
@@ -33,29 +32,28 @@ Column {
         text: "Gradient"
     }
 
-    // ButtonGroup.group { id: gradientGroup }
-    ButtonGroup { id: gradientGroup }
+    QQC.ButtonGroup { id: gradientGroup }
 
-    RadioButton {
+    DiceRadioButton {
         id: gauss
         text: "Gauss"
-        checked: !!gradSchemeTuple.value && gradSchemeTuple.value[0] == "Gauss"
-        ButtonGroup.group: gradientGroup
+        checked: !!gradSchemeTuple.value && gradSchemeTuple.value[0] === "Gauss"
+        QQC.ButtonGroup.group: gradientGroup
         onClicked: {
             gradSchemeTuple.value =  ["Gauss", "linear"];
         }
     }
 
-    DropDown2 {
+    DiceInlineComboBox {
         visible: gauss.checked
         path: visible ? "foam:system/fvSchemes gradSchemes grad(T) 1" : ""
         model: ["linear", "cubic"]
     }
 
-    RadioButton {
+    DiceRadioButton {
         text: "Least Squares"
-        ButtonGroup.group: gradientGroup
-        checked: gradScheme.value == "leastSquares"
+        QQC.ButtonGroup.group: gradientGroup
+        checked: gradScheme.value === "leastSquares"
         onClicked: gradScheme.value = "leastSquares"
     }
 
@@ -64,28 +62,27 @@ Column {
         text: "Surface Normal Gradient"
     }
 
-    // ButtonGroup.group { id: snGradientGroup }
-    ButtonGroup { id: snGradientGroup }
+    QQC.ButtonGroup { id: snGradientGroup }
 
-    RadioButton {
+    DiceRadioButton {
         text: "Corrected"
-        ButtonGroup.group: snGradientGroup
-        checked: snGradScheme.value == "corrected"
+        QQC.ButtonGroup.group: snGradientGroup
+        checked: snGradScheme.value === "corrected"
         onClicked: snGradScheme.value = "corrected"
     }
 
-    RadioButton {
+    DiceRadioButton {
         text: "Uncorrected"
-        ButtonGroup.group: snGradientGroup
-        checked: snGradScheme.value == "uncorrected"
+        QQC.ButtonGroup.group: snGradientGroup
+        checked: snGradScheme.value === "uncorrected"
         onClicked: snGradScheme.value = "uncorrected"
     }
     
-    RadioButton {
+    DiceRadioButton {
         id: limited
         text: "Limited"
-        ButtonGroup.group: snGradientGroup
-        checked: !!snGradSchemeTuple.value && snGradSchemeTuple.value[0] == "limited"
+        QQC.ButtonGroup.group: snGradientGroup
+        checked: !!snGradSchemeTuple.value && snGradSchemeTuple.value[0] === "limited"
         onClicked: {
             snGradSchemeTuple.value = ["limited", "corrected", 0.5];
         }
@@ -96,10 +93,10 @@ Column {
         path: visible ? "foam:system/fvSchemes snGradSchemes default 2" : ""
     }
 
-    RadioButton {
+    DiceRadioButton {
         text: "Orthogonal"
-        ButtonGroup.group: snGradientGroup
-        checked: snGradScheme.value == "orthogonal"
+        QQC.ButtonGroup.group: snGradientGroup
+        checked: snGradScheme.value === "orthogonal"
         onClicked: snGradScheme.value = "orthogonal"
     }
     

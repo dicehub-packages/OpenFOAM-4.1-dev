@@ -3,7 +3,7 @@ snappyHexMesh
 =============
 DICE meshing app based on snappyHexMesh in OpenFOAM (http://www.openfoam.org)
 
-Copyright (c) 2014-2015 by DICE Developers
+Copyright (c) 2014-2017 by DICE Developers
 All rights reserved.
 """
 
@@ -433,7 +433,6 @@ class snappyHexMesh(
                 user=os.environ.get('USER'),
                 user_name=os.environ.get('USERNAME'),
                 command=' '.join(args))
-
         if "win" not in sys.platform:
             params['user_id'] = os.getuid()
 
@@ -442,7 +441,7 @@ class snappyHexMesh(
             stdout=self.log,
             stderr=self.log,
             format_kwargs=params,
-            stop=lambda: not self.running)
+            stop=self.stopped)
 
         return result
 

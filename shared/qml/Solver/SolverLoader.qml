@@ -9,9 +9,9 @@ import DICE.Components 1.0
 SolverControl {
     path: {
         switch (modelData.modelData) {
-            case 'p - Pressure':
+            case 'Pressure':
                 return "foam:system/fvSolution solvers p"
-            case 'U - Velocity':
+            case 'Velocity':
                 return "foam:system/fvSolution solvers U"
             case 'k':
                 return "foam:system/fvSolution solvers k"

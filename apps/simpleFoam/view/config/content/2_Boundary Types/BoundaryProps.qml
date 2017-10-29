@@ -18,11 +18,9 @@ Column {
         path: 'boundary:neighbour_patch'
     }
 
-    Subheader {
-        text: "Type"
-    }
-    DiceComboBox {
+    DiceInlineComboBox {
         id: typeDropDown
+        label: "Type"
         enabled: !isCyclic.value
         visible: enabled
         model: [
@@ -58,6 +56,7 @@ Column {
 
     Subheader {
         text: "Transform"
+        visible: !!isCyclic.value
     }
     DiceComboBox {
         enabled: !!isCyclic.value

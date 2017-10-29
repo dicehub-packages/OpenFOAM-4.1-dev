@@ -10,7 +10,7 @@ Column {
     enabled: linearMatrixSolver.currentText === "smoothSolver"
     visible: enabled
 
-    DropDown2 {
+    DiceInlineComboBox {
         id: smoothSolverPreconditioner
         label: qsTr("Preconditioner")
         model: [
@@ -60,7 +60,7 @@ Column {
         path: root.path + " preconditioner"
     }
 
-    DropDown2 {
+    DiceInlineComboBox {
         id: smoother
         label: qsTr("Smoother")
         model: ["DIC",

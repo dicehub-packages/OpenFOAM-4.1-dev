@@ -9,7 +9,7 @@ Column {
     visible: enabled
     spacing: 20
 
-    DropDown2 {
+    DiceInlineComboBox {
         id: iccgPreconditioner
         label: qsTr("Preconditioner")
         model: [
@@ -21,7 +21,7 @@ Column {
         ]
         path: root.path + " preconditioner"
         function valueFromText(txt) {
-            if (txt == 'GAMG') {
+            if (txt === 'GAMG') {
                 return {
                     "agglomerator": "faceAreaPair",
                     "cacheAgglomeration": true,

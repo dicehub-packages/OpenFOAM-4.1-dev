@@ -1,8 +1,7 @@
-import QtQuick 2.4
-import QtQuick.Layouts 1.3
-import QtQuick.Controls 1.4
+import QtQuick 2.9
 
 import DICE.App 1.0
+
 
 Body {
     Card {
@@ -10,23 +9,55 @@ Body {
 
         DiceComboBox {
             target: app
-            visible: turbToggle.checked
             property: "turbulenceModel"
             model: [
-                "none",
+                "laminar",
                 "kOmegaSST",
                 "kEpsilon"
             ]
         }
 
-        Column {
+        Card {
+            title: "kEpsilonCoeffs"
+            width: parent.width
+            visible: app.turbulenceModel === "kEpsilon"
+            spacing: 20
+            expanded: false
+            backgroundBorder: 0
+
+            DiceValueField {
+                label: "Cmu"
+                path: "foam:constant/turbulenceProperties RAS kEpsilonCoeffs Cmu"
+            }
+            DiceValueField {
+                label: "C1"
+                path: "foam:constant/turbulenceProperties RAS kEpsilonCoeffs C1"
+            }
+            DiceValueField {
+                label: "C2"
+                path: "foam:constant/turbulenceProperties RAS kEpsilonCoeffs C2"
+            }
+            DiceValueField {
+                label: "C3"
+                path: "foam:constant/turbulenceProperties RAS kEpsilonCoeffs C3"
+            }
+            DiceValueField {
+                label: "sigmak"
+                path: "foam:constant/turbulenceProperties RAS kEpsilonCoeffs sigmak"
+            }
+            DiceValueField {
+                label: "sigmaEps"
+                path: "foam:constant/turbulenceProperties RAS kEpsilonCoeffs sigmaEps"
+            }
+        }
+
+        Card {
+            title: "kOmegaSSTCoeffs"
             width: parent.width
             visible: app.turbulenceModel === "kOmegaSST"
             spacing: 20
-
-            Subheader {
-                text: "kOmegaSSTCoeffs"
-            }
+            expanded: false
+            backgroundBorder: 0
 
             DiceValueField {
                 label: "alphaK1"
@@ -52,8 +83,8 @@ Body {
                 label: "gamma1"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs gamma1"
             }
-            ToggleButton {
-                label: "F3"
+            DiceSwitch {
+                text: "F3"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs F3"
             }
             DiceValueField {
@@ -81,10 +112,5 @@ Body {
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs betaStar"
             }
         }
-
     }
-
-
-
-
 }

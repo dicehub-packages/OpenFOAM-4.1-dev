@@ -11,10 +11,9 @@ Column {
         width: parent.width
         label: qsTr('Name')
         path: "refinement:Boundary.name"
-        floating: false
     }
-
     DiceComboBox {
+        label: "Type"
         width: parent.width
         path: "refinement:Boundary.type"
         model: ListModel {

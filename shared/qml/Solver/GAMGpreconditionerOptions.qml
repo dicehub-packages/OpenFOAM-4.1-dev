@@ -1,6 +1,7 @@
 import QtQuick 2.7
+
 import DICE.App 1.0
-import DICE.App.Foam 1.0
+
 
 Column {
     id: root
@@ -12,14 +13,14 @@ Column {
 
     Subheader { text: qsTr("GAMG Preconditioner Options") }
 
-    DropDown2 {
+    DiceInlineComboBox {
         label: qsTr("Agglomerator")
         model: ["faceAreaPair"]
         path: root.path + " agglomerator"
     }
 
-    ToggleButton {
-        label: qsTr("Cache Agglomeration")
+    DiceSwitch {
+        text: qsTr("Cache Agglomeration")
         path: root.path + " cacheAgglomeration"
     }
 
@@ -56,7 +57,7 @@ Column {
         dataType: "int"
     }
 
-    DropDown2 {
+    DiceInlineComboBox {
         label: qsTr("Smoother")
         model: [
             "DIC",
@@ -105,13 +106,12 @@ Column {
         dataType: "int"
     }
 
-    ToggleButton {
-        label: qsTr("Interpolate Correction")
+    DiceSwitch {
+        text: "Interpolate Correction"
         path: root.path + " interpolateCorrection"
     }
-
-    ToggleButton {
-        label: qsTr("Direct Solve Coarsest")
+    DiceSwitch {
+        text: "Direct Solve Coarsest"
         path: root.path + " directSolveCoarsest"
     }
 }

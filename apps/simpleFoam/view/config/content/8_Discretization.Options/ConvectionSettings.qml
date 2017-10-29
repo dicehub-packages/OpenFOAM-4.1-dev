@@ -1,7 +1,7 @@
-import QtQuick 2.5
+import QtQuick 2.9
 
 import DICE.App 1.0
-import DICE.Components 1.0
+
 
 Column {
     id: root
@@ -31,7 +31,7 @@ Column {
         divScheme.value = value;
     }
 
-    RadioButton {
+    DiceRadioButton {
         text: "Upwind"
         checked: divScheme.isValid && divScheme.value.indexOf('upwind') >= 0
         onClicked: {
@@ -41,7 +41,7 @@ Column {
         }
     }
 
-    RadioButton {
+    DiceRadioButton {
         text: "Linear Upwind"
         checked: divScheme.isValid && (divScheme.value.indexOf('linearUpwind') >= 0 ||
             divScheme.value.indexOf('linearUpwindV') >= 0)
@@ -56,7 +56,7 @@ Column {
         }
     }
 
-    RadioButton {
+    DiceRadioButton {
         text: "Linear"
         checked: divScheme.isValid && (divScheme.value.indexOf('linear') >= 0)
         onClicked: {
@@ -66,7 +66,7 @@ Column {
         }
     }
 
-    RadioButton {
+    DiceRadioButton {
         id: limLinear
         text: "Limited Linear"
         checked: divScheme.isValid && (divScheme.value.indexOf('limitedLinear') >= 0 ||
@@ -89,7 +89,7 @@ Column {
         dataType: "int"
     }
 
-    CheckBox {
+    DiceCheckBox {
         id: vecSpec
         text: "Vector Specific"
         enabled: root.vector && (checked || (divScheme.isValid && (divScheme.value.indexOf('linearUpwind') >= 0 ||
@@ -116,7 +116,7 @@ Column {
     }
 
 
-    CheckBox {
+    DiceCheckBox {
         text: "Bounded"
         checked: divScheme.isValid && divScheme.value.indexOf('bounded') >= 0
         onClicked: {
@@ -134,7 +134,7 @@ Column {
         }
     }
 
-    CheckBox {
+    DiceCheckBox {
         text: "Skew Corrected"
         checked: divScheme.isValid && divScheme.value.indexOf('skewCorrected') >= 0
         onClicked: {

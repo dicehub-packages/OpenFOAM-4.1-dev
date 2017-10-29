@@ -7,11 +7,11 @@ import DICE.Components 1.0
 SplitBody {
     AppLayoutCard {
         id: tree
+        title: qsTr("Geometry objects")
         height: parent.height/2
         Layout.minimumHeight: 100
         Layout.fillWidth: true
         Layout.fillHeight: true
-        title: qsTr("Geometry objects") 
         SimpleTreeView {
             Layout.fillHeight: true
             Layout.fillWidth: true
@@ -25,12 +25,12 @@ SplitBody {
     }
 
     TabsCard2 {
+        title: qsTr("Properties")
         height: parent.height/2
         Layout.minimumHeight: 100
         Layout.preferredHeight: parent.height/2
         Layout.fillWidth: true
         Layout.fillHeight: true
-        title: qsTr("Properties")
         model: app.refinement.properties
         delegateSource: "Props.qml"
         textRole: 'title'

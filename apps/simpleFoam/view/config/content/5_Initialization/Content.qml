@@ -10,22 +10,22 @@ Body {
         title: qsTr("Discretization")
         model:  {
             switch (app.turbulenceModel) {
-                case 'none':
+                case 'laminar':
                     return [
-                        'p - Pressure',
-                        'U - Velocity'
+                        'Pressure',
+                        'Velocity'
                     ]
                 case 'kOmegaSST':
                     return [
-                        'p - Pressure',
-                        'U - Velocity',
+                        'Pressure',
+                        'Velocity',
                         'k',
                         'Omega',
                         'nut'
                     ]
                 case 'kEpsilon': [
-                        'p - Pressure',
-                        'U - Velocity',
+                        'Pressure',
+                        'Velocity',
                         'k',
                         'Epsilon',
                         'nut'

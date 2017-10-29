@@ -9,13 +9,16 @@ Column {
     property alias model: linearMatrixSolver.model
     spacing: 20
 
-    DropDown2 {
+    DiceInlineComboBox {
         id: linearMatrixSolver
         path: root.path + " solver"
         label: qsTr("Solver")
     }
 
-    Subheader { text: qsTr("Options") }
+    Subheader {
+        text: qsTr("Options")
+        horizontalAlignment: "AlignHCenter"
+    }
 
     PCGoptions {}
     GAMGoptions {}
