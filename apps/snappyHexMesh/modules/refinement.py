@@ -29,7 +29,7 @@ class Refinement(DICEObject):
         "searchableBox": SearchableBox,
         "searchableSphere": SearchableSphere,
         # "searchableCylinder": Tube,
-        # "searchablePlate": Plane,
+        # "searchablePlate": Plate,
         # "searchablePlane": Plane,
         # "searchableDisk": Disk
     }

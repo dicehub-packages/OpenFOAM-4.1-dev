@@ -15,6 +15,7 @@ import shutil
 import random
 import yaml
 import sys
+import json
 
 from common.foam_app import FoamApp
 from common.boundary_model import *
@@ -51,7 +52,12 @@ class simpleFoamApp(
         self.update_result()
  
     def w_foam(self, path):
+        """
+        Catch if controlDict is being changed and write both 
+        to run and to config.
+        """
         if 'system/controlDict' in path:
+            self.control_dict.writeFile()
             src = self.config_path('system/controlDict')
             dst = self.run_path('system/controlDict')
             self.copy(src, dst)
@@ -177,7 +183,7 @@ class simpleFoamApp(
         nut_dict = ParsedParameterFile(self.config_path('0/nut'))
         epsilon_dict = ParsedParameterFile(self.config_path('0/epsilon'))
         fv_schemes = ParsedParameterFile(self.config_path('system/fvSchemes'))
-        control_dict = ParsedParameterFile(self.config_path('system/controlDict'))
+        self.control_dict = ParsedParameterFile(self.config_path('system/controlDict'))
         fv_solutions = ParsedParameterFile(self.config_path('system/fvSolution'))
 
         transport_props = ParsedParameterFile(
@@ -200,11 +206,9 @@ class simpleFoamApp(
         self.foam_file('0/omega', omega_dict)
         self.foam_file('0/epsilon', epsilon_dict)
         
-
-        self.foam_file('system/controlDict', control_dict)
         self.foam_file('system/fvSolution', fv_solutions)
         self.foam_file('system/fvSchemes', fv_schemes)
-        self.foam_file('system/controlDict', control_dict)
+        self.foam_file('system/controlDict', self.control_dict)
         self.foam_file('system/decomposeParDict', self._decompose_par_dict)
 
         self.foam_file('constant/transportProperties', transport_props)
@@ -303,13 +307,19 @@ class simpleFoamApp(
         path = self.run_path(relative=True)
         if "win" in sys.platform and self.__use_docker:
             path = path.replace('\\', '/')
-        return 0 == self.execute_command(
+        result = self.execute_command(
                 application,
                 "-case",
                 path,
                 stdout=self.plot_log,
                 allow_mpi = True
             )
+        self.draw_plot(force=True)
+
+        with open(self.run_path('plot_data'), 'w') as file:
+            json.dump(self.__plot_data, file)
+
+        return result == 0
 
     def reconstruct_par_enabled(self):
         self.read_settings()
@@ -396,3 +406,24 @@ class simpleFoamApp(
                 self.__plot_data[k][1].append(v)
                 self.draw_plot()
             self.time_value = float(res_time.groups()[0])
+
+    def progress_changed(self, progress):
+        """
+        Overrides progress function and if simpleFoam is finished load plot data.
+        """
+        super().progress_changed(progress)
+        print("------>>>", progress)
+        simple_foam_index = self.__dice_tasks__.index(simpleFoamApp.run_simpleFoam)
+        if ((progress < 0 or progress > simple_foam_index)
+            and (not self.__plot_data and os.path.exists(self.run_path('plot_data')))):
+                with open(self.run_path('plot_data')) as f:
+                    self.__plot_data = json.load(f)
+                    self.__plot_ax.cla()
+                    for k, v in self.__plot_data.items():
+                        self.__plot_ax.plot(*v, label=k)
+                    self.__plot_ax.set_yscale('log')
+                    self.__plot_ax.set_ylim(ymin=0)
+                    self.__plot_ax.set_ylabel("Residuals (Log Scale)")
+                    self.__plot_ax.set_xlabel("Time(s)/Iterations")
+                    self.__plot_ax.legend(loc='upper right')
+                    self.__plot_ax.grid()

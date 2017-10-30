@@ -69,8 +69,11 @@ Column {
                     "directSolveCoarsest": false
                 };
             }
-            if (txt === 'none') {
-                return false
+            function textFromValue(val) {
+                if (typeof val === 'object') {
+                    return 'GAMG';
+                }
+                return val;
             }
             return txt;
         }

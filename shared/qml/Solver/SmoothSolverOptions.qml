@@ -22,7 +22,7 @@ Column {
         ]
         path: root.path + " preconditioner"
         function valueFromText(txt) {
-            if (txt == 'GAMG') {
+            if (txt === 'GAMG') {
                 return {
                     "agglomerator": "faceAreaPair",
                     "cacheAgglomeration": true,
@@ -44,11 +44,20 @@ Column {
                     "directSolveCoarsest": false
                 };
             }
+            function textFromValue(val) {
+                if (typeof val === 'object') {
+                    return 'GAMG';
+                }
+                return val;
+            }
             return txt;
         }
         function textFromValue(val) {
             if (typeof val === 'object') {
                 return 'GAMG';
+            }
+            if (val === false) {
+                return 'none'
             }
             return val;
         }

@@ -34,7 +34,7 @@ Item {
             Layout.fillWidth: true
             anchors.margins: 5
             anchors.verticalCenter: parent.verticalCenter
-            text: label
+            text: label + " " + boundaryType + " " + boundaryOrientation
         }
 
         MouseArea {
