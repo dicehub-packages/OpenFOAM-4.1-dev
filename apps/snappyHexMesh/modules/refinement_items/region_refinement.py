@@ -32,12 +32,9 @@ class RegionRefinement(ModelItem):
 
     @region_mode.setter
     def region_mode(self, value):
-        print('----------------------------------------')
         self.current_mode = value
-        print('zzzzzzzz')
         if self.app[self.region_path] is not None:
             self.app[self.mode_path] = value
-            print('blaaa')
         for v in self.elements:
             wizard.w_model_update_item(v)
         wizard.w_model_update_item(self)
@@ -81,7 +78,6 @@ class RegionRefinement(ModelItem):
         self.app[self.levels_path + ' %i'%index] = value
 
     def remove_region_level(self, index):
-        print('remoooove', index)
         self.app[self.levels_path + ' %i'%index] = None
         print(self.app[self.levels_path])
         if not self.app[self.levels_path]:

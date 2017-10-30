@@ -375,10 +375,8 @@ class snappyHexMesh(
         if successfull.
         :return: True/False
         """
-
         # Save everything
         self.save()
-
 
         # Clear %APP_RUN in %WORKFLOW_DIR
         # ==================================

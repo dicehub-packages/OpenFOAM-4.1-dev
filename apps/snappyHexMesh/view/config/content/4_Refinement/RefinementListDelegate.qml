@@ -21,11 +21,24 @@ Item {
             Layout.minimumWidth: 20
             height: 20
             anchors.verticalCenter: parent.verticalCenter
-            FontAwesomeIcon {
+            property Component fileIcon: FontAwesomeIcon {
                 size: 12
                 anchors.centerIn: parent
-                name: {
-                    return "File";
+                name: "File"
+            }
+            property Component boundaryIcon: DiceIconSVG {
+                source: "images/" + boundaryOrientation + ".svg"
+                size: 16
+            }
+            Loader {
+                anchors.centerIn: parent
+                sourceComponent: {
+                    if (boundaryOrientation != undefined){
+                        return parent.boundaryIcon
+                    }
+                    else {
+                        return parent.fileIcon
+                    }
                 }
             }
         }
@@ -34,7 +47,39 @@ Item {
             Layout.fillWidth: true
             anchors.margins: 5
             anchors.verticalCenter: parent.verticalCenter
-            text: label + " " + boundaryType + " " + boundaryOrientation
+            text: label //+ " [" + boundaryOrientation + "]"
+        }
+
+        Item {
+            Layout.minimumWidth: 20
+            height: 20
+            anchors.verticalCenter: parent.verticalCenter
+
+            property Component boundaryTypeIcon: DiceIconSVG {
+                source: "images/" + boundaryType + ".svg"
+                size: 16
+                color: {
+                    switch (boundaryType) {
+                    case "patch":
+                        return "#00007f"
+                    case "wall":
+                        return "#000"
+                    case "symmetryPlane":
+                        return "#5500ff"
+                    case "symetry":
+                        return "#005500"
+                    case "empty":
+                        return "#aaaaff"
+                    case "wedge":
+                        return "#550000"
+                    }
+                }
+            }
+            Loader {
+                anchors.centerIn: parent
+                sourceComponent: parent.boundaryTypeIcon
+                enabled: boundaryType != undefined
+            }
         }
 
         MouseArea {

@@ -36,4 +36,8 @@ Column {
         visible: modelData.modelData === "nut"
         path: "foam:0/nut internalField %field"
     }
+    DiceSwitch {
+        text: qsTr("Initialize with potentialFoam")
+        path: "config:potentialFoam"
+    }
 }

@@ -218,7 +218,7 @@ class simpleFoamApp(
     @diceTask('prepare')
     def prepare(self):
         """
-        Copy all necessary folders for running potentialFoam
+        Copy all necessary folders for running simpleFoam
         :return:
         """
         self.__plot_data = {}
@@ -242,6 +242,7 @@ class simpleFoamApp(
             self.__cmd_pattern = settings['foam_cmd']
         self.__cpu_count = self._decompose_par_dict['numberOfSubdomains']
         self.__use_mpi = self.config['parallelRun']
+        # self.__use_potentialFoam = self.config['potentialFoam']
         return True
 
     def stop(self):
@@ -299,7 +300,31 @@ class simpleFoamApp(
                 path
             )
 
-    # @prepare.after('simpleFoam')
+    # def potentialFoam_enabled(self):
+    #     self.read_settings()
+    #     return self.__use_potentialFoam
+
+    # @diceTask('potentialFoam', run_decompose_par,
+    #     enabled=potentialFoam_enabled)
+    # def run_potentialFoam(self):
+    #     self.read_settings()
+    #     path = self.run_path(relative=True)
+    #     if "win" in sys.platform and self.__use_docker:
+    #         path = path.replace('\\', '/')
+    #     result = self.execute_command(
+    #             "potentialFoam",
+    #             "-case",
+    #             path,
+    #             stdout=self.plot_log,
+    #             allow_mpi = True
+    #         )
+    #     self.draw_plot(force=True)
+
+    #     with open(self.run_path('plot_data'), 'w') as file:
+    #         json.dump(self.__plot_data, file)
+
+    #     return result == 0
+
     @diceTask('simpleFoam', run_decompose_par)
     def run_simpleFoam(self):
         self.read_settings()
@@ -366,14 +391,9 @@ class simpleFoamApp(
         now = time.time()
         if force or (now - self.__plot_time) > 0.5:
             self.__plot_ax.cla()
-            self.__plot_ax.set_yscale('log')
-            self.__plot_ax.set_ylim(ymin=0)
-            self.__plot_ax.set_ylabel("Residuals (Log Scale)")
-            self.__plot_ax.set_xlabel("Time(s)/Iterations")
             for k, v in self.__plot_data.items():
                 self.__plot_ax.plot(*v, label=k)
-            self.__plot_ax.legend(loc='upper right')
-            self.__plot_ax.grid()
+            self.set_plot_style()
             self.__plot.draw()
             self.__plot_time = now
 
@@ -412,7 +432,6 @@ class simpleFoamApp(
         Overrides progress function and if simpleFoam is finished load plot data.
         """
         super().progress_changed(progress)
-        print("------>>>", progress)
         simple_foam_index = self.__dice_tasks__.index(simpleFoamApp.run_simpleFoam)
         if ((progress < 0 or progress > simple_foam_index)
             and (not self.__plot_data and os.path.exists(self.run_path('plot_data')))):
@@ -421,9 +440,12 @@ class simpleFoamApp(
                     self.__plot_ax.cla()
                     for k, v in self.__plot_data.items():
                         self.__plot_ax.plot(*v, label=k)
-                    self.__plot_ax.set_yscale('log')
-                    self.__plot_ax.set_ylim(ymin=0)
-                    self.__plot_ax.set_ylabel("Residuals (Log Scale)")
-                    self.__plot_ax.set_xlabel("Time(s)/Iterations")
-                    self.__plot_ax.legend(loc='upper right')
-                    self.__plot_ax.grid()
+                    self.set_plot_style()
+
+    def set_plot_style(self):
+        self.__plot_ax.set_yscale('log')
+        self.__plot_ax.set_ylim(ymin=0)
+        self.__plot_ax.set_ylabel("Residuals (Log Scale)")
+        self.__plot_ax.set_xlabel("Time(s)/Iterations")
+        self.__plot_ax.legend(loc='upper right')
+        self.__plot_ax.grid()

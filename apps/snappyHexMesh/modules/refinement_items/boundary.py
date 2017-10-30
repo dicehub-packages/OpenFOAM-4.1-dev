@@ -30,9 +30,18 @@ class Boundary:
 
     @modelRole("boundaryOrientation")
     def boundary_orientation(self):
-        if (self.boundary_faces == [0,4,7,3]):
-            return "min_X_Plane"
-        # TODO: all other faces
+        if (self.boundary_faces == [0, 4, 7, 3]):
+            return "X-"
+        elif (self.boundary_faces == [1, 2, 6, 5]):
+            return "X+"
+        elif (self.boundary_faces == [0, 1, 5, 4]):
+            return "Y-"
+        elif (self.boundary_faces == [3, 7, 6, 2]):
+            return "Y+"
+        elif (self.boundary_faces == [0, 3, 2, 1]):
+            return "Z-"
+        elif (self.boundary_faces == [4, 5, 6, 7]):
+            return "Z+"
 
     @property
     def name(self):

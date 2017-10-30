@@ -5,7 +5,6 @@ import DICE.App 1.0
 Column {
     width: parent.width
     height: childrenRect.height
-
     spacing: 20
     
     DiceVectorField {

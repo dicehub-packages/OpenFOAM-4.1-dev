@@ -42,7 +42,7 @@ edges
 
 boundary 
 (
-	min_X_Plane
+    min_X_Plane
     {
         type patch;
         faces
