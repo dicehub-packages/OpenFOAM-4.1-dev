@@ -53,7 +53,8 @@ Column {
     DiceButton {
         width: parent.width
         text: "Add level"
-        enabled: canAddLevel.value
+        enabled: canAddLevel !== undefined
+                 ? canAddLevel.value : false
         onClicked: {
             app.refinement.addRegionLevel()
         }

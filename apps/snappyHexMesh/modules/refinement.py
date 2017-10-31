@@ -28,10 +28,11 @@ class Refinement(DICEObject):
     ref_obj_types = {
         "searchableBox": SearchableBox,
         "searchableSphere": SearchableSphere,
-        # "searchableCylinder": Tube,
-        # "searchablePlate": Plate,
-        # "searchablePlane": Plane,
-        # "searchableDisk": Disk
+        "searchableCylinder": SearchableCylinder,
+        "searchablePlate": SearchablePlate,
+        "searchableDisk": SearchableDisk,
+        "searchablePlane3P": SearchablePlane3P,
+        "searchablePlanePaN": SearchablePlanePaN
     }
 
     ref_object_templates = {
@@ -99,6 +100,11 @@ class Refinement(DICEObject):
             SurfaceRegion,
             SearchableBox,
             SearchableSphere,
+            SearchableCylinder,
+            SearchablePlate,
+            SearchableDisk,
+            SearchablePlane3P,
+            SearchablePlanePaN,
             RegionLevel,
             Boundary,
             BoundariesNode,
@@ -213,6 +219,11 @@ class Refinement(DICEObject):
             ('Boundary', Boundary, 'Boundary.qml'),
             ('SearchableBox', SearchableBox, 'SearchableBox.qml'),
             ('SearchableSphere', SearchableSphere, 'SearchableSphere.qml'),
+            ('SearchableCylinder', SearchableCylinder, 'SearchableCylinder.qml'),
+            ('SearchablePlate', SearchablePlate, 'SearchablePlate.qml'),
+            ('SearchableDisk', SearchableDisk, 'SearchableDisk.qml'),
+            ('SearchablePlane3P', SearchablePlane3P, 'SearchablePlane3P.qml'),
+            ('SearchablePlanePaN', SearchablePlanePaN, 'SearchablePlanePaN.qml')
         ]
 
         result_props = []
@@ -252,7 +263,14 @@ class Refinement(DICEObject):
             raise Exception("can't create refinement object")
         template = self.ref_object_templates[type_name]
         self.app[self.geometry_path + ' ' + obj_name] = copy.deepcopy(template)
-        self.ref_obj_types[template['type']](obj_name, app=self.__app)
+        if template['type'] == "searchablePlane" \
+                and template['planeType'] == "embeddedPoints":
+            self.ref_obj_types["searchablePlane3P"](obj_name, app=self.__app)
+        elif template['type'] == "searchablePlane" \
+                and template['planeType'] == "pointAndNormal":
+            self.ref_obj_types["searchablePlanePaN"](obj_name, app=self.__app)
+        else:
+            self.ref_obj_types[template['type']](obj_name, app=self.__app)
         wizard.w_modified('snappy_hex_mesh_dict')
         return obj_name
 

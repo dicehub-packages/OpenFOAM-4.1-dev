@@ -72,6 +72,8 @@ Item {
                         return "#aaaaff"
                     case "wedge":
                         return "#550000"
+                    default:
+                        return "#000"
                     }
                 }
             }

@@ -37,7 +37,14 @@ Column {
         path: "foam:0/nut internalField %field"
     }
     DiceSwitch {
+        id: initializationWithPotentialFoamSwitch
         text: qsTr("Initialize with potentialFoam")
         path: "config:potentialFoam"
+    }
+    DiceInlineSpinBox {
+        enabled: initializationWithPotentialFoamSwitch.checked
+        visible: enabled
+        label: "Non Orthogonal Correctors (potentialFoam)"
+        path: "foam:system/fvSolution potentialFlow nNonOrthogonalCorrectors"
     }
 }

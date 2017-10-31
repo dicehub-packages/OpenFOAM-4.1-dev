@@ -1,10 +1,10 @@
 from .refinement_object import RefinementObject
 # from dice_tools import wizard
 # from dice_tools.helpers.xmodel import modelRole, modelMethod
-from dice_vtk.geometries import Sphere
+from dice_vtk.geometries import Tube
 
 
-class SearchableSphere(RefinementObject):
+class SearchableCylinder(RefinementObject):
 
     default_region_mode = "inside"
     region_modes_list = ["inside", "outside"]
@@ -15,25 +15,35 @@ class SearchableSphere(RefinementObject):
 
     @property
     def template_name(self):
-        return "refinementSphere"
+        return "refinementCylinder"
 
     def create_vis(self):
-        vis = Sphere()
+        vis = Tube()
         vis.opacity = 0.5
         vis.color = (.2, .8, .2)
         return vis
 
     def setup(self):
-        self.vtk_obj.position = self.centre
+        self.vtk_obj.point1 = self.point_1
+        self.vtk_obj.point2 = self.point_2
         self.vtk_obj.radius = self.radius
 
     @property
-    def centre(self):
-        return list(self.app[self.object_path + ' centre'])
+    def point_1(self):
+        return list(self.app[self.object_path + ' point1'])
 
-    @centre.setter
-    def centre(self, value):
-        self.app[self.object_path + ' centre'] = value
+    @point_1.setter
+    def point_1(self, value):
+        self.app[self.object_path + ' point1'] = value
+        self.setup()
+
+    @property
+    def point_2(self):
+        return list(self.app[self.object_path + ' point2'])
+
+    @point_2.setter
+    def point_2(self, value):
+        self.app[self.object_path + ' point2'] = value
         self.setup()
 
     @property

@@ -22,7 +22,7 @@ Column {
 
         enabled: featureToggle.checked
         visible: enabled
-//        height: enabled ? childrenRect.height : 0
+        height: enabled ? childrenRect.height : 0
         width: parent.width
 
         Row {

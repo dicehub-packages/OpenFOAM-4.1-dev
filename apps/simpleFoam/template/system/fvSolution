@@ -83,7 +83,7 @@ SIMPLE
 
 potentialFlow
 {
-    nNonOrthogonalCorrectors 0;
+    nNonOrthogonalCorrectors 5;
 }
 
 relaxationFactors

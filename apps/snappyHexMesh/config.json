@@ -1,5 +1,5 @@
 {
   "blockMesh-useCellSize": false,
   "blockMesh-spacing": [0, 0, 0],
-  "parallelRun": false,
+  "parallelRun": false
 }

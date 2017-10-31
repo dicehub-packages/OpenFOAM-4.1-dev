@@ -3,6 +3,9 @@ icon: view/config/content/1_Overview/images/simpleFoam.svg
 
 inputs:
   foam_mesh: 1
+
+outputs:
+  - foam_result
   
 settings:
   "use_docker": true

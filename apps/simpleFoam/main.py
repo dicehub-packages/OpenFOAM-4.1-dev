@@ -1,28 +1,46 @@
-from dice_vtk import VisApp
+"""
+simpleFoam
+==========
+DICE incomrepssible solver app based on steady-state solver for 
+incompressible flows with turbulence modelling in OpenFOAM. 
+(http://www.openfoam.org)
 
-from dice_tools import *
-from dice_tools.helpers.xmodel import *
-from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile, ParsedBoundaryDict
-from PyFoam.Basics.DataStructures import Field, Vector, DictProxy
-from dice_tools.helpers import JsonOrderedDict, run_process
+Copyright (c) 2014-2017 by DICE Developers
+All rights reserved.
+"""
 
-from dice_plot.plot import Plot
-import matplotlib.pyplot as plt
+# External modules
+# ================
 import re
-
 import os
 import shutil
 import random
-import yaml
 import sys
 import json
+import time
 
+# External modules
+# ================
+import yaml
+import matplotlib.pyplot as plt
+from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile, ParsedBoundaryDict
+from PyFoam.Basics.DataStructures import Field, Vector, DictProxy
+
+# DICE Libs
+# =========
+from dice_vtk import VisApp
+from dice_tools import *
+from dice_tools.helpers.xmodel import *
+from dice_tools.helpers import JsonOrderedDict, run_process
+from dice_plot.plot import Plot
+
+# Shared package libs
+# ===================
 from common.foam_app import FoamApp
 from common.boundary_model import *
 from common.foam_result import Result
 from common.basic_app import BasicApp
 
-import time
 
 class simpleFoamApp(
     Application,
@@ -70,8 +88,21 @@ class simpleFoamApp(
         return self.__result
 
     def progress_changed(self, progress):
+        """
+        Overrides progress function and if simpleFoam is finished load plot data.
+        """
         super().progress_changed(progress)
         self.update_result()
+
+        simple_foam_index = self.__dice_tasks__.index(simpleFoamApp.run_simpleFoam)
+        if ((progress < 0 or progress > simple_foam_index)
+            and (not self.__plot_data and os.path.exists(self.run_path('plot_data')))):
+                with open(self.run_path('plot_data')) as f:
+                    self.__plot_data = json.load(f)
+                    self.__plot_ax.cla()
+                    for k, v in self.__plot_data.items():
+                        self.__plot_ax.plot(*v, label=k)
+                    self.set_plot_style()
 
     @diceProperty('QVariant')
     def plot(self):
@@ -242,7 +273,7 @@ class simpleFoamApp(
             self.__cmd_pattern = settings['foam_cmd']
         self.__cpu_count = self._decompose_par_dict['numberOfSubdomains']
         self.__use_mpi = self.config['parallelRun']
-        # self.__use_potentialFoam = self.config['potentialFoam']
+        self.__use_potentialFoam = self.config['potentialFoam']
         return True
 
     def stop(self):
@@ -300,32 +331,32 @@ class simpleFoamApp(
                 path
             )
 
-    # def potentialFoam_enabled(self):
-    #     self.read_settings()
-    #     return self.__use_potentialFoam
+    def potentialFoam_enabled(self):
+        self.read_settings()
+        return self.__use_potentialFoam
 
-    # @diceTask('potentialFoam', run_decompose_par,
-    #     enabled=potentialFoam_enabled)
-    # def run_potentialFoam(self):
-    #     self.read_settings()
-    #     path = self.run_path(relative=True)
-    #     if "win" in sys.platform and self.__use_docker:
-    #         path = path.replace('\\', '/')
-    #     result = self.execute_command(
-    #             "potentialFoam",
-    #             "-case",
-    #             path,
-    #             stdout=self.plot_log,
-    #             allow_mpi = True
-    #         )
-    #     self.draw_plot(force=True)
+    @diceTask('potentialFoam', run_decompose_par,
+        enabled=potentialFoam_enabled)
+    def run_potentialFoam(self):
+        self.read_settings()
+        path = self.run_path(relative=True)
+        if "win" in sys.platform and self.__use_docker:
+            path = path.replace('\\', '/')
+        result = self.execute_command(
+                "potentialFoam",
+                "-case",
+                path,
+                stdout=self.plot_log,
+                allow_mpi = True
+            )
+        self.draw_plot(force=True)
 
-    #     with open(self.run_path('plot_data'), 'w') as file:
-    #         json.dump(self.__plot_data, file)
+        with open(self.run_path('plot_data'), 'w') as file:
+            json.dump(self.__plot_data, file)
 
-    #     return result == 0
+        return result == 0
 
-    @diceTask('simpleFoam', run_decompose_par)
+    @diceTask('simpleFoam', run_potentialFoam)
     def run_simpleFoam(self):
         self.read_settings()
         application = self['foam:system/controlDict application']
@@ -426,21 +457,6 @@ class simpleFoamApp(
                 self.__plot_data[k][1].append(v)
                 self.draw_plot()
             self.time_value = float(res_time.groups()[0])
-
-    def progress_changed(self, progress):
-        """
-        Overrides progress function and if simpleFoam is finished load plot data.
-        """
-        super().progress_changed(progress)
-        simple_foam_index = self.__dice_tasks__.index(simpleFoamApp.run_simpleFoam)
-        if ((progress < 0 or progress > simple_foam_index)
-            and (not self.__plot_data and os.path.exists(self.run_path('plot_data')))):
-                with open(self.run_path('plot_data')) as f:
-                    self.__plot_data = json.load(f)
-                    self.__plot_ax.cla()
-                    for k, v in self.__plot_data.items():
-                        self.__plot_ax.plot(*v, label=k)
-                    self.set_plot_style()
 
     def set_plot_style(self):
         self.__plot_ax.set_yscale('log')

@@ -7,8 +7,8 @@ Copyright (c) 2014-2017 by DICE Developers
 All rights reserved.
 """
 
-# Standard Python modules
-# =======================
+# External modules
+# ================
 import os
 import sys
 import shutil
