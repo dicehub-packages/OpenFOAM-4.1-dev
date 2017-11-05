@@ -26,8 +26,6 @@ SplitView {
         Layout.fillHeight: true
         Layout.fillWidth: true
 
-
-
         Rectangle {
             id: rendererBackground
 

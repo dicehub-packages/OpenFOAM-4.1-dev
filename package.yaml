@@ -19,12 +19,12 @@ apps:
   Solvers:
     Incompressible:
       - apps/simpleFoam
-    Multiphase:
-      - apps/interFoam
+    #Multiphase:
+      #- apps/interFoam
   Utilities:
     Mesh:
-      - apps/fluentMeshToFoam
-      - apps/ansysToFoam
+      #- apps/fluentMeshToFoam
+      #- apps/ansysToFoam
       - apps/snappyHexMesh
     Python:
       - apps/Python Script

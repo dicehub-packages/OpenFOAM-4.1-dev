@@ -31,7 +31,9 @@ Column {
             spacing: 10
             width: parent.width
             DiceVectorField2D2 {
-                width: parent.width-30
+                width: parent.width
+                       - deleteButton.width
+                       - 10
                 xLabel: "Distance [m]"
                 yLabel: "Level"
                 xDataType: "double"
@@ -39,10 +41,10 @@ Column {
                 yDataType: "int"
                 path: "refinement:RegionRefinement.level."+index
             }
-            DiceButton {
-                width: 20
+            DiceIconButton {
+                id: deleteButton
                 anchors.verticalCenter: parent.verticalCenter
-                text: "-"
+                iconName: "Close"
                 onClicked: {
                     app.refinement.removeRegionLevel(index)
                 }

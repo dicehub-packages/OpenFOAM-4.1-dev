@@ -13,11 +13,19 @@ SolverControl {
                 return "foam:system/fvSolution solvers omega"
         }
     }
-    model: [
-      "PCG",
-      "GAMG",
-      "smoothSolver",
-      "ICCG"
-    ]
+    model: {
+        switch (modelData.modelData) {
+           case 'Pressure':
+               return ["PCG", "GAMG", "smoothSolver", "ICCG"]
+           case 'Velocity':
+               return ["PCG", "smoothSolver", "ICCG"]
+           case 'k':
+               return ["PCG", "smoothSolver", "ICCG"]
+           case 'Epsilon':
+               return ["PCG", "smoothSolver", "ICCG"]
+           case 'Omega':
+               return ["PCG", "smoothSolver", "ICCG"]
+       }
+    }
 }
 

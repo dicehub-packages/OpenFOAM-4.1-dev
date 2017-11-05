@@ -11,7 +11,7 @@ SplitBody {
         DiceInputField {
             id: filterKeyword
             Layout.fillWidth: true
-            label: "Filter"
+            placeholderText: "Filter"
             onTextChanged: {
                 app.filterBoundaries(text)
             }

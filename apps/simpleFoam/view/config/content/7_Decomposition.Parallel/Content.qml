@@ -29,7 +29,7 @@ Body {
             }
             DiceComboBox {
 	            id: methodDropDown
-	            model: [ "hierarchical", "simple" ]
+                model: [ "hierarchical", "simple", "scotch" ]
 	            currentIndex: -1
                 width: parent.width/2
                 DiceValueConnector {
@@ -43,7 +43,10 @@ Body {
         	}
         }
 
-        Subheader { text: qsTr("Coefficients") }
+        Subheader {
+            text: qsTr("Coefficients")
+            visible: methodDropDown.currentText !== "scotch"
+        }
 
         DiceVectorField {
             xLabel: "n_x"
@@ -51,11 +54,13 @@ Body {
             zLabel: "n_z"
             path: "foam:system/decomposeParDict " + methodDropDown.currentText + "Coeffs n"
         	dataType: 'int'
+            visible: methodDropDown.currentText !== "scotch"
         }
 
         DiceValueField {
             label: qsTr("Delta")
             path: "foam:system/decomposeParDict " + methodDropDown.currentText + "Coeffs delta"
+            visible: methodDropDown.currentText !== "scotch"
         }
 
         Row {

@@ -1,6 +1,7 @@
+import QtQuick 2.7
+
 import DICE.App 1.0
 import DICE.App.Foam 1.0
-import QtQuick 2.7
 
 Column {
     id: root

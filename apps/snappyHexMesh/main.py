@@ -245,7 +245,7 @@ class snappyHexMesh(
                 # ====================================
                 Surface(app=self, path=self.workflow_path(file))
 
-        # delete files which not exist now
+        # delete files which no longer exist
         for k, v in list(self['foam:system/snappyHexMeshDict geometry'].items()):
             if v.get('type') == 'triSurfaceMesh':
                 for i in self.refinement.model.elements_of(Surface):

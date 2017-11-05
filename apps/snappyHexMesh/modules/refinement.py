@@ -114,7 +114,7 @@ class Refinement(DICEObject):
         self.__props_model = standard_model(PropertyItem)
 
         self.__geometry_node = TreeNode('Geometry')
-        self.__refinement_node = TreeNode('Refinement')
+        self.__refinement_node = TreeNode('Refinement Objects')
         self.__boundaries_node = BoundariesNode('Boundary', self.__app)
 
         for v in self.__app.bounding_box.boundaries_model.root_elements:

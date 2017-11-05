@@ -64,7 +64,7 @@ Body {
             zLabel: "Cells in Z"
             dataType: "int"
             target: app.boundingBox
-            property: 'cellsNum'    
+            property: 'cellsNum'
         }
         DiceVectorField {
             readOnly: !toggleSizeOrNumber.checked
@@ -73,7 +73,7 @@ Body {
             yLabel: "Δs in Y [m]"
             zLabel: "Δs in Z [m]"
             target: app.boundingBox
-            property: 'cellsSize'   
+            property: 'cellsSize'
         }
     }
 }

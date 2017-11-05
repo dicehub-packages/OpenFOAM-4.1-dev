@@ -8,6 +8,7 @@ import os
 import random
 import shutil
 
+
 class BoundaryGroup(ModelItem):
 
     def __init__(self, items, **kwargs):
@@ -38,6 +39,7 @@ class BoundaryGroup(ModelItem):
         a, b = self.elements
         a.neighbour_patch = b.name
         b.neighbour_patch = a.name
+
 
 class Boundary:
 
@@ -88,7 +90,6 @@ class Boundary:
                 self.app[self.path + ' neighbourPatch'] = ''
 
         self.app[self.path + ' type'] = value
-
 
     @modelRole('isVisible')
     def visible(self):
@@ -700,7 +701,6 @@ class BoundaryApp:
                     setattr(s, path, value)
         signal('boundary:*')
         return True
-
 
     def w_model_selection_changed(self, model, selected, deselected):
         for v in deselected:

@@ -9,6 +9,7 @@ from dice_vtk.scene import VtkScene
 from dice_vtk.utils.foam_reader import FoamReader
 from dice_vtk.geometries.geometry_base import GeometryBase
 
+
 class BoundaryItem:
 
     def __init__(self, parent, vis_obj):
@@ -52,7 +53,6 @@ class BoundaryItem:
         self.vis_obj.visible = value
 
 
-
 class Result(DICEObject):
 
     def __init__(self, app, **kwargs):
@@ -71,6 +71,7 @@ class Result(DICEObject):
         wizard.subscribe(self, self.__boundary_model)
         wizard.subscribe(self.w_geometry_object_clicked)
         wizard.subscribe(self, self.__scene)
+        self.__result_loaded = False
 
     def w_scene_object_added(self, scene, obj):
         if isinstance(obj, GeometryBase):
@@ -184,27 +185,26 @@ class Result(DICEObject):
 
     def update(self):
         if self.__app.progress < 0:
+            if not self.__result_loaded:
+                self.__boundary = ParsedBoundaryDict(self.__app.run_path(
+                    'constant', 'polyMesh', 'boundary'))
 
-            self.__boundary = ParsedBoundaryDict(self.__app.run_path(
-                'constant', 'polyMesh', 'boundary'))
+                self.__reader = FoamReader(self.__app.run_path())
+                wizard.subscribe(self, self.__reader)
+                self.__scene.animation = self.__reader
 
-            self.__reader = FoamReader(self.__app.run_path())
-            wizard.subscribe(self, self.__reader)
-            self.__scene.animation = self.__reader
+                for v in self.__reader.patches:
+                    self.__scene.add_object(v)
+                    if v.name in self.boundary:
+                        item = BoundaryItem(self, v)
+                        self.__boundary_model.root_elements.append(item)
+                        color = [random.uniform(0.3, 0.7),
+                            random.uniform(0.6, 1.0), random.uniform(0.6, 1.0)]
+                        v.color=color
+                        v.visible=False
 
-
-
-            for v in self.__reader.patches:
-                self.__scene.add_object(v)
-                if v.name in self.boundary:
-                    item = BoundaryItem(self, v)
-                    self.__boundary_model.root_elements.append(item)
-                    color = [random.uniform(0.3, 0.7),
-                        random.uniform(0.6, 1.0), random.uniform(0.6, 1.0)]
-                    v.color=color
-                    v.visible=False
-
-            self.update_field_names()
+                self.update_field_names()
+                self.__result_loaded = True
         else:
             if self.__reader:
                 for v in self.__reader.patches:
@@ -214,6 +214,7 @@ class Result(DICEObject):
             self.__scene.animation = None
             self.__boundary = None
             self.__boundary_model.root_elements.clear()
+            self.__result_loaded = False
 
     def w_model_selection_changed(self, model, selected, deselected):
         for v in deselected:

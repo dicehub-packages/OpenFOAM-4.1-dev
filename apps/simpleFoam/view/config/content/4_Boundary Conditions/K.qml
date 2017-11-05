@@ -1,7 +1,6 @@
-import QtQuick 2.5
+import QtQuick 2.9
 
 import DICE.App 1.0
-import DICE.Components 1.0
 
 Column {
     width: parent.width
@@ -9,7 +8,7 @@ Column {
 
     spacing: 20
 
-    DropDown2 {
+    DiceInlineComboBox {
         id: kType
         label: "Type"
         model: ["Fixed Value",

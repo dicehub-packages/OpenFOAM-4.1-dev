@@ -5,6 +5,7 @@ from PyFoam.Basics.DataStructures import Vector, TupleProxy, Field
 # ============
 from dice_tools import diceSync, signal, wizard
 
+
 class FoamApp:
 
     def __init__(self, **kwargs):

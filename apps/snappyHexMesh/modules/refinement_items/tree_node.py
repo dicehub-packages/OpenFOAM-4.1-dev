@@ -2,6 +2,7 @@ from dice_tools.helpers.xmodel import modelRole, modelMethod, ModelItem
 from dice_tools import wizard
 from dice_vtk.geometries import *
 
+
 class TreeNode(ModelItem):
 
     def __init__(self, name, **kwargs):

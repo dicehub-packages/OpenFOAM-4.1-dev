@@ -2,6 +2,7 @@ from .region_refinement import RegionRefinement
 from dice_tools import wizard
 from dice_tools.helpers.xmodel import modelRole, modelMethod, ModelItem
 
+
 class RefinementObject(RegionRefinement):
 
     def __init__(self, name, app, **kwargs):
