@@ -7,7 +7,6 @@ import DICE.Components 1.0 as DC
 Column {
     id: root
 
-    property var path
     property string grad
 
     width: parent.width
@@ -66,12 +65,13 @@ Column {
         visible: hasCoeff
         enabled: visible
         label: "Coefficient"
-        text: coeff
+        text: !!coeff ? coeff : ""
         onTextChanged: {
             coeff = text
         }
         onEnabledChanged: {
-            text = coeff
+            if (enabled)
+                text = coeff
         }
     }
 

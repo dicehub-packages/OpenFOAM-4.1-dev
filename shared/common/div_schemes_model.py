@@ -7,6 +7,7 @@ from PyFoam.Basics.DataStructures import TupleProxy
 class DivScheme:
 
     def __init__(self, app, name):
+        super().__init__()
         self.app = app
         self.__name = name
 
@@ -280,6 +281,7 @@ class DivScheme:
 class DivSchemesApp:
 
     def __init__(self):
+        super().__init__()
         self.__div_schemes_model = standard_model(DivScheme)
 
         wizard.subscribe("w_turbulence_model_changed", self.load_schemes)

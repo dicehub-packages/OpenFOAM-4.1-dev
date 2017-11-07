@@ -41,6 +41,8 @@ from common.boundary_model import *
 from common.foam_result import Result
 from common.basic_app import BasicApp
 from common.div_schemes_model import DivSchemesApp
+from modules.mrf_zones_model import MRFZonesApp
+from modules.cell_zone_model import CellZonesApp
 
 
 class simpleFoamApp(
@@ -49,7 +51,9 @@ class simpleFoamApp(
     FoamApp,
     BasicApp,
     BoundaryApp,
-    DivSchemesApp
+    DivSchemesApp,
+    MRFZonesApp,
+    CellZonesApp
     ):
 
     def __init__(self, **kwargs):
@@ -72,14 +76,21 @@ class simpleFoamApp(
  
     def w_foam(self, path):
         """
-        Catch if controlDict is being changed and write both 
-        to run and to config.
+        Catch if controlDict and fvSolution are being changed during the run
+        and write both to run and to config. Important so user can switch
+        schemes or update relaxation factors during runtime.
         """
-        if 'system/controlDict' in path:
-            self.control_dict.writeFile()
-            src = self.config_path('system/controlDict')
-            dst = self.run_path('system/controlDict')
-            self.copy(src, dst)
+        updated_run_files = (
+            "system/controlDict",
+            "system/fvSolution"
+        )
+        for file_path in updated_run_files:
+            if file_path in path:
+                self.control_dict.writeFile()
+                self.fv_solutions.writeFile()
+                src = self.config_path(file_path)
+                dst = self.run_path(file_path)
+                self.copy(src, dst)
 
     def update_result(self):
         self.__result.update()
@@ -201,6 +212,8 @@ class simpleFoamApp(
 
         self.load_boundary(boundary_props, input_data)
         self.load_schemes()
+        self.load_cell_zone_model()
+        self.load_mrf_zones()
 
     def __load_config_files(self):
         """
@@ -231,7 +244,7 @@ class simpleFoamApp(
         # Controls
         fv_schemes = ParsedParameterFile(self.config_path('system/fvSchemes'))
         self.control_dict = ParsedParameterFile(self.config_path('system/controlDict'))
-        fv_solutions = ParsedParameterFile(self.config_path('system/fvSolution'))
+        self.fv_solutions = ParsedParameterFile(self.config_path('system/fvSolution'))
         self._decompose_par_dict = ParsedParameterFile(
             self.config_path('system/decomposeParDict')
         )
@@ -245,7 +258,7 @@ class simpleFoamApp(
         self.foam_file('0/omega', omega_dict)
         self.foam_file('0/epsilon', epsilon_dict)
         
-        self.foam_file('system/fvSolution', fv_solutions)
+        self.foam_file('system/fvSolution', self.fv_solutions)
         self.foam_file('system/fvSchemes', fv_schemes)
         self.foam_file('system/controlDict', self.control_dict)
         self.foam_file('system/decomposeParDict', self._decompose_par_dict)

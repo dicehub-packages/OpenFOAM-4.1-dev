@@ -7,8 +7,16 @@ Column {
     height: childrenRect.height
     spacing: 20
     
+    Subheader {
+        text: "Point 1"
+    }
+
     DiceVectorField {
         path: "refinement:SearchableCylinder.point_1"
+    }
+
+    Subheader {
+        text: "Point 2"
     }
 
     DiceVectorField {

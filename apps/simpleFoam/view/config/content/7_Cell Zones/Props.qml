@@ -2,6 +2,7 @@ import QtQuick 2.9
 
 import DICE.Components 1.0
 
+
 ScrollView_DICE {
     id: scrollView
     anchors.fill: parent
@@ -10,10 +11,8 @@ ScrollView_DICE {
         height: !!item ? item.height : 0
         source: {
             switch (modelData.modelData) {
-                case 'boundary':
-                    return "BoundaryProps.qml"
-                case 'group':
-                    return "GroupProps.qml"
+                case 'MRF Properties':
+                    return "MRFproperties.qml"
             }
         }
     }
