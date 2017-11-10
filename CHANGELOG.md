@@ -1,1 +1,9 @@
- 
+- [simpleFoam] Added working MRFZone selection.
+- [solvers] Better convection scheme selection.
+- [simpleFoam] Added automatic update of controlDict during run time.
+- [solvers] Added more controls for runView (Relaxation Factory, Write controls, ...).
+- [snappyHexMesh] Added multiple refinementObjects.
+- [simpleFoam] Added `slip` boundary condition.
+- [all] Port to new DiceComponents in DICE.
+- [all] Refactoring of multiple qml components.
+- [build] Fixed build dependencies on linux and windows.
