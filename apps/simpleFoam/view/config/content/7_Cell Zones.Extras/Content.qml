@@ -10,10 +10,10 @@ SplitBody {
         height: parent.height/2
 
         SimpleTreeView {
-            id: boundaries
+            id: cellZones
             Layout.fillHeight: true
             Layout.fillWidth: true
-            model: app.cellZoneModel
+            model: app.cellZonesModel
             delegate: SimpleTreeViewDelegate {
                 contentSource: 'CellZoneDelegate.qml'
             }
@@ -22,7 +22,14 @@ SplitBody {
 
     TabsCard2 {
         title: qsTr("Properties")
-        model: ["MRF Properties"]
+        model: {
+            if (!app.hasMrfProps) {
+                return []
+            }
+            else {
+                return ["MRF"]
+            }
+        }
         delegateSource: "Props.qml"
         textRole: 'modelData'
     }

@@ -36,7 +36,7 @@ Item {
                         rightMargin: 10
                     }
                     text: name
-                    font.bold: isCurrent
+                    font.bold: selected
                     color: colors.theme["text_color"]
                 }
             }

@@ -26,25 +26,18 @@ class MRFZone:
 
 class MRFZonesApp:
 
-    def __init__(self):
-        super().__init__()
-        self.__mrf_zones_model = standard_model()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.__mrf_zones_model = standard_model(MRFZone)
 
     @property
     def path(self):
         return "foam:constant/MRFProperties"
 
-    @diceProperty('QVariant', name="mrfZonesModel")
-    def mrf_zones_model(self):
-        return self.__mrf_zones_model
-
     @diceProperty('QVariant', name='mrfZonesModel')
     def mrf_zones_model(self):
         return self.__mrf_zones_model
 
-    # def __mrf_zones(self):
-    #     return None
-    #
     def load_mrf_zones(self):
         self.__mrf_zones_model.root_elements.clear()
         self.__mrf_zones_model.root_elements.append(MRFZone(self, "test"))

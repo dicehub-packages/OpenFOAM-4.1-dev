@@ -38,6 +38,7 @@ Column {
         width: parent.width
         text: 'Group'
         enabled: app.canGroup
+        visible: enabled
         onClicked: app.makeGroup()
     }
 

@@ -11,8 +11,8 @@ ScrollView_DICE {
         height: !!item ? item.height : 0
         source: {
             switch (modelData.modelData) {
-                case 'MRF Properties':
-                    return "MRFproperties.qml"
+                case 'MRF':
+                    return "MRF.qml"
             }
         }
     }

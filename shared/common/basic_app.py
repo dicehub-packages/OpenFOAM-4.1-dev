@@ -1,6 +1,8 @@
-from dice_tools.helpers import FileOperations, JsonOrderedDict
 import os
+
+from dice_tools.helpers import FileOperations, JsonOrderedDict
 from dice_tools import notify, diceSync, wizard, signal
+
 
 class BasicApp(FileOperations):
 

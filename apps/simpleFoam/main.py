@@ -42,7 +42,7 @@ from common.foam_result import Result
 from common.basic_app import BasicApp
 from common.div_schemes_model import DivSchemesApp
 from modules.mrf_zones_model import MRFZonesApp
-from modules.cell_zone_model import CellZonesApp
+from modules.cell_zones_model import CellZonesApp
 
 
 class simpleFoamApp(
@@ -50,10 +50,9 @@ class simpleFoamApp(
     VisApp,
     FoamApp,
     BasicApp,
-    BoundaryApp,
+    CellZonesApp,
     DivSchemesApp,
-    MRFZonesApp,
-    CellZonesApp
+    BoundaryApp
     ):
 
     def __init__(self, **kwargs):
@@ -249,6 +248,11 @@ class simpleFoamApp(
             self.config_path('system/decomposeParDict')
         )
 
+        # cellZone options
+        self.mrf_props = ParsedParameterFile(
+            self.config_path('constant/MRFProperties')
+        )
+
         # Registered files
         # ================
         self.foam_file('0/p', p_dict)
@@ -265,6 +269,8 @@ class simpleFoamApp(
 
         self.foam_file('constant/transportProperties', transport_props)
         self.foam_file('constant/turbulenceProperties', turbulence_props)
+
+        self.foam_file('constant/MRFProperties', self.mrf_props)
 
     @diceTask('prepare')
     def prepare(self):
