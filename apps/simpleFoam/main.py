@@ -41,8 +41,8 @@ from common.boundary_model import *
 from common.foam_result import Result
 from common.basic_app import BasicApp
 from common.div_schemes_model import DivSchemesApp
-from modules.mrf_zones_model import MRFZonesApp
 from modules.cell_zones_model import CellZonesApp
+from modules.function_objects_model import FunctionObjectsApp
 
 
 class simpleFoamApp(
@@ -69,6 +69,7 @@ class simpleFoamApp(
         self.__load_config_files()
 
         self.__result = Result(self)
+        self.__monitoring = FunctionObjectsApp(self)
 
         wizard.subscribe(self.w_foam)
         self.update_result()
@@ -97,6 +98,10 @@ class simpleFoamApp(
     @diceProperty('QVariant', name='result')
     def result(self):
         return self.__result
+
+    @diceProperty('QVariant', name='monitoring')
+    def monitoring(self):
+        return self.__monitoring
 
     def progress_changed(self, progress):
         """
@@ -253,6 +258,11 @@ class simpleFoamApp(
             self.config_path('constant/MRFProperties')
         )
 
+        # Post-Processing
+        self.function_objects = ParsedParameterFile(
+            self.config_path('system/functionObjects'),  noHeader=True
+        )
+
         # Registered files
         # ================
         self.foam_file('0/p', p_dict)
@@ -271,6 +281,7 @@ class simpleFoamApp(
         self.foam_file('constant/turbulenceProperties', turbulence_props)
 
         self.foam_file('constant/MRFProperties', self.mrf_props)
+        self.foam_file('system/functionObjects', self.function_objects)
 
     @diceTask('prepare')
     def prepare(self):

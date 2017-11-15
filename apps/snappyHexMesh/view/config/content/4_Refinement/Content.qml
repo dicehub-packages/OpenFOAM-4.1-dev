@@ -35,5 +35,4 @@ SplitBody {
         delegateSource: "Props.qml"
         textRole: 'title'
     }
-
 }

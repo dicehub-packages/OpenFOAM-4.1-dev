@@ -5,7 +5,7 @@ import DICE.App.Foam 1.0
 
 SplitBody {
     AppLayoutCard {
-        title: "Cell Zones"
+        title: "Monitors"
         width: parent.width
         height: parent.height/2
 
@@ -13,24 +13,22 @@ SplitBody {
             id: cellZones
             Layout.fillHeight: true
             Layout.fillWidth: true
-            model: app.cellZonesModel
+            model: app.monitoring.model
             delegate: SimpleTreeViewDelegate {
-                contentSource: 'CellZoneDelegate.qml'
+                contentSource: 'MonitorDelegate.qml'
             }
         }
     }
 
     TabsCard2 {
         title: qsTr("Properties")
-        model: {
-            if (!app.hasMrfProps) {
-                return []
-            }
-            else {
-                return ["MRF"]
-            }
-        }
+        height: parent.height/2
+        Layout.minimumHeight: 100
+        Layout.preferredHeight: parent.height/2
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        model: app.monitoring.properties
         delegateSource: "Props.qml"
-        textRole: 'modelData'
+        textRole: 'title'
     }
 }

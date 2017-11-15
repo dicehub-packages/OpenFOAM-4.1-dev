@@ -9,15 +9,15 @@ Column {
 
     DiceVectorField {
         path: "refinement:SearchableBox.min"
-        xLabel: "minX"
-        yLabel: "minY"
-        zLabel: "minZ"
+        xLabel: "min_X"
+        yLabel: "min_Y"
+        zLabel: "min_Z"
     }
     
     DiceVectorField {
         path: "refinement:SearchableBox.max"
-        xLabel: "maxX"
-        yLabel: "maxY"
-        zLabel: "maxZ"
+        xLabel: "max_X"
+        yLabel: "max_Y"
+        zLabel: "max_Z"
     }
 }

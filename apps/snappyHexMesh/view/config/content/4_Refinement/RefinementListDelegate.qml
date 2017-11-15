@@ -56,7 +56,9 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
 
             property Component boundaryTypeIcon: DiceIconSVG {
-                source: "images/" + boundaryType + ".svg"
+                source: boundaryType !== undefined
+                        ? "images/" + boundaryType + ".svg" :
+                          ""
                 size: 16
                 color: {
                     switch (boundaryType) {
@@ -90,8 +92,9 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             enabled: type === "RefinementObject"
             visible: enabled
+            cursorShape: "PointingHandCursor"
 
-            FontAwesomeIcon {
+            DiceFontAwesomeIcon {
                 size: 12
                 anchors.centerIn: parent
                 name: "Remove"
@@ -107,7 +110,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             enabled: isVisible !== undefined
             visible: enabled
-            FontAwesomeIcon {
+            DiceFontAwesomeIcon {
                 size: 12
                 anchors.centerIn: parent
                 name: isVisible ? "Eye" : "EyeSlash"

@@ -47,5 +47,9 @@ graphFormat	raw;
 
 runTimeModifiable yes;
 
+functions {
+    #include "functionObjects"
+};
+
 
 // ************************************************************************* //

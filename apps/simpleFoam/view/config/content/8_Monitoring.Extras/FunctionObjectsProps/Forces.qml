@@ -9,6 +9,10 @@ Column {
     width: parent.width
     height: childrenRect.height
 
+//    DiceButton {
+//        text: "ShowProps"
+//        onClicked: app.monitoring.showProps()
+//    }
 
     DiceCheckBox {
         id: enableMrfCheckBox

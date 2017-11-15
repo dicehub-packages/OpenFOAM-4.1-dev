@@ -10,6 +10,9 @@ Column {
     width: parent.width
     height: childrenRect.height
 
+    Subheader {
+        text: "Rotating Frame (Multiple Reference Frame)"
+    }
 
     DiceCheckBox {
         id: enableMrfCheckBox
@@ -30,18 +33,12 @@ Column {
             text: "Origin"
         }
         DiceVectorField {
-            xLabel: "Origin X"
-            yLabel: "Origin Y"
-            zLabel: "Origin Z"
             path: "mrf:origin"
         }
         Subheader {
             text: "Axis"
         }
         DiceVectorField {
-            xLabel: "Axis X"
-            yLabel: "Axis Y"
-            zLabel: "Axis Z"
             path: "mrf:axis"
         }
         Subheader {

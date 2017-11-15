@@ -1,7 +1,9 @@
+import random
+
 from dice_tools import wizard
 from dice_tools.helpers.xmodel import modelRole, modelMethod
-import random
 from dice_vtk.geometries import VtkNumpySTL
+
 
 class SurfaceRegion:
 

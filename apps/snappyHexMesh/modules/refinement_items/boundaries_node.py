@@ -2,6 +2,7 @@ from .tree_node import TreeNode
 from dice_tools.helpers.xmodel import modelRole, modelMethod, ModelItem
 from dice_tools import wizard
 
+
 class BoundariesNode(TreeNode):
 
     def __init__(self, name, app, **kwargs):
