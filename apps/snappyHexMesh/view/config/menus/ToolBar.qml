@@ -48,7 +48,7 @@ ToolBarMenu {
         }
 
         BigToolBarButton {
-            iconSource: "images/refinementPlane3Points.svg"
+            iconSource: "images/refinementPlane3P.svg"
             text: qsTr("Plane (3 Points)")
             tooltip: qsTr("Add Refinement Plane by defining 3 Points")
             onClicked: {
@@ -58,7 +58,7 @@ ToolBarMenu {
         }
 
         BigToolBarButton {
-            iconSource: "images/refinementPlanePointAndNormal.svg"
+            iconSource: "images/refinementPlanePaN.svg"
             text: qsTr("Plane (Point + Normal)")
             tooltip: qsTr("Add Refinement Plane by a Point and a Normal Vector")
             onClicked: {

@@ -14,11 +14,9 @@ Body {
             }
         } 
 
-        DiceInputField {
+        DiceValueField {
             label: "nu"
             path: "foam:constant/transportProperties nu 2"
         }
-
     }
-
 }

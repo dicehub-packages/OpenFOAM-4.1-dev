@@ -1,9 +1,8 @@
 import copy
 
-from PyFoam.Basics.DataStructures import DictProxy
-
 from dice_tools import *
 from dice_tools.helpers.xmodel import *
+from .function_objects import *
 
 
 class PropertyItem:
@@ -18,91 +17,6 @@ class PropertyItem:
     @modelRole("source")
     def source(self):
         return self.__source
-
-
-class TreeNode(ModelItem):
-
-    def __init__(self, name, node_type, **kwargs):
-        super().__init__(**kwargs)
-        self.__name = name
-        self.__node_type = node_type
-        wizard.subscribe(self, self)
-
-    def w_model_remove_items(self, *args, **kwargs):
-        wizard.w_model_update_item(self)
-
-    def w_model_insert_items(self, *args, **kwargs):
-        wizard.w_model_update_item(self)
-
-    @modelRole('name')
-    def name(self):
-        return self.__name
-
-    @modelRole('label')
-    def label(self):
-        return '{0} ({1})'.format(self.name, self.count)
-
-    @modelRole('count')
-    def count(self):
-        return len(self.elements)
-
-    @modelRole('type')
-    def type(self):
-        return "TreeNode"
-
-    @modelRole('nodeType')
-    def node_type(self):
-        return self.__node_type
-
-
-class FunctionObject:
-
-    def __init__(self, name, app, **kwargs):
-        self.__name = name
-        self.__app = app
-
-        print(">> ", app)
-        print(">> ", name)
-
-        wizard.w_function_object_created(self)
-
-    @property
-    def path(self):
-        return 'foam:system/functionObjects ' + self.name
-
-    @property
-    def app(self):
-        return self.__app
-
-    @modelRole('name')
-    def name(self):
-        return self.__name
-
-    @modelRole('label')
-    def label(self):
-        return self.name
-
-    @modelRole('type')
-    def type(self):
-        return self.app[self.path + ' type']
-
-    @modelMethod('remove')
-    def remove_function_object(self):
-        type = self.type
-        self.app[self.path] = None
-        wizard.w_function_object_removed(self, type)
-
-
-class ForcesMonitor(FunctionObject):
-
-    def __init__(self, name, **kwargs):
-        super().__init__(name=name, **kwargs)
-
-
-class ForceCoeffsMonitor(FunctionObject):
-
-    def __init__(self, name, **kwargs):
-        super().__init__(name=name, **kwargs)
 
 
 class FunctionObjectsApp(DICEObject):
@@ -132,7 +46,7 @@ class FunctionObjectsApp(DICEObject):
         },
         "forceCoeffs": {
             "type": "forceCoeffs",
-            "libs": ["libforces.so"],
+            "libs": ["\"libforces.so\""],
             "patches": [],
             "p": "p",
             "U": "U",
@@ -151,7 +65,7 @@ class FunctionObjectsApp(DICEObject):
     def __init__(self, app, **kwargs):
         super().__init__(base_type='QObject', **kwargs)
         self.__app = app
-        self.__function_objects = self.app.function_objects
+        self.__function_objects_dict = self.app.function_objects_dict
 
         self.__model = standard_model(
             TreeNode,
@@ -187,8 +101,8 @@ class FunctionObjectsApp(DICEObject):
         return self.__model
 
     def load_model(self):
-        for f_name in self.__function_objects:
-            function_object_type = self.__function_objects[f_name]['type']
+        for f_name in self.__function_objects_dict:
+            function_object_type = self.__function_objects_dict[f_name]['type']
             if function_object_type in self.function_obj_types:
                 self.function_obj_types[function_object_type](f_name, app=self.app)
 
@@ -225,6 +139,7 @@ class FunctionObjectsApp(DICEObject):
                     elements.insert(i, p)
             else:
                 elements.append(p)
+        signal('functionObjects:*')
 
     def w_function_object_created(self, item):
         print("created >>", item)
@@ -259,35 +174,40 @@ class FunctionObjectsApp(DICEObject):
 
         self.function_obj_types[template['type']](obj_name, app=self.__app)
 
+    def function_objects_get(self, path):
+        p = path.split('.')
+        prop_class, prop = globals()[p[0]], p[1]
+        result = None
+        for s in self.__model.selection:
+            if isinstance(s, prop_class):
+                value = getattr(s, prop)
+                if value is not None:
+                    if result is None:
+                        result = value
+                    else:
+                        try:
+                            for i, x in enumerate(value):
+                                if x != result[i]:
+                                    result[i] = None
+                        except TypeError:
+                            if result != value:
+                                return None
+        return result
 
-    #     properties = [
-    #         ('Forces', ForcesMonitor, 'Forces.qml'),
-    #         ('ForcesCoeffs', ForcesCoeffsMonitor, 'ForcesCoeffs.qml')
-    #     ]
-    #
-    #     result_props = []
-    #
-    #     for title, tp, source in properties:
-    #         for s in self.__model.selection:
-    #             if isinstance(s, tp):
-    #                 result_props.append(PropertyItem(
-    #                     title, source))
-    #                 break
-    #     for v in self.__props_model.root_elements[:]:
-    #         for p in result_props:
-    #             if p.title == v.title:
-    #                 break
-    #         else:
-    #             self.__props_model.root_elements.remove(v)
-    #
-    #     elements = self.__props_model.root_elements
-    #     for i, p in enumerate(result_props):
-    #         if i < len(elements):
-    #             v = elements[i]
-    #             if v.title != p.title:
-    #                 elements.insert(i, p)
-    #         else:
-    #             elements.append(p)
-    #
-    #     for i in result_props:
-    #         print(">>>", i)
+    def function_objects_set(self, path, value):
+        p = path.split('.')
+        prop_class, prop = globals()[p[0]], p[1]
+        for s in self.__model.selection:
+            print(s, path, prop_class, prop)
+            if isinstance(s, prop_class):
+                try:
+                    v = getattr(s, prop)
+                    for i, x in enumerate(value):
+                        if value[i] is not None:
+                            v[i] = value[i]
+                    setattr(s, prop, v)
+                except TypeError:
+                    print('invoke set', getattr(s, prop))
+                    setattr(s, prop, value)
+        signal('functionObjects:*')
+        return False

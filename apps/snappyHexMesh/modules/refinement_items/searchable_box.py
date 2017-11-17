@@ -13,7 +13,7 @@ class SearchableBox(RefinementObject):
         super().__init__(name=name, **kwargs)
         self.setup()
 
-    @property
+    @modelRole('templateName')
     def template_name(self):
         return "refinementBox"
 

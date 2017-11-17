@@ -1,5 +1,6 @@
 from .refinement_object import RefinementObject
 from dice_vtk.geometries import Disk
+from dice_tools.helpers.xmodel import modelRole
 
 
 class SearchableDisk(RefinementObject):
@@ -11,7 +12,7 @@ class SearchableDisk(RefinementObject):
         super().__init__(name=name, **kwargs)
         self.setup()
 
-    @property
+    @modelRole('templateName')
     def template_name(self):
         return "refinementDisk"
 

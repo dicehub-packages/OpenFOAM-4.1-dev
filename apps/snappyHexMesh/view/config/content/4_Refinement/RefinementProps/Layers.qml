@@ -17,7 +17,6 @@ Column {
 
     DiceValueField {
         enabled: addLayersSwitch.checked
-//        enabled: modelData.hasLayersAddition
         width: parent.width
         label: qsTr("Number of Layers")
         path: "refinement:SurfaceRegion.layers_addition"

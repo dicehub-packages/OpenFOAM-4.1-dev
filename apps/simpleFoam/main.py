@@ -69,7 +69,7 @@ class simpleFoamApp(
         self.__load_config_files()
 
         self.__result = Result(self)
-        self.__monitoring = FunctionObjectsApp(self)
+        self.__function_objects = FunctionObjectsApp(self)
 
         wizard.subscribe(self.w_foam)
         self.update_result()
@@ -99,9 +99,9 @@ class simpleFoamApp(
     def result(self):
         return self.__result
 
-    @diceProperty('QVariant', name='monitoring')
-    def monitoring(self):
-        return self.__monitoring
+    @diceProperty('QVariant', name='functionObjects')
+    def function_objects(self):
+        return self.__function_objects
 
     def progress_changed(self, progress):
         """
@@ -259,7 +259,7 @@ class simpleFoamApp(
         )
 
         # Post-Processing
-        self.function_objects = ParsedParameterFile(
+        self.function_objects_dict = ParsedParameterFile(
             self.config_path('system/functionObjects'),  noHeader=True
         )
 
@@ -281,7 +281,15 @@ class simpleFoamApp(
         self.foam_file('constant/turbulenceProperties', turbulence_props)
 
         self.foam_file('constant/MRFProperties', self.mrf_props)
-        self.foam_file('system/functionObjects', self.function_objects)
+        self.foam_file('system/functionObjects', self.function_objects_dict)
+
+    @diceSync('functionObjects:')
+    def __function_objects_sync(self, path):
+        return self.__function_objects.function_objects_get(path)
+
+    @__function_objects_sync.setter
+    def __function_objects_sync(self, path, value):
+        return self.__function_objects.function_objects_set(path, value)
 
     @diceTask('prepare')
     def prepare(self):

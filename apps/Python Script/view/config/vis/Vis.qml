@@ -1,5 +1,5 @@
 import QtQuick 2.4
-import QtWebEngine 1.3
+import QtWebEngine 1.5
 import QtQuick.Layouts 1.3
 import DICE.Components 1.0
 import DICE.App 1.0

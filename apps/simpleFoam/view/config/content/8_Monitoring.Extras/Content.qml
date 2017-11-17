@@ -13,7 +13,7 @@ SplitBody {
             id: cellZones
             Layout.fillHeight: true
             Layout.fillWidth: true
-            model: app.monitoring.model
+            model: app.functionObjects.model
             delegate: SimpleTreeViewDelegate {
                 contentSource: 'MonitorDelegate.qml'
             }
@@ -27,7 +27,7 @@ SplitBody {
         Layout.preferredHeight: parent.height/2
         Layout.fillWidth: true
         Layout.fillHeight: true
-        model: app.monitoring.properties
+        model: app.functionObjects.properties
         delegateSource: "Props.qml"
         textRole: 'title'
     }

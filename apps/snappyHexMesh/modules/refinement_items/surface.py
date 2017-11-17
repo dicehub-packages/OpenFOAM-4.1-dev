@@ -1,9 +1,11 @@
-from .region_refinement import RegionRefinement
+import os
+
 from dice_tools import wizard
 from dice_tools.helpers.xmodel import modelRole, modelMethod, ModelItem
-import os
 from stl.mesh import Mesh
+from .region_refinement import RegionRefinement
 from .surface_region import SurfaceRegion
+
 
 class Surface(RegionRefinement):
 

@@ -1,6 +1,6 @@
 from .refinement_object import RefinementObject
 # from dice_tools import wizard
-# from dice_tools.helpers.xmodel import modelRole, modelMethod
+from dice_tools.helpers.xmodel import modelRole
 from dice_vtk.geometries import Plane
 
 
@@ -13,7 +13,7 @@ class SearchablePlate(RefinementObject):
         super().__init__(name=name, **kwargs)
         self.setup()
 
-    @property
+    @modelRole('templateName')
     def template_name(self):
         return "refinementPlate"
 

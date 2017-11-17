@@ -21,13 +21,17 @@ Item {
             Layout.minimumWidth: 20
             height: 20
             anchors.verticalCenter: parent.verticalCenter
-            property Component fileIcon: FontAwesomeIcon {
+            property Component fileIcon: DiceFontAwesomeIcon {
                 size: 12
                 anchors.centerIn: parent
-                name: "File"
+                name: "Folder"
             }
             property Component boundaryIcon: DiceIconSVG {
                 source: "images/" + boundaryOrientation + ".svg"
+                size: 16
+            }
+            property Component refinementObjectIcon: DiceIconSVG {
+                source: "../../menus/images/" + templateName + ".svg"
                 size: 16
             }
             Loader {
@@ -36,6 +40,10 @@ Item {
                     if (boundaryOrientation != undefined){
                         return parent.boundaryIcon
                     }
+                    if (type === "RefinementObject" && templateName != undefined) {
+                        return parent.refinementObjectIcon
+                    }
+
                     else {
                         return parent.fileIcon
                     }
@@ -95,9 +103,10 @@ Item {
             cursorShape: "PointingHandCursor"
 
             DiceFontAwesomeIcon {
-                size: 12
+                size: 10
                 anchors.centerIn: parent
                 name: "Remove"
+                color: colors.theme["text_color_info"]
             }
             onClicked: {
                 remove()

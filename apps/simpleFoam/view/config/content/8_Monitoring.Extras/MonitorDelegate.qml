@@ -47,7 +47,7 @@ Item {
                     name: "Plus"
                 }
                 onClicked: {
-                    app.monitoring.addFunctionObject(nodeType)
+                    app.functionObjects.addFunctionObject(nodeType)
                 }
 
                 DiceToolTip {

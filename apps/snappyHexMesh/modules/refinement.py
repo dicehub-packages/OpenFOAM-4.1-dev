@@ -132,8 +132,19 @@ class Refinement(DICEObject):
         wizard.subscribe(self, self.__model)
         wizard.subscribe(self, self.__app.bounding_box.vis_obj)
 
+        self.load_model()
+
+    def load_model(self):
         for k, v in self.app[self.geometry_path].items():
-            if v['type'] in self.ref_obj_types:
+            if v['type'] == "searchablePlane" \
+                and v['planeType'] == "embeddedPoints":
+                refinement_type = "searchablePlane3P"
+                self.ref_obj_types[refinement_type](k, app=self.__app)
+            elif v['type'] == "searchablePlane" \
+                and v['planeType'] == "pointAndNormal":
+                refinement_type = "searchablePlanePaN"
+                self.ref_obj_types[refinement_type](k, app=self.__app)
+            elif v['type'] in self.ref_obj_types:
                 refinement_type = v['type']
                 self.ref_obj_types[refinement_type](k, app=self.__app)
 
