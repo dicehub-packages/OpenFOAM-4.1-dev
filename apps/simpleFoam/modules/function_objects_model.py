@@ -112,6 +112,7 @@ class FunctionObjectsApp(DICEObject):
 
     def w_model_selection_changed(self, model, selected, deselected):
         properties = [
+            ('default', TreeNode, 'Default.qml'),
             ('forces', ForcesMonitor, 'Forces.qml'),
             ('forceCoeffs', ForceCoeffsMonitor, 'ForceCoeffs.qml')
         ]
@@ -211,3 +212,17 @@ class FunctionObjectsApp(DICEObject):
                     setattr(s, prop, value)
         signal('functionObjects:*')
         return False
+
+    @diceSlot('QString')
+    def call(self, f_name):
+        for s in self.__model.selection:
+            if hasattr(s, f_name):
+                getattr(s, f_name)()
+
+    # Monitored Patches
+    # =================
+
+    # @diceProperty('QVariant', name='monitoredPatchesModel')
+    # def monitored_patches_model(self):
+    #     return self.__monitored_patches_model
+

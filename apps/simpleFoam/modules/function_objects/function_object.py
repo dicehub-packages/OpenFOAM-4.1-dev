@@ -8,9 +8,6 @@ class FunctionObject:
         self.__name = name
         self.__app = app
 
-        print(">> ", app)
-        print(">> ", name)
-
         wizard.w_function_object_created(self)
 
     @property

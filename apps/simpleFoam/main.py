@@ -260,7 +260,8 @@ class simpleFoamApp(
 
         # Post-Processing
         self.function_objects_dict = ParsedParameterFile(
-            self.config_path('system/functionObjects'),  noHeader=True
+            self.config_path('system/functionObjects'),
+            noHeader=True, preserveComments=False
         )
 
         # Registered files

@@ -231,7 +231,6 @@ class CellZonesApp:
                 self["foam:constant/MRFProperties " + mrf.name] = None
                 self.__mrf_zones_model.root_elements.remove(mrf)
 
-
     # Non Rotating Patches for MRF
     # ============================
 
@@ -264,9 +263,7 @@ class CellZonesApp:
     @diceProperty('QVariant', name='singleCellZoneSelection',
                   notify=cell_zone_selection_changed)
     def single_cell_zone_selection(self):
-        cell_zones = [cellzone for cellzone in
-                           self.__cell_zones_model.selection]
-        return len(cell_zones) == 1
+        return len(self.__cell_zones_model.selection) == 1
 
     @diceProperty('QVariant', name='nonRotatingPatchSelected',
                   notify=non_rotating_patches_selection_changed)

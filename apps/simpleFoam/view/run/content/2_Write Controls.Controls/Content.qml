@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.2
 
 import DICE.App 1.0
 
+import "../1_Run Controls.Controls"
+
 SplitView {
     anchors.fill: parent
     Rectangle {
@@ -79,4 +81,5 @@ SplitView {
         Layout.fillHeight: true
         Layout.fillWidth: true
     }
+//    ResidualsPlot {}
 }

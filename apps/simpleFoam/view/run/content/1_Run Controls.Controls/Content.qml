@@ -68,25 +68,5 @@ SplitView {
         }
     }
 
-
-    Item {
-        Layout.fillHeight: true
-        Layout.fillWidth: true
-
-        Rectangle {
-            id: fig
-            color: "#eee"
-            gradient: Gradient {
-                GradientStop { position: 0.0; color: "#EEE"; }
-                GradientStop { position: 0.8; color: "#E9E9E9"; }
-                GradientStop { position: 1.0; color: "#C0C0C0"; }
-            }
-
-            anchors.fill: parent
-            Component.onCompleted: {
-                app.plot.parent = this;
-                app.plot.anchors.fill = this;
-            }
-        }
-    }
+    ResidualsPlot {}
 }
