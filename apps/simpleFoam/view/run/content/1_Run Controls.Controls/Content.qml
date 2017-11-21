@@ -1,13 +1,16 @@
 import QtQuick 2.9
-import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.2
+import QtQuick.Controls 1.4 as QC1
+import QtQuick.Controls 2.0
+import QtQuick.Layouts 1.3
 
 import DICE.App 1.0
+import DICE.Components 1.0 as DC
 
-SplitView {
+QC1.SplitView {
     anchors.fill: parent
     Rectangle {
         Layout.fillHeight: true
+        Layout.minimumWidth: 300
         width: parent.width/4
         color: colors.theme["app_background_color"]
 
@@ -67,6 +70,72 @@ SplitView {
             }
         }
     }
+    Item {
+        Layout.fillHeight: true
+        Layout.fillWidth: true
 
-    ResidualsPlot {}
+        ListModel {
+            id: plotsModel
+            ListElement {
+                name: "Residuals"
+            }
+            ListElement {
+                name: "Forces"
+            }
+            ListElement {
+                name: "Forces 1"
+            }
+        }
+        ColumnLayout {
+            anchors.fill: parent
+
+            TabBar {
+                id: bar
+                Layout.fillWidth: true
+                Repeater {
+                    model: app.plots.model
+                    delegate: TabButton {
+                        text: name
+                    }
+                }
+            }
+            StackLayout {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                currentIndex: bar.currentIndex
+                Repeater {
+                    model: app.plots.model
+                    delegate: Item {
+                        id: root
+
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+
+                        Component {
+                            id: plotComponent
+                            Item {
+                                id: plotItem
+                                property var plot: undefined
+                                anchors.fill: parent
+                            }
+                        }
+
+
+                        Loader {
+                            anchors.fill: parent
+                            sourceComponent: plotComponent
+                            onLoaded: {
+                                if (Loader.Ready) {
+                                    item.plot = plot
+                                    plot.parent = item
+                                    plot.anchors.fill = item
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+//    ResidualsPlot {}
 }

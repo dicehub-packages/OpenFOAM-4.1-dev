@@ -21,23 +21,17 @@ class ForcesMonitor(FunctionObject):
 
         self.__patches_model = standard_model(Patch)
         self.load_patches_model()
+
         wizard.subscribe('w_model_selection_changed',
                          self.__w_boundary_selected,
                          model=self.app.boundaries_model)
         wizard.subscribe('w_model_selection_changed',
                          self.__w_monitored_patch_selected,
                          model=self.patches_model)
+        wizard.subscribe("input_changed", self.__w_input_changed)
 
-    # Adding monitored patches
-    # ========================
-
-    def __w_boundary_selected(self, model, selected, deselected):
-        signal("functionObjects:*")
-
-    def load_patches_model(self):
-        self.patches_model.root_elements.clear()
-        for patch in self.patches:
-            self.__patches_model.root_elements.append(Patch(patch))
+    # Monitored patches
+    # =================
 
     @diceProperty('QVariant', name='patchesModel')
     def patches_model(self):
@@ -51,6 +45,29 @@ class ForcesMonitor(FunctionObject):
     def patches(self, value):
         self.app[self.path + ' patches'] = value
         self.load_patches_model()
+
+    # Adding monitored patches
+    # ========================
+
+    def __w_input_changed(self):
+        self.__clean_non_existing_patches()
+
+    def __w_boundary_selected(self, model, selected, deselected):
+        signal("functionObjects:*")
+
+    def load_patches_model(self):
+        self.patches_model.root_elements.clear()
+        for patch in self.patches:
+            self.__patches_model.root_elements.append(Patch(patch))
+
+    def __clean_non_existing_patches(self):
+        patches = self.patches
+        boundary_names = [boundary.name for boundary in
+                          self.app.boundaries_model]
+        for patch in self.patches:
+            if patch not in boundary_names and len(boundary_names) is not 0:
+                patches.remove(patch)
+                self.patches = patches
 
     def add_patches(self):
         patches = self.patches

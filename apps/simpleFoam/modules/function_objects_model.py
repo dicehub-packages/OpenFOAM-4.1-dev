@@ -143,16 +143,14 @@ class FunctionObjectsApp(DICEObject):
         signal('functionObjects:*')
 
     def w_function_object_created(self, item):
-        print("created >>", item)
         if item.type == "forces":
             self.__forces_node.elements.append(item)
+            self.app.plots.add_plot(item.name)
         elif item.type == "forceCoeffs":
             self.__force_coeffs_node.elements.append(item)
+            self.app.plots.add_plot(item.name)
 
     def w_function_object_removed(self, item, type):
-        print("removed >>", item)
-        print("removed >>", item.type)
-        # self.__forces_node.elements.remove(item)
         if type == "forces":
             self.__forces_node.elements.remove(item)
         elif type == "forceCoeffs":
@@ -160,7 +158,6 @@ class FunctionObjectsApp(DICEObject):
 
     @diceSlot('QString', name='addFunctionObject')
     def add_function_object(self, node_type, obj_name=None):
-        print("-->>>", node_type, obj_name)
         if not obj_name:
             obj_name = node_type
             count = 0
@@ -218,11 +215,3 @@ class FunctionObjectsApp(DICEObject):
         for s in self.__model.selection:
             if hasattr(s, f_name):
                 getattr(s, f_name)()
-
-    # Monitored Patches
-    # =================
-
-    # @diceProperty('QVariant', name='monitoredPatchesModel')
-    # def monitored_patches_model(self):
-    #     return self.__monitored_patches_model
-

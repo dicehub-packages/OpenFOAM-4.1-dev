@@ -8,6 +8,7 @@ SplitView {
     anchors.fill: parent
     Rectangle {
         Layout.fillHeight: true
+        Layout.minimumWidth: 300
         width: parent.width/4
         color: colors.theme["app_background_color"]
 

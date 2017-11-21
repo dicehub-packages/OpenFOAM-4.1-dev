@@ -7,39 +7,33 @@ Item {
     width: parent.width
     height: Math.max(25, buttonLabel.height + 20)
 
+
     RowLayout {
         width: parent.width
         height: 20
         anchors.verticalCenter: parent.verticalCenter
 
         Item {
-            id: label
-
-            anchors.fill: parent
-            implicitHeight: col.height
-            height: implicitHeight
-            width: buttonLabel.width + 20
-
-            Column {
-                id: col
-
-                spacing: 2
-                anchors.verticalCenter: parent.verticalCenter
-
-                BasicText {
-                    id: buttonLabel
-                    width: root.width - 60
-                    verticalAlignment: Text.AlignVCenter
-                    anchors {
-                        left: parent.left
-                        leftMargin: 10
-                        rightMargin: 10
-                    }
-                    text: name
-                    font.bold: selected
-                    color: colors.theme["text_color"]
-                }
+            Layout.minimumWidth: 20
+            height: 20
+            anchors.verticalCenter: parent.verticalCenter
+            property Component fileIcon: DiceFontAwesomeIcon {
+                size: 12
+                anchors.centerIn: parent
+                name: "Folder"
             }
+            Loader {
+                anchors.centerIn: parent
+                sourceComponent: parent.fileIcon
+            }
+        }
+
+        BasicText {
+            id: buttonLabel
+            Layout.fillWidth: true
+            anchors.margins: 5
+            anchors.verticalCenter: parent.verticalCenter
+            text: name
         }
     }
 }
