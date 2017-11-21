@@ -145,16 +145,16 @@ class FunctionObjectsApp(DICEObject):
     def w_function_object_created(self, item):
         if item.type == "forces":
             self.__forces_node.elements.append(item)
-            self.app.plots.add_plot(item.name)
         elif item.type == "forceCoeffs":
             self.__force_coeffs_node.elements.append(item)
-            self.app.plots.add_plot(item.name)
+        self.app.plots.add_function_objects_plot(item)
 
     def w_function_object_removed(self, item, type):
         if type == "forces":
             self.__forces_node.elements.remove(item)
         elif type == "forceCoeffs":
             self.__force_coeffs_node.elements.remove(item)
+        self.app.plots.remove_function_objects_plot(item)
 
     @diceSlot('QString', name='addFunctionObject')
     def add_function_object(self, node_type, obj_name=None):

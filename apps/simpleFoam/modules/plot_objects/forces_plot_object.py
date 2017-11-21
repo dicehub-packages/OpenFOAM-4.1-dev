@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from dice_plot.plot import Plot
 
 
-class ResidualsPlotObject(PlotObject):
+class ForcesPlotObject(PlotObject):
 
     def __init__(self, name, **kwargs):
         super().__init__(name=name, **kwargs)
@@ -59,7 +59,7 @@ class ResidualsPlotObject(PlotObject):
         self.__init_residual = {}
         self.__time_value = None
 
-    def __draw_plot(self, force=False):
+    def draw_plot(self, force=False):
         now = time.time()
         if force or (now - self.__plot_time) > 1.0:
             self.__plot_ax.cla()
@@ -99,10 +99,10 @@ class ResidualsPlotObject(PlotObject):
                     self.__plot_data[field_name] = [[], []]
                 self.__plot_data[field_name][0].append(self.__time_value)
                 self.__plot_data[field_name][1].append(field_value)
-                self.__draw_plot()
+                self.draw_plot()
 
     def __set_plot_style(self):
-        self.__plot_ax.set_facecolor('None')
+        self.__plot_ax.set_facecolor('white')
         self.__plot_ax.set_yscale('log')
         self.__plot_ax.set_ylim(ymax=1)
         self.__plot_ax.set_ylabel("Residuals (Log Scale)")
@@ -116,7 +116,7 @@ class ResidualsPlotObject(PlotObject):
         and save data.
         """
         print("--->>Finalizing", self)
-        self.__draw_plot(force=True)
+        self.draw_plot(force=True)
         if not os.path.exists(self.__plot_data_directory_path):
             os.makedirs(self.__plot_data_directory_path)
         with open(self.__plot_data_path, 'w') as file:
