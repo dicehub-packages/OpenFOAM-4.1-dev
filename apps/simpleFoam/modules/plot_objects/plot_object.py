@@ -11,14 +11,7 @@ class PlotObject:
         super().__init__(**kwargs)
         self.__name = name
         self.__app = app
-
-        self.__plot = Plot(plt.figure())
-        self.__plot_ax = self.__plot.figure.add_subplot(111)
-        self.__plot.figure.patch.set_alpha(0)
-        # # self.__set_plot_style()
-        self.__plot_data = {}
-        self.__plot_time = 0
-        self.__lines = {}
+        self.__visible = False
 
     @property
     def app(self):
@@ -28,14 +21,12 @@ class PlotObject:
     def name(self):
         return self.__name
 
-    @modelRole('plot')
-    def plot(self):
-        return self.__plot
+    @modelRole('visible')
+    def visible(self):
+        return self.__visible
 
-    @property
-    def plot_ax(self):
-        return self.__plot_ax
-
-    @property
-    def plot_data(self):
-        return self.__plot_data
+    @modelMethod('setVisible')
+    def set_visible(self, value):
+        print("value ..", value)
+        self.__visible = value
+        wizard.w_visible_changed()

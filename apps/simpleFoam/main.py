@@ -13,6 +13,7 @@ All rights reserved.
 # ================
 import os
 import sys
+from concurrent.futures import ThreadPoolExecutor
 
 # External modules
 # ================
@@ -39,6 +40,10 @@ from modules.function_objects_model import FunctionObjectsApp
 from modules.plots_model import PlotsApp
 
 
+def logs_worker(line):
+    wizard.w_log(line)
+
+
 class simpleFoamApp(
     Application,
     VisApp,
@@ -60,7 +65,10 @@ class simpleFoamApp(
 
         wizard.subscribe(self.w_foam)
         self.update_result()
- 
+
+        wizard.subscribe("w_log", self.__w_log)
+        # wizard.subscribe("log_line", self.__w_log)
+
     def w_foam(self, path):
         """
         Catch if controlDict and fvSolution are being changed during the run
@@ -442,8 +450,13 @@ class simpleFoamApp(
             self['foam:constant/transportProperties nu 2'] = material['kinematicViscosity']
 
     def plot_log(self, line):
-        self.log(line, callback = None)
-        self.__plots.log_line(line)
+        self.log(line)
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            executor.submit(logs_worker, line)
+
+    def __w_log(self, line):
+        # self.log(line, callback=None)
+        pass
 
     @diceSlot(name="runCheckMesh")
     def run_check_mesh(self):

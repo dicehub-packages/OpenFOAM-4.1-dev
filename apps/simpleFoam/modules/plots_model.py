@@ -7,9 +7,13 @@ from dice_tools import *
 from dice_tools.helpers.xmodel import *
 from .plot_objects import *
 
-# import concurrent.futures
+import concurrent.futures
 
-# executor = concurrent.futures.ThreadPoolExecutor(max_workers=4)
+executor = concurrent.futures.ThreadPoolExecutor(max_workers=3)
+
+
+def plot(line):
+    wizard.plot_log(line)
 
 
 class PlotsApp(DICEObject):
@@ -26,16 +30,9 @@ class PlotsApp(DICEObject):
 
         self.__model.root_elements.append(
             ResidualsPlotObject('Residuals', app=self.app))
-        self.__model.root_elements.append(
-            ResidualsPlotObject('Residuals 1', app=self.app))
-        self.__model.root_elements.append(
-            ResidualsPlotObject('Residuals 2', app=self.app))
-        self.__model.root_elements.append(
-            ResidualsPlotObject('Residuals 3', app=self.app))
-        self.__model.root_elements.append(
-            ResidualsPlotObject('Residuals 4', app=self.app))
 
-        wizard.subscribe("finalize_plot", self.__w_finalize_plot)
+        # wizard.subscribe("w_log", self.__w_log)
+        # wizard.subscribe("finalize_plot", self.__finalize_plots)
 
     @property
     def app(self):
@@ -59,19 +56,16 @@ class PlotsApp(DICEObject):
             if plot.name == item.name:
                 self.__model.root_elements.remove(plot)
 
-    def log_line(self, line):
-        for p in self.__model:
-            # print("plotting ..", p)
-            if isinstance(p, ResidualsPlotObject):
-                # executor.submit(p.plot_log, line)
-                p.plot_log(line)
-            elif isinstance(p, ForcesPlotObject):
-                p.plot_log(line)
-                # executor.submit(p.plot_log, line)
-
-    def __w_finalize_plot(self):
-        for p in self.__model:
-            if isinstance(p, ResidualsPlotObject):
-                p.finalize_plot()
-            elif isinstance(p, ForcesPlotObject):
-                p.finalize_plot()
+    # def __w_log(self, line):
+    #     for p in self.__model:
+    #         if isinstance(p, ResidualsPlotObject):
+    #             p.plot_log(line)
+    #         elif isinstance(p, ForcesPlotObject):
+    #             p.plot_log(line)
+    #
+    # def __finalize_plots(self):
+    #     for p in self.__model:
+    #         if isinstance(p, ResidualsPlotObject):
+    #             p.finalize_plot()
+    #         elif isinstance(p, ForcesPlotObject):
+    #             p.finalize_plot()
