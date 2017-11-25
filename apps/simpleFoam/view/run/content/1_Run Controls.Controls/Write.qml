@@ -28,6 +28,7 @@ Column {
         DiceValueField {
             label: "Purge Write"
             path: "foam:system/controlDict purgeWrite"
+            dataType: 'int'
         }
         DiceInlineComboBox {
             label: "Write Control"

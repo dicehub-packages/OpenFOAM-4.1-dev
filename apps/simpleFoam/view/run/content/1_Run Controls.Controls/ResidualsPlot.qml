@@ -34,7 +34,6 @@ Item {
                 model: app.plots.model
                 delegate: Item {
                     onVisibleChanged: {
-                        print(visible)
                         setVisible(visible)
                     }
                     Layout.fillHeight: true
@@ -42,76 +41,11 @@ Item {
                     Component.onCompleted: {
                         plot.parent = this;
                         plot.anchors.fill = this;
-                        plot.width = 200
-                        plot.height = 200
+                        plot.width = root.width
+                        plot.height = root.height
                     }
                 }
             }
         }
-
-//            GridView {
-//                id: grid
-//                Layout.fillWidth: true
-//                Layout.fillHeight: true
-////                currentIndex: bar.currentIndex
-
-//                cellWidth: parent.width/4
-//                cellHeight: parent.height/2
-
-////                Repeater {
-//                    model: app.plots.model
-//                    delegate: Item {
-//                        id: root
-
-////                        Layout.fillHeight: true
-////                        Layout.fillWidth: true
-
-//                        width: grid.cellWidth*0.8
-//                        height: grid.cellHeight*0.8
-
-//                        Rectangle {
-//                            id: fig
-//                            color: "#eee"
-//                            gradient: Gradient {
-//                                GradientStop { position: 0.0; color: "#EEE"; }
-//                                GradientStop { position: 0.8; color: "#E9E9E9"; }
-//                                GradientStop { position: 1.0; color: "#C0C0C0"; }
-//                            }
-
-//                            anchors.fill: parent
-//                            Component.onCompleted: {
-//                                plot.parent = this;
-//                                plot.anchors.fill = this;
-////                                plot.width = 200
-////                                plot.height = 200
-//                            }
-////                            implicitWidth: 200
-////                            implicitHeight: 200
-//                        }
-
-//////                        Component {
-//////                            id: plotComponent
-////                            Item {
-////                                id: plotItem
-////                                property var plot: undefined
-////                                anchors.fill: parent
-////                            }
-//////                        }
-
-
-////                        Loader {
-////                            anchors.fill: parent
-////                            sourceComponent: plotComponent
-////                            onLoaded: {
-////                                if (Loader.Ready) {
-////                                    item.plot = plot
-////                                    plot.parent = item
-////                                    plot.anchors.fill = item
-////                                }
-////                            }
-////                        }
-////                    }
-//                }
-//            }
     }
 }

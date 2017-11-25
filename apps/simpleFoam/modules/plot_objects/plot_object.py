@@ -1,9 +1,6 @@
 from dice_tools import *
 from dice_tools.helpers.xmodel import *
 
-import matplotlib.pyplot as plt
-from dice_plot.plot import Plot
-
 
 class PlotObject:
 
@@ -27,6 +24,5 @@ class PlotObject:
 
     @modelMethod('setVisible')
     def set_visible(self, value):
-        print("value ..", value)
         self.__visible = value
         wizard.w_visible_changed()

@@ -55,10 +55,6 @@ Column {
         path: "functionObjects:ForceCoeffsMonitor.l_ref"
     }
     DiceValueField {
-        label: "Reference area [m²]"
-        path: "functionObjects:ForceCoeffsMonitor.a_ref"
-    }
-    DiceValueField {
         label: "Freestream velocity magnitude [m/s]"
         path: "functionObjects:ForceCoeffsMonitor.mag_u_inf"
     }
