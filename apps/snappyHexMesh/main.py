@@ -148,8 +148,19 @@ class snappyHexMesh(
     def api(self):
         return self.__api
 
+    @diceProperty('QVariant', name='auto_load_result')
+    def auto_load_result(self):
+        return self.config['autoLoadResult']
+
+    @auto_load_result.setter
+    def auto_load_result(self, value):
+        self.config['autoLoadResult'] = value
+        self.update_result()
+
+    @diceSlot(name='updateResult')
     def update_result(self):
-        self.__result.update()
+        if self.auto_load_result:
+            self.__result.update()
 
     def progress_changed(self, progress):
         super().progress_changed(progress)

@@ -67,7 +67,6 @@ class simpleFoamApp(
         self.update_result()
 
         wizard.subscribe("w_log", self.__w_log)
-        # wizard.subscribe("log_line", self.__w_log)
 
     def w_foam(self, path):
         """
@@ -87,8 +86,19 @@ class simpleFoamApp(
                 dst = self.run_path(file_path)
                 self.copy(src, dst)
 
+    @diceProperty('QVariant', name='auto_load_result')
+    def auto_load_result(self):
+        return self.config['autoLoadResult']
+
+    @auto_load_result.setter
+    def auto_load_result(self, value):
+        self.config['autoLoadResult'] = value
+        self.update_result()
+
+    @diceSlot(name='updateResult')
     def update_result(self):
-        self.__result.update()
+        if self.auto_load_result:
+            self.__result.update()
 
     @diceProperty('QVariant', name='result')
     def result(self):
@@ -105,16 +115,6 @@ class simpleFoamApp(
         super().progress_changed(progress)
         wizard.progress_changed(progress)
         self.update_result()
-
-        # simple_foam_index = self.__dice_tasks__.index(simpleFoamApp.run_simpleFoam)
-        # if ((progress < 0 or progress > simple_foam_index)
-        #     and (not self.__plot_data and os.path.exists(self.run_path('plot_data')))):
-        #         with open(self.run_path('plot_data')) as f:
-        #             self.__plot_data = json.load(f)
-        #             self.__plot_ax.cla()
-        #             for k, v in self.__plot_data.items():
-        #                 self.__plot_ax.plot(*v, label=k)
-        #             self.__set_plot_style()
 
     @diceProperty('QVariant')
     def plots(self):

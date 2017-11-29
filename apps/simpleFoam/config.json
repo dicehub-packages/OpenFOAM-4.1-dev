@@ -1,4 +1,5 @@
 {
   "parallelRun": false,
-  "potentialFoam": false
+  "potentialFoam": false,
+  "autoLoadResult": true
 }
