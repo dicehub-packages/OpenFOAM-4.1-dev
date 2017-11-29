@@ -77,6 +77,7 @@ class Result(DICEObject):
         wizard.subscribe(self, self.__scene)
         self.__result_loaded = False
         self.__result_is_loading = False
+        self.__current_selected_obj = None
 
     def w_scene_object_added(self, scene, obj):
         if isinstance(obj, GeometryBase):
@@ -333,12 +334,10 @@ class Result(DICEObject):
                                 # print(cells)
                                 # print("object type: ", source.GetDataObjectType())
 
-                                # print("bounds: ", source.GetBounds())
-                                # print("center: ", source.GetCenter())
+                                print("bounds: ", source.GetBounds())
+                                print("center: ", source.GetCenter())
                                 # print("scalar range: ", source.GetScalarRange())
                                 # print("cell max size: ", source.GetMaxCellSize())
-                                # print("number of cells]: ", source.GetNumberOfCells())
-                                # print("number of points: ", source.GetNumberOfPoints())
                                 # print("memory size [MB]: ", source.GetActualMemorySize()*0.001024)
 
                                 comp_names = self.current_field_component_names
@@ -415,6 +414,17 @@ class Result(DICEObject):
     def w_geometry_object_clicked(self, obj, *args, **kwargs):
         if obj == None:
             self.__boundary_model.current_item = None
+        self.current_selected_obj = obj
+        self.bounds_changed()
+
+    @property
+    def current_selected_obj(self):
+        return self.__current_selected_obj
+
+    @current_selected_obj.setter
+    def current_selected_obj(self, obj):
+        if self.__current_selected_obj != obj:
+            self.__current_selected_obj = obj
 
     # @diceSlot(name='testFunction')
     # def test_function(self):
@@ -469,3 +479,32 @@ class Result(DICEObject):
     def result_loaded(self, value):
         self.__result_loaded = value
         self.result_loaded_changed()
+
+    bounds_changed = diceSignal(name='boundsChanged')
+
+    @diceProperty('QVariant', name='bounds', notify=bounds_changed)
+    def bounds(self):
+        obj = self.current_selected_obj
+        if isinstance(obj, GeometryBase):
+            for source in obj.get_sources():
+                if source.IsA('vtkAlgorithm'):
+                    source.Update()
+                    source = source.GetOutputDataObject(0)
+                if source.IsA('vtkDataSet'):
+                    return source.GetBounds()
+
+    @diceProperty('QVariant', name='statistics', notify=bounds_changed)
+    def statistics(self):
+        obj = self.current_selected_obj
+        if isinstance(obj, GeometryBase):
+            for source in obj.get_sources():
+                if source.IsA('vtkAlgorithm'):
+                    source.Update()
+                    source = source.GetOutputDataObject(0)
+                if source.IsA('vtkDataSet'):
+                    stats = {}
+                    # stats['Type'] = source.GetDataObjectType()
+                    stats['Number of Cells'] = source.GetNumberOfCells()
+                    stats['Number of Points'] = source.GetNumberOfPoints()
+                    stats['Memory [MB]'] = source.GetActualMemorySize()*0.001024
+                    return stats

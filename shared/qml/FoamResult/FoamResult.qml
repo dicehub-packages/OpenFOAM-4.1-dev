@@ -1,11 +1,12 @@
 import QtQuick 2.7
 import QtQuick.Layouts 1.3
-import QtQuick.Controls 1.4
+import QtQuick.Controls 1.4 as QC1
+import QtQuick.Controls 2.1
 
 import DICE.App 1.0
 import DICE.Components 1.0 as DC
 
-SplitView {
+QC1.SplitView {
     anchors.fill: parent
 
     AppLayoutCard {
@@ -20,6 +21,85 @@ SplitView {
             model: app.result.model
             delegate: SimpleTreeViewDelegate {
                 contentSource: 'ResultDelegate.qml'
+            }
+        }
+
+        GroupBox {
+            title: "Statistics"
+            Layout.fillWidth: true
+
+            ColumnLayout {
+                anchors.fill: parent
+
+                Label {
+                    text: {
+                        var t = ""
+                        var keys = []
+                        var stats = app.result.statistics
+                        for (var key in stats) {
+                          t += key + ":   " + stats[key] + " <br>"
+                        }
+                        return t
+                    }
+                }
+            }
+        }
+
+        GroupBox {
+            title: "Bounds"
+            Layout.fillWidth: true
+
+            ColumnLayout {
+                anchors.fill: parent
+                clip: true
+
+                TextInput {
+                    Layout.fillWidth: true
+                    readOnly: true
+                    selectByMouse: true
+                    text: {
+                        var t = ""
+                        if (app.result.bounds !== undefined) {
+                            var min_x = app.result.bounds[0]
+                            var max_x = app.result.bounds[1]
+                            var delta = max_x - min_x
+                            t += "X range:   " + min_x + " to " + max_x + " (delta:   " + delta + ")"
+                        }
+                        return t
+                    }
+                }
+                TextInput {
+                    width: parent.width
+                    Layout.fillWidth: true
+                    readOnly: true
+                    selectByMouse: true
+                    text: {
+                        var t = ""
+                        if (app.result.bounds !== undefined) {
+                            var min_y = app.result.bounds[2]
+                            var max_y = app.result.bounds[3]
+                            var delta = max_y - min_y
+                            t += "Y range: " + min_y + " to " + max_y + " (delta: " + delta + ")"
+                        }
+                        return t
+                    }
+                }
+                TextInput {
+                    width: parent.width
+                    Layout.fillWidth: true
+                    readOnly: true
+                    selectByMouse: true
+                    text: {
+                        var t = ""
+                        if (app.result.bounds !== undefined) {
+                            var min_z = app.result.bounds[4]
+                            var max_z = app.result.bounds[5]
+                            var delta = max_z - min_z
+                            t += "Z range: " + min_z + " to " + max_z + " (delta: " + delta + ")"
+                        }
+                        return t
+                    }
+                }
             }
         }
 
@@ -131,32 +211,6 @@ SplitView {
             VisControlPanel {
                 id: visControl
                 scene: app.result.scene
-            }
-
-            Column {
-
-                anchors.margins: 20
-
-    //            Subheader {
-    //                text: "Field"
-    //            }
-
-
-//                ToggleButton {
-//                    id: toggleSizeOrNumber
-//                    uncheckedText: "Manual range"
-//                    checkedText: qsTr("Auto range")
-//                    target: app.result
-//                    property: "fieldRangeAuto"
-//                }
-
-//                DiceVectorField2D2 {
-//                    height: 30
-//                    xLabel: "Min"
-//                    yLabel: "Max"
-//                    target: app.result
-//                    property: "fieldRange"
-//                }
             }
         }
     }
