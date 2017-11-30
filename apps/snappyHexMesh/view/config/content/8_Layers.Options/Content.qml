@@ -8,7 +8,6 @@ Body {
             text: "Add Layers"
             path: "foam:system/snappyHexMeshDict addLayers"
         }
-        Subheader { text: "Settings for Layer Addition" }
         ToggleButton {
             id: toggleButtonRelativeSize
             uncheckedText:  "Absolute Sizes [m]"

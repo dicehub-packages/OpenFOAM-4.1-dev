@@ -58,6 +58,7 @@ class Surface(RegionRefinement):
         self.setup_region(["inside", "outside", "distance"], "inside")
 
         for m in Mesh.from_multi_file(self.__path):
+
             # Add regions as children to this element
             # =======================================
             self.elements.append(SurfaceRegion(self, m, app=self.app))

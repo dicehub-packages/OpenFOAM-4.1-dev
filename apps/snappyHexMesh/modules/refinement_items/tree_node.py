@@ -8,6 +8,7 @@ class TreeNode(ModelItem):
     def __init__(self, name, **kwargs):
         super().__init__(**kwargs)
         self.__name = name
+        self.__is_expanded = True
         wizard.subscribe(self, self)
 
     def w_model_remove_items(self, *args, **kwargs):

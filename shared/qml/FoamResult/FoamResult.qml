@@ -27,11 +27,13 @@ QC1.SplitView {
         GroupBox {
             title: "Statistics"
             Layout.fillWidth: true
+            clip: true
 
             ColumnLayout {
                 anchors.fill: parent
 
                 Label {
+                    Layout.fillWidth: true
                     text: {
                         var t = ""
                         var keys = []

@@ -26,6 +26,10 @@ DC.DiceDialog {
             yLabel: "Max"
             target: app.result
             property: "fieldRange"
+
+            Keys.onReturnPressed: {
+                confirmButton.clicked()
+            }
         }
         
         Row {
@@ -46,11 +50,5 @@ DC.DiceDialog {
                 }
             }
         }
-    }
-    Keys.onReturnPressed: {
-        confirmButton.clicked()
-    }
-    Keys.onEscapePressed: {
-        cancelButton.clicked()
     }
 }

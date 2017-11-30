@@ -12,7 +12,6 @@ Body {
             text: "Enable CastellatedMesh"
             path: "foam:system/snappyHexMeshDict castellatedMesh"
         }
-        Subheader { text: qsTr("Settings for the castellatedMesh generation") }
         DiceValueField {
             label: qsTr("Resolve Feature Angle [°]")
             path: "foam:system/snappyHexMeshDict castellatedMeshControls resolveFeatureAngle"

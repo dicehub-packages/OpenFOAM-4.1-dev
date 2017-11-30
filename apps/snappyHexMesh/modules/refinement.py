@@ -135,13 +135,18 @@ class Refinement(DICEObject):
         self.load_model()
 
     def load_model(self):
+        """
+        Refinement objects are loaded here.
+        STL files are imported on_input_changed.
+        :return:
+        """
         for k, v in self.app[self.geometry_path].items():
             if v['type'] == "searchablePlane" \
-                and v['planeType'] == "embeddedPoints":
+                    and v['planeType'] == "embeddedPoints":
                 refinement_type = "searchablePlane3P"
                 self.ref_obj_types[refinement_type](k, app=self.__app)
             elif v['type'] == "searchablePlane" \
-                and v['planeType'] == "pointAndNormal":
+                    and v['planeType'] == "pointAndNormal":
                 refinement_type = "searchablePlanePaN"
                 self.ref_obj_types[refinement_type](k, app=self.__app)
             elif v['type'] in self.ref_obj_types:
@@ -224,17 +229,18 @@ class Refinement(DICEObject):
             ('Surface', Surface, 'Surface.qml'),
             ('Region', SurfaceRegion, 'SurfaceRegion.qml'),
             ('Layers', SurfaceRegion, 'Layers.qml'),
-            ('Levels', RegionRefinement, 'RegionRefinement.qml'),
+            ('Regions', RegionRefinement, 'RegionRefinement.qml'),
             ('Feature', Surface, 'Feature.qml'),
             ('Region Level', RegionLevel, 'RegionLevel.qml'),
             ('Boundary', Boundary, 'Boundary.qml'),
-            ('SearchableBox', SearchableBox, 'SearchableBox.qml'),
-            ('SearchableSphere', SearchableSphere, 'SearchableSphere.qml'),
-            ('SearchableCylinder', SearchableCylinder, 'SearchableCylinder.qml'),
-            ('SearchablePlate', SearchablePlate, 'SearchablePlate.qml'),
-            ('SearchableDisk', SearchableDisk, 'SearchableDisk.qml'),
-            ('SearchablePlane3P', SearchablePlane3P, 'SearchablePlane3P.qml'),
-            ('SearchablePlanePaN', SearchablePlanePaN, 'SearchablePlanePaN.qml')
+            ('Box', SearchableBox, 'SearchableBox.qml'),
+            ('Sphere', SearchableSphere, 'SearchableSphere.qml'),
+            ('Cylinder', SearchableCylinder, 'SearchableCylinder.qml'),
+            ('Plate', SearchablePlate, 'SearchablePlate.qml'),
+            ('Disk', SearchableDisk, 'SearchableDisk.qml'),
+            ('Plane (3P)', SearchablePlane3P, 'SearchablePlane3P.qml'),
+            ('Plane (PaN)', SearchablePlanePaN, 'SearchablePlanePaN.qml'),
+            ('Surface', RefinementObject, 'RefinementObjectSurface.qml')
         ]
 
         result_props = []
@@ -362,16 +368,17 @@ class Refinement(DICEObject):
         p = path.split('.')
         prop_class, prop = globals()[p[0]], p[1]
         for s in self.__model.selection:
-            print (s, path, prop_class, prop)
             if isinstance(s, prop_class):
                 try:
                     v = getattr(s, prop)
-                    for i, x in enumerate(value):
-                        if value[i] is not None:
-                            v[i] = value[i]
+                    if isinstance(value, bool):
+                        v = value
+                    else:
+                        for i, x in enumerate(value):
+                            if value[i] is not None:
+                                v[i] = value[i]
                     setattr(s, prop, v)
                 except TypeError:
-                    print('invoke set',getattr(s, prop))
                     setattr(s, prop, value)
         signal('refinement*')
         return False

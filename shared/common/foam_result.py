@@ -331,29 +331,15 @@ class Result(DICEObject):
                         if source.IsA('vtkDataSet'):
                             cells = source.GetPointData().GetAbstractArray(self.__current_field)
                             if cells is not None:
-                                # print(cells)
-                                # print("object type: ", source.GetDataObjectType())
-
-                                print("bounds: ", source.GetBounds())
-                                print("center: ", source.GetCenter())
-                                # print("scalar range: ", source.GetScalarRange())
-                                # print("cell max size: ", source.GetMaxCellSize())
-                                # print("memory size [MB]: ", source.GetActualMemorySize()*0.001024)
-
                                 comp_names = self.current_field_component_names
-                                # print(comp_names)
                                 if isinstance(comp_names, list) and \
                                                 self.current_field_component in self.current_field_component_names:
                                     i = comp_names.index(self.current_field_component)
                                 else:
                                     i = 0
-                                # print("--->>>", i)
                                 rr = cells.GetRange(i)
                                 # print('-->> rr: ', rr)
                                 # print('-->> vectors: ', source.GetCellData().GetVectors())
-                                # print('-->> range 0: ', cells.GetRange(0))
-                                # print('-->> range 1: ', cells.GetRange(1))
-                                # print('-->> range 2: ', cells.GetRange(2))
                                 # print('-->> component name: ', cells.GetComponentName(0))
                                 # print('-->> number of components: ', cells.GetNumberOfComponents())
                                 # print("-->> field names: ", self.field_names)
@@ -507,4 +493,5 @@ class Result(DICEObject):
                     stats['Number of Cells'] = source.GetNumberOfCells()
                     stats['Number of Points'] = source.GetNumberOfPoints()
                     stats['Memory [MB]'] = source.GetActualMemorySize()*0.001024
+                    stats['Center'] = source.GetCenter()
                     return stats

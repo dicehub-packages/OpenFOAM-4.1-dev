@@ -14,6 +14,7 @@ import sys
 import shutil
 import sys
 import traceback
+from concurrent.futures import ThreadPoolExecutor
 
 # External modules
 # ================
@@ -44,6 +45,10 @@ from time import time
 from collections.abc import Sequence
 from modules.api.app_api import AppApi
 from common.basic_app import BasicApp
+
+
+def logs_worker(line):
+    wizard.w_log(line)
 
 
 class snappyHexMesh(
@@ -93,6 +98,7 @@ class snappyHexMesh(
 
         wizard.subscribe(self.w_idle)
         wizard.subscribe(self.w_modified)
+        wizard.subscribe("w_log", self.__w_log)
 
         # Load input (STL)
         # ================
@@ -206,7 +212,7 @@ class snappyHexMesh(
         items = [
             'foam:system/snappyHexMeshDict castellatedMeshControls refinementRegions ',
             'foam:system/snappyHexMeshDict geometry ',
-            'foam:system/snappyHexMeshDict castellatedMeshControls refinementSurfaces',
+            'foam:system/snappyHexMeshDict castellatedMeshControls refinementSurfaces ',
             'foam:system/surfaceFeatureExtractDict '
         ]
 
@@ -256,7 +262,26 @@ class snappyHexMesh(
                 # ====================================
                 Surface(app=self, path=self.workflow_path(file))
 
-        # delete files which no longer exist
+        self.__clean_up()
+
+
+        # Get parameters from input
+        # =========================
+        for parameters in self.__input_data.get('parameters', {}).values():
+            self.__parameters = parameters
+            break
+        else:
+            self.__parameters = []
+
+        # Run custom initialization script
+        self.run_script(self.config_path('initialization.py'))
+
+    def __clean_up(self):
+        """
+        Clean up old stl files, refinement surfaces, features and layers.
+        :return:
+        """
+        # Delete files which no longer exist in geometry
         for k, v in list(self['foam:system/snappyHexMeshDict geometry'].items()):
             if v.get('type') == 'triSurfaceMesh':
                 for i in self.refinement.model.elements_of(Surface):
@@ -265,6 +290,25 @@ class snappyHexMesh(
                 else:
                     self.remove_stl(k)
 
+        # Delete refinementSurfaces which have no corresponding geometry
+        for k, v in list(self['foam:system/snappyHexMeshDict castellatedMeshControls refinementSurfaces'].items()):
+            if k not in self['foam:system/snappyHexMeshDict geometry']:
+                self['foam:system/snappyHexMeshDict castellatedMeshControls refinementSurfaces ' + k] = None
+
+        # Delete features with no corresponding geometry
+        geometry_names = [os.path.splitext(name)[0] for name in self['foam:system/snappyHexMeshDict geometry']]
+        for i, v in enumerate(self['foam:system/snappyHexMeshDict castellatedMeshControls features']):
+            if os.path.splitext(v["file"])[0] not in geometry_names:
+                self['foam:system/snappyHexMeshDict castellatedMeshControls features %i'%i] = None
+        feature_extract_dict_names = [name for name in self['foam:system/surfaceFeatureExtractDict']]
+        for i, name in enumerate(self['foam:system/surfaceFeatureExtractDict']):
+            print(i, name, name not in geometry_names)
+            print(self['foam:system/surfaceFeatureExtractDict ' + name])
+            if v not in geometry_names:
+                self['foam:system/surfaceFeatureExtractDict ' + name] = None
+
+
+        # Delete regions which no longer exist in stl files
         for k, v in list(self['foam:system/snappyHexMeshDict geometry'].items()):
             if v.get('type') == 'triSurfaceMesh':
                 for kk, vv in list(v['regions'].items()):
@@ -274,21 +318,14 @@ class snappyHexMesh(
                     else:
                         del v['regions'][kk]
 
+        # Delete layers for regions which no longer exist in stl files
         for k, v in list(self[
-                'foam:system/snappyHexMeshDict addLayersControls layers'].items()):
+                             'foam:system/snappyHexMeshDict addLayersControls layers'].items()):
             for i in self.refinement.model.elements_of(SurfaceRegion):
                 if i.name == k:
                     break
             else:
                 self['foam:system/snappyHexMeshDict addLayersControls layers '+k] = None
-
-        for parameters in self.__input_data.get('parameters', {}).values():
-            self.__parameters = parameters
-            break
-        else:
-            self.__parameters = []
-
-        self.run_script(self.config_path('initialization.py'))
 
     @property
     def parameters(self):
@@ -447,8 +484,8 @@ class snappyHexMesh(
 
         result = run_process(command=cmd_pattern,
             cwd=self.workflow_path(),
-            stdout=self.log,
-            stderr=self.log,
+            stdout=self.print_log,
+            stderr=self.print_log,
             format_kwargs=params,
             stop=self.stopped)
 
@@ -549,3 +586,11 @@ class snappyHexMesh(
     @diceTask('post run script', run_cleanup, enabled=post_run_script_enabled)
     def post_run_script(self):
         return self.run_script(self.config_path('post_run.py'))
+
+    def print_log(self, line):
+        # self.log(line)
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            executor.submit(logs_worker, line)
+
+    def __w_log(self, line):
+        self.log(line, callback=None)

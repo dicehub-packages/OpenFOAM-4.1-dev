@@ -80,8 +80,8 @@ Column {
             path: "refinement:Surface.non_manifold_edges"
         }
 
-        ToggleButton {
-            label: qsTr("openEdges")
+        DiceSwitch {
+            text: qsTr("openEdges")
             path: "refinement:Surface.open_edges"
         }
     }

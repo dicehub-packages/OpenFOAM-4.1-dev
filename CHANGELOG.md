@@ -1,3 +1,4 @@
+- [snappyHexMesh] Multiple fixes for refinement objects and additional functions for surface refinement for refinement object.
 - [simpleFoam] Added working MRFZone selection.
 - [solvers] Better convection scheme selection.
 - [simpleFoam] Added automatic update of controlDict during run time.

@@ -8,8 +8,6 @@ Body {
 
         spacing: 30
 
-        Item {width:1; height:1}
-
         DiceValueField {
             label: "Maximum non-orthogonality allowed [°]"
             path: "foam:system/meshQualityDict maxNonOrtho"

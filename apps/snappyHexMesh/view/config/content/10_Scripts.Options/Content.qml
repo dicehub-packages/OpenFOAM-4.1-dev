@@ -5,12 +5,12 @@ import QtQuick.Layouts 1.3
 Body {
     id: root
 
-    property var codeEditorDrawer
+    property var codeEditorPopup
 
     Component.onCompleted: {
-        var newComponent = Qt.createComponent("CodeEditorDrawer.qml");
+        var newComponent = Qt.createComponent("CodeEditorPopup.qml");
         if (newComponent.status === Component.Ready) {
-            root.codeEditorDrawer = newComponent.createObject(appWindow, {});
+            root.codeEditorPopup = newComponent.createObject(appWindow, {});
         } else if (newComponent.status === Component.Error) {
             console.error("Error creating Connector component:",
                           newComponent.errorString());
@@ -24,7 +24,7 @@ Body {
             width: parent.width
             text: qsTr("Initialization")
             onClicked: {
-                root.codeEditorDrawer.openScript('initialization.py')
+                root.codeEditorPopup.openScript('initialization.py')
             }
         }
 
@@ -32,7 +32,7 @@ Body {
             width: parent.width
             text: qsTr("Pre-run")
             onClicked: {
-                root.codeEditorDrawer.openScript('pre_run.py')
+                root.codeEditorPopup.openScript('pre_run.py')
             }
         }
 
@@ -40,7 +40,7 @@ Body {
             width: parent.width
             text: qsTr("Post-run")
             onClicked: {
-                root.codeEditorDrawer.openScript('post_run.py')
+                root.codeEditorPopup.openScript('post_run.py')
             }
         }
     }

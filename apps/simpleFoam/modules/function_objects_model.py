@@ -205,7 +205,7 @@ class FunctionObjectsApp(DICEObject):
                             v[i] = value[i]
                     setattr(s, prop, v)
                 except TypeError:
-                    print('invoke set', getattr(s, prop))
+                    # print('invoke set', getattr(s, prop))
                     setattr(s, prop, value)
         signal('functionObjects:*')
         return False

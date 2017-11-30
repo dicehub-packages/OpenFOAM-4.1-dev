@@ -53,7 +53,6 @@ class RegionRefinement(ModelItem):
     def add_region_level(self):
         if not self.can_add_level:
             return False
-        # print('--->', self.app[self.region_path])
         if self.app[self.region_path] is None:
             level_data = [0, 0]
             self.app[self.region_path] = {
@@ -80,7 +79,6 @@ class RegionRefinement(ModelItem):
 
     def remove_region_level(self, index):
         self.app[self.levels_path + ' %i'%index] = None
-        # print(self.app[self.levels_path])
         if not self.app[self.levels_path]:
             self.app[self.region_path] = None
 

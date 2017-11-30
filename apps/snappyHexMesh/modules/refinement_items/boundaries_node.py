@@ -6,7 +6,7 @@ from dice_tools import wizard
 class BoundariesNode(TreeNode):
 
     def __init__(self, name, app, **kwargs):
-        super().__init__(name = name, **kwargs)
+        super().__init__(name=name, **kwargs)
         self.app = app
 
     @modelMethod('showInScene')

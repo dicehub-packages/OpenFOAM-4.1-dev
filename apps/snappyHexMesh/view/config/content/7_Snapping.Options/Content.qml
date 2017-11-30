@@ -11,12 +11,6 @@ Body {
             text: "Activate Snapping"
             path: "foam:system/snappyHexMeshDict snap"
         }
-
-        Subheader {
-            text: "Settings for the Snapping"
-            horizontalAlignment: "AlignHCenter"
-        }
-
         DiceSwitch {
             text: "Implicit Feature Snap"
             path: "foam:system/snappyHexMeshDict snapControls implicitFeatureSnap"
