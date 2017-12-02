@@ -200,7 +200,6 @@ class ForcesPlotObject(PlotObject):
         Execute plot at the end because of the plot interval in draw_plot
         and save data.
         """
-        print("--->>Finalizing", self)
         self.__draw_plot(force=True)
         self.__save_data()
         self.__save_figure()

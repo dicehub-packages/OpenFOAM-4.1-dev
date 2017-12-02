@@ -64,7 +64,7 @@ class simpleFoamApp(
         self.__result = Result(self)
 
         wizard.subscribe(self.w_foam)
-        self.update_result()
+        # self.update_result()
 
         wizard.subscribe("w_log", self.__w_log)
 
@@ -92,8 +92,8 @@ class simpleFoamApp(
 
     @auto_load_result.setter
     def auto_load_result(self, value):
-        self.config['autoLoadResult'] = value
-        self.update_result()
+        if self.auto_load_result != value:
+            self.config['autoLoadResult'] = value
 
     @diceSlot(name='updateResult')
     def update_result(self):
@@ -299,6 +299,7 @@ class simpleFoamApp(
         self.copy_folder_content(self.config_path('system'), self.run_path('system'), overwrite=True)
         self.copy_folder_content(self.config_path('constant'), self.run_path('constant'), overwrite=True)
         self.copy_folder_content(self.config_path('0'), self.run_path('0'), overwrite=True)
+        self.copy(self.config_path('p.foam'), self.run_path())
         wizard.prepare()
         return True
 
@@ -386,7 +387,7 @@ class simpleFoamApp(
                 "potentialFoam",
                 "-case",
                 path,
-                allow_mpi = True
+                allow_mpi=True
             )
         return result == 0
 
@@ -408,11 +409,26 @@ class simpleFoamApp(
 
         return result == 0
 
+    @diceTask('postProcess', run_simpleFoam)
+    def run_process(self):
+        self.read_settings()
+        path = self.run_path(relative=True)
+        if "win" in sys.platform and self.__use_docker:
+            path = path.replace('\\', '/')
+        return 0 == self.execute_command(
+                "postProcess",
+                "-func",
+                "\"mag(U)\"",
+                "-case",
+                path,
+                allow_mpi=True
+            )
+
     def reconstruct_par_enabled(self):
         self.read_settings()
         return self.__use_mpi
 
-    @diceTask('reconstructPar', run_simpleFoam,
+    @diceTask('reconstructPar', run_process,
         enabled=reconstruct_par_enabled)
     def run_reconstruct_par(self):
         """ Execute mesher command. """
@@ -422,9 +438,10 @@ class simpleFoamApp(
             path = path.replace('\\', '/')
         return 0 == self.execute_command(
                 "reconstructPar",
-                "-latestTime",
+                # "-latestTime",
                 "-case",
-                path
+                path,
+                "-withZero"
             )
 
     @diceTask('cleanup', run_reconstruct_par)

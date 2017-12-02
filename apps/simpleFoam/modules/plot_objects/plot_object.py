@@ -18,6 +18,11 @@ class PlotObject:
     def name(self):
         return self.__name
 
+    @name.setter
+    def name(self, value):
+        if self.__name != value:
+            self.__name = value
+
     @modelRole('visible')
     def visible(self):
         return self.__visible

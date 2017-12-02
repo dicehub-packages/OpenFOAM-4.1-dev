@@ -85,6 +85,7 @@ class FunctionObjectsApp(DICEObject):
         wizard.subscribe(self, self.__model)
         wizard.subscribe(self.w_function_object_created)
         wizard.subscribe(self.w_function_object_removed)
+        wizard.subscribe(self.w_function_object_changed)
 
         self.load_model()
 
@@ -155,6 +156,13 @@ class FunctionObjectsApp(DICEObject):
         elif type == "forceCoeffs":
             self.__force_coeffs_node.elements.remove(item)
         self.app.plots.remove_function_objects_plot(item)
+
+    def w_function_object_changed(self, item, **kwargs):
+        if "new_name" and "old_name" in kwargs:
+            for it in self.app.plots.model.root_elements:
+                if it.name == kwargs["old_name"]:
+                    it.name = kwargs["new_name"]
+                    break
 
     @diceSlot('QString', name='addFunctionObject')
     def add_function_object(self, node_type, obj_name=None):

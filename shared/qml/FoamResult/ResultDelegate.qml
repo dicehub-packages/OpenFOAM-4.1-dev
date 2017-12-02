@@ -7,7 +7,13 @@ import DICE.Components 1.0
 
 Item {
     width: parent.width
-    height: 20
+    height: {
+        if (boundaryName.visible)
+            return boundaryName.height
+        else
+            return 30
+    }
+
     RowLayout {
 
         Connections {
@@ -19,7 +25,7 @@ Item {
         height: 20
         anchors.verticalCenter: parent.verticalCenter
 
-        TextInput {
+        DiceTextField {
             id: boundaryName
 
             Layout.fillWidth: true
@@ -52,7 +58,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             enabled: isVisible !== undefined
             visible: enabled
-            FontAwesomeIcon {
+            DiceFontAwesomeIcon {
                 size: 12
                 anchors.centerIn: parent
                 name: isVisible ? "EyeOpen" : "EyeClose"

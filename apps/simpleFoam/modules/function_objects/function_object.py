@@ -22,6 +22,16 @@ class FunctionObject:
     def name(self):
         return self.__name
 
+    @name.setter
+    def name(self, value):
+        if self.name != value:
+            v = self.app[self.path]
+            self.app[self.path] = None
+            wizard.w_function_object_changed(self, old_name=self.__name,
+                                             new_name=value)
+            self.__name = value
+            self.app[self.path] = v
+
     @modelRole('label')
     def label(self):
         return self.name

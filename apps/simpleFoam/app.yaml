@@ -15,3 +15,4 @@ settings:
   "docker_cmd_mpi": "docker run --name {docker_name} --rm -v {dice_workflow}:/usr/share/openfoam/data:Z dicehub/openfoam:4.1 \"mpirun -np $NP {command} -parallel\""
   "foam_cmd_mpi": "/usr/bin/foamExec"
   "mpi_cpu_count": 1
+  "paraview_cmd": "paraview"

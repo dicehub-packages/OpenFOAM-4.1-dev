@@ -1,8 +1,11 @@
 import math
 import random
+import subprocess
 
-from dice_tools import DICEObject, diceProperty, diceSlot, wizard, diceSignal
+from dice_tools import DICEObject, diceProperty, diceSlot, wizard, diceSignal, \
+    app_settings
 from dice_vtk.utils.foam_reader import FoamReader
+from dice_tools.helpers import run_process
 from dice_tools.helpers.xmodel import modelRole, modelMethod, ModelItem
 from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile, ParsedBoundaryDict
 from dice_tools.helpers.xmodel import standard_model
@@ -33,10 +36,15 @@ class BoundaryItem:
 
     @name.setter
     def name(self, value):
-        self.parent.boundary[value] = self.parent.boundary[self.name]
-        del self.parent.boundary[self.name]
-        self.vis_obj.name = value
-        self.parent.boundary.writeFile()
+        for v in self.parent.model.elements_of(BoundaryItem):
+            if v.name == value:
+                return
+        if self.name != value:
+            v = self.parent.boundary[self.name]
+            del self.parent.boundary[self.name]
+            self.parent.boundary[value] = v
+            self.vis_obj.name = value
+            self.parent.boundary.writeFile()
 
     @modelRole('type')
     def type(self):
@@ -60,9 +68,9 @@ class Result(DICEObject):
 
     def __init__(self, app, **kwargs):
         super().__init__(base_type='QObject', **kwargs)
+        self.__app = app
         self.__reader = None
         self.__scene = VtkScene()
-        self.__app = app
         self.__boundary = None
         self.__boundary_model = standard_model(BoundaryItem)
         self.__bar = ScalarBarWidget()
@@ -72,17 +80,25 @@ class Result(DICEObject):
         self.__field_names = []
         self.__field_range_auto = True
         self.__field_range = [0, 0]
-        wizard.subscribe(self, self.__boundary_model)
-        wizard.subscribe(self.w_geometry_object_clicked)
-        wizard.subscribe(self, self.__scene)
         self.__result_loaded = False
         self.__result_is_loading = False
         self.__current_selected_obj = None
+        self.__point_data_mode = True
+        wizard.subscribe(self, self.__boundary_model)
+        wizard.subscribe(self.w_geometry_object_clicked)
+        wizard.subscribe(self, self.__scene)
+        wizard.subscribe("prepare", self.__w_prepare)
+
+        # self.update()
+
+    def __w_prepare(self):
+        self.result_loaded = False
 
     def w_scene_object_added(self, scene, obj):
         if isinstance(obj, GeometryBase):
             self.update_field_range()
             for m in obj.get_mappers():
+                m.InterpolateScalarsBeforeMappingOn()
                 m.SetScalarModeToUsePointFieldData()
                 m.SelectColorArray(self.__current_field)
                 m.UseLookupTableScalarRangeOn()
@@ -132,45 +148,47 @@ class Result(DICEObject):
                                     cells_array.SetComponentName(c_index, str(c_index))
                                     points_array.SetComponentName(c_index, str(c_index))
 
-                            if component_count == 3:
-
-                                # Magnitude (Cells)
-                                # =================
-                                num_tuples = cells_array.GetNumberOfTuples()
-                                num_comps = cells_array.GetNumberOfComponents()
-
-                                new_array = vtkFloatArray()
-                                new_array.SetNumberOfComponents(1)
-                                new_array.SetNumberOfTuples(num_tuples)
-                                new_array.SetName("{} Magnitude".format(arr_name))
-
-                                for cc in range(num_tuples):
-                                    mag = 0.0
-                                    tuple = cells_array.GetTuple(cc)
-                                    for comp in range(num_comps):
-                                        mag += tuple[comp] * tuple[comp]
-                                    new_array.SetTuple1(cc, math.sqrt(mag))
-                                dataCellSet.AddArray(new_array)
-
-                                # Magnitude (Points)
-                                # ==================
-                                num_tuples = points_array.GetNumberOfTuples()
-                                num_comps = points_array.GetNumberOfComponents()
-
-                                new_array = vtkFloatArray()
-                                new_array.SetNumberOfComponents(1)
-                                new_array.SetNumberOfTuples(num_tuples)
-                                new_array.SetName("{} Magnitude".format(arr_name))
-
-                                for cc in range(num_tuples):
-                                    mag = 0.0
-                                    tuple = points_array.GetTuple(cc)
-                                    for comp in range(num_comps):
-                                        mag += tuple[comp] * tuple[comp]
-                                    new_array.SetTuple1(cc, math.sqrt(mag))
-                                dataPointSet.AddArray(new_array)
-
-                                self.update_field_names()
+                            # if component_count == 3:
+                            #
+                            #     print("----calculating ...", obj.name, arr_name)
+                            #
+                            #     # Magnitude (Cells)
+                            #     # =================
+                            #     num_tuples = cells_array.GetNumberOfTuples()
+                            #     num_comps = cells_array.GetNumberOfComponents()
+                            #
+                            #     new_array = vtkFloatArray()
+                            #     new_array.SetNumberOfComponents(1)
+                            #     new_array.SetNumberOfTuples(num_tuples)
+                            #     new_array.SetName("{} Magnitude".format(arr_name))
+                            #
+                            #     for cc in range(num_tuples):
+                            #         mag = 0.0
+                            #         tuple = cells_array.GetTuple(cc)
+                            #         for comp in range(num_comps):
+                            #             mag += tuple[comp] * tuple[comp]
+                            #         new_array.SetTuple1(cc, math.sqrt(mag))
+                            #     dataCellSet.AddArray(new_array)
+                            #     dataCellSet.Update()
+                            #
+                            #     # Magnitude (Points)
+                            #     # ==================
+                            #     num_tuples = points_array.GetNumberOfTuples()
+                            #     num_comps = points_array.GetNumberOfComponents()
+                            #
+                            #     new_array = vtkFloatArray()
+                            #     new_array.SetNumberOfComponents(1)
+                            #     new_array.SetNumberOfTuples(num_tuples)
+                            #     new_array.SetName("{} Magnitude".format(arr_name))
+                            #
+                            #     for cc in range(num_tuples):
+                            #         mag = 0.0
+                            #         tuple = points_array.GetTuple(cc)
+                            #         for comp in range(num_comps):
+                            #             mag += tuple[comp] * tuple[comp]
+                            #         new_array.SetTuple1(cc, math.sqrt(mag))
+                            #     dataPointSet.AddArray(new_array)
+                            self.update_field()
                             self.update_field_names()
 
     current_field_changed = diceSignal(name='currentFieldChanged')
@@ -184,10 +202,10 @@ class Result(DICEObject):
     def current_field(self, value):
         if self.__current_field != value:
             self.__current_field = value
+            self.set_default_component_name()
             self.update_field()
             self.update_field_range()
             self.__scene.render()
-            self.set_default_component_name()
             self.current_field_changed()
 
     @diceProperty("QVariantList", name="fieldNames")
@@ -338,11 +356,6 @@ class Result(DICEObject):
                                 else:
                                     i = 0
                                 rr = cells.GetRange(i)
-                                # print('-->> rr: ', rr)
-                                # print('-->> vectors: ', source.GetCellData().GetVectors())
-                                # print('-->> component name: ', cells.GetComponentName(0))
-                                # print('-->> number of components: ', cells.GetNumberOfComponents())
-                                # print("-->> field names: ", self.field_names)
                                 r = [min(rr[0], r[0]), max(rr[1], r[1])]
             if r != [float('+inf'), float('-inf')]:
                 self.field_range = r
@@ -371,10 +384,10 @@ class Result(DICEObject):
                         item = BoundaryItem(self, v)
                         self.__boundary_model.root_elements.append(item)
                         color = [random.uniform(0.3, 0.7),
-                                 random.uniform(0.6, 1.0), random.uniform(0.6, 1.0)]
+                                 random.uniform(0.6, 1.0),
+                                 random.uniform(0.6, 1.0)]
                         v.color = color
                         v.visible = False
-
                 self.update_field_names()
                 self.result_loaded = True
         else:
@@ -382,7 +395,6 @@ class Result(DICEObject):
                 for v in self.__reader.patches:
                     self.__scene.remove_object(v)
                 self.__reader = None
-            # self.fields = []
             self.__scene.animation = None
             self.__boundary = None
             self.__boundary_model.root_elements.clear()
@@ -412,38 +424,6 @@ class Result(DICEObject):
         if self.__current_selected_obj != obj:
             self.__current_selected_obj = obj
 
-    # @diceSlot(name='testFunction')
-    # def test_function(self):
-    #     print("--->>>")
-    #     print("obj: ", self.__boundary_model.current_item)
-    #     print("")
-    #     for obj in self.__scene.objects:
-    #         self.set_component_names(obj)
-    #         print("---->>>>")
-    #         self.print_fields()
-    #
-    # def print_fields(self):
-    #     for obj in self.__scene.objects:
-    #         if isinstance(obj, GeometryBase):
-    #             for source in obj.get_sources():
-    #                 if source.IsA('vtkAlgorithm'):
-    #                     source = source.GetOutputDataObject(0)
-    #                 if source.IsA('vtkDataSet'):
-    #                     dataSet = source.GetCellData()
-    #                     n_arrays = dataSet.GetNumberOfArrays()
-    #                     for i in range(n_arrays):
-    #                         print(">> arr_name: >>", dataSet.GetArrayName(i))
-    #                         arr_name = dataSet.GetArrayName(i)
-    #                         if arr_name is not None:
-    #                             array = dataSet.GetAbstractArray(i)
-    #                             component_count = array.GetNumberOfComponents()
-    #                             for c_index in range(-1, component_count):
-    #                                 component_name = array.GetComponentName(
-    #                                     c_index)
-    #                                 if component_name is not None:
-    #                                     print(">> component_name: >>",
-    #                                           component_name)
-
     result_is_loading_changed = diceSignal(name="resultIsLoadingChanged")
 
     @diceProperty('QVariant', name='resultIsLoading', notify=result_is_loading_changed)
@@ -453,6 +433,10 @@ class Result(DICEObject):
     @result_is_loading.setter
     def result_is_loading(self, value):
         self.__result_is_loading = value
+        print("-->>", value)
+        # if not value:
+        #     for obj in self.scene.objects:
+        #         self.set_component_names(obj)
         self.result_is_loading_changed()
 
     result_loaded_changed = diceSignal(name="resultLoadedChanged")
@@ -495,3 +479,27 @@ class Result(DICEObject):
                     stats['Memory [MB]'] = source.GetActualMemorySize()*0.001024
                     stats['Center'] = source.GetCenter()
                     return stats
+
+    @diceSlot(name='openParaview')
+    def open_paraview(self):
+        settings = app_settings()
+        paraview_cmd = settings['paraview_cmd']
+
+        subprocess.Popen([paraview_cmd, 'p.foam'], cwd=self.__app.run_path())
+
+    @diceProperty('QVariant', name='pointDataMode')
+    def point_data_mode(self):
+        return self.__point_data_mode
+
+    @point_data_mode.setter
+    def point_data_mode(self, value):
+        if self.point_data_mode != value:
+            for obj in self.__scene.objects:
+                if isinstance(obj, GeometryBase):
+                    for m in obj.get_mappers():
+                        if value:
+                            m.SetScalarModeToUsePointFieldData()
+                        else:
+                            m.SetScalarModeToUseCellFieldData()
+            self.__scene.render()
+            self.__point_data_mode = value

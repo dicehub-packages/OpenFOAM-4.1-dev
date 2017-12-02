@@ -61,10 +61,14 @@ class Boundary:
 
     @name.setter
     def name(self, value):
-        v = self.app[self.path]
-        self.app[self.path] = None
-        self.vis.name = value
-        self.app[self.path] = v
+        for v in self.app.boundaries_model.elements_of(Boundary):
+            if v.name == value:
+                return
+        if self.name != value:
+            v = self.app[self.path]
+            self.app[self.path] = None
+            self.vis.name = value
+            self.app[self.path] = v
 
     @modelRole('boundaryType')
     def boundary_type(self):

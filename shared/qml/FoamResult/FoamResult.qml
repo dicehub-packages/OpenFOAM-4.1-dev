@@ -7,6 +7,7 @@ import DICE.App 1.0
 import DICE.Components 1.0 as DC
 
 QC1.SplitView {
+    id: root
     anchors.fill: parent
 
     AppLayoutCard {
@@ -21,6 +22,14 @@ QC1.SplitView {
             model: app.result.model
             delegate: SimpleTreeViewDelegate {
                 contentSource: 'ResultDelegate.qml'
+            }
+        }
+
+        DiceIconButton {
+            text: "Open in paraview"
+            Layout.fillWidth: true
+            onClicked: {
+                app.result.openParaview()
             }
         }
 
@@ -130,59 +139,8 @@ QC1.SplitView {
         Layout.fillHeight: true
         Layout.fillWidth: true
 
-        Rectangle {
+        FoamResultHeader {
             id: header
-            width: parent.width
-            height: 50
-            color: colors.theme["base_background_color"]
-
-            Row {
-                width: parent.width
-                height: parent.height
-                spacing: 5
-
-                ToggleButton {
-                    uncheckedText: "Manual range"
-                    checkedText: qsTr("Auto range")
-                    target: app.result
-                    property: "fieldRangeAuto"
-                    width: 200
-                }
-
-                DiceButton {
-                    width: 100
-                    text: "Custom Data Range"
-                    flat: true
-                    onClicked: {
-                        customDataRangeDialog.open()
-                    }
-                    CustomDataRangeDialog {
-                        id: customDataRangeDialog
-                    }
-                }
-
-                DiceComboBox {
-                    width: 200
-                    target: app.result
-                    property: "currentField"
-                    model: app.result.fieldNames
-                }
-
-                DiceComboBox {
-                    width: 70
-                    target: app.result
-                    property: "currentFieldComponent"
-                    model: app.result.currentFieldComponentNames
-                    enabled: model.length !== 0
-                }
-
-//                DiceButton {
-//                    width: 100
-//                    text: "test"
-//                    onClicked: app.result.testFunction()
-//                }
-            }
-            DC.BottomBorder {}
         }
 
         Item {

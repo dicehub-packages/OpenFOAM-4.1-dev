@@ -5,18 +5,47 @@ import DICE.Components 1.0
 
 Item {
     width: parent.width
-    height: Math.max(25, buttonLabel.height + 20)
+    height: {
+        if (functionObjectName.visible)
+            return functionObjectName.height
+        else
+            return Math.max(25, buttonLabel.height + 20)
+    }
 
     RowLayout {
         width: parent.width
         height: 20
         anchors.verticalCenter: parent.verticalCenter
 
+        Connections {
+            target: delegateRoot
+            onDoubleClicked: functionObjectName.forceActiveFocus()
+        }
+
         RowLayout {
             id: col
 
             spacing: 2
             anchors.verticalCenter: parent.verticalCenter
+
+            DiceTextField {
+                id: functionObjectName
+
+                Layout.fillWidth: true
+                anchors.margins: 5
+                visible: focus
+                text: name
+                anchors.verticalCenter: parent.verticalCenter
+                activeFocusOnPress: false
+                onFocusChanged: {
+                    if (!focus) {
+                        name=text
+                    }
+                }
+                onEditingFinished: {
+                    focus = false
+                }
+            }
 
             BasicText {
                 id: buttonLabel
@@ -30,6 +59,7 @@ Item {
                 text: label
                 font.bold: selected
                 color: colors.theme["text_color"]
+                visible: !functionObjectName.focus
             }
 
             MouseArea {

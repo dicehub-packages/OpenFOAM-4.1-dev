@@ -443,6 +443,10 @@ class snappyHexMesh(
         for v in self.refinement.model.elements_of(Surface):
             shutil.copy(v.path, self.run_path('constant', 'triSurface'))
 
+        # For paraview post-processing
+        self.copy(self.config_path('p.foam'),
+                  self.run_path())
+
         return True
 
     def read_settings(self):
@@ -457,6 +461,7 @@ class snappyHexMesh(
             self.__cmd_pattern = settings['foam_cmd']
         self.__cpu_count = self._decompose_par_dict['numberOfSubdomains']
         self.__use_mpi = self.config['parallelRun']
+        self.paraview_cmd = settings['paraview_cmd']
         return True
 
     def stop(self):

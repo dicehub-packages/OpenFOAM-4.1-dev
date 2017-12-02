@@ -1,3 +1,8 @@
+- [FoamResults] Addition of paraview option for results visualization in a seperate thread.
+- [snappyHexMesh, simpleFoam] Fixes for renaming boundary names.
+- [simpleFoam] Option to rename functionObjects.
+- [simpleFoam] Addition of the postProcess utitlity after simpleFoam task to calculate mag(U) instead of calculation in vtk.
+- [FoamResults] Addition of statistics, bounds information and loading button for results.
 - [snappyHexMesh] Multiple fixes for refinement objects and additional functions for surface refinement for refinement object.
 - [simpleFoam] Added working MRFZone selection.
 - [solvers] Better convection scheme selection.
