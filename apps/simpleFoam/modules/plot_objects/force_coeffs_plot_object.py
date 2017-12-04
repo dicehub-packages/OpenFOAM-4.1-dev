@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from dice_plot.plot import Plot
 
 
-class ResidualsPlotObject(PlotObject):
+class ForceCoeffsPlotObject(PlotObject):
 
     def __init__(self, name, **kwargs):
         super().__init__(name=name, **kwargs)
@@ -23,6 +23,8 @@ class ResidualsPlotObject(PlotObject):
         self.__plot_data_path = os.path.join(
             self.__plot_data_directory_path, self.name + '_plot_data'
         )
+        self.__data_file_path = self.app.run_path('postProcessing', self.name,
+                                                  '0', 'forceCoeffs.dat')
 
         self.__w_prepare()
         self.__load_reg_expr()
@@ -34,17 +36,20 @@ class ResidualsPlotObject(PlotObject):
         wizard.subscribe("w_visible_changed", self.__w_visible_changed)
 
     def __load_reg_expr(self):
-        # reg-expression:
-        # ===============
-        # ^  : assert position at start of the string
-        # () : capturing group
-        # .+ : mathes any character (except newline), + : between one and unlimited times
-
-        reg_expression = "^(.+):  Solving for (.+), Initial residual = (.+), Final residual = (.+), No Iterations (.+)$"
-        self.__expression = re.compile(reg_expression)
-
         time_reg_expression = "^Time = (.+)$"
         self.__res_time_expression = re.compile(time_reg_expression)
+
+        force_coeffs_name_reg_expression = "^forceCoeffs (.+) write:$"
+        self.__force_coeffs_name_expression = re.compile(force_coeffs_name_reg_expression)
+
+        c_m_reg_expression = "\s*Cm\s*=\s*(.+)$"
+        self.__c_m_expression = re.compile(c_m_reg_expression)
+
+        c_d_reg_expression = "\s*Cd\s*=\s*(.+)$"
+        self.__c_d_expression = re.compile(c_d_reg_expression)
+
+        c_l_reg_expression = "\s*Cl\s*=\s*(.+)$"
+        self.__c_l_expression = re.compile(c_l_reg_expression)
 
     @modelRole('plot')
     def plot(self):
@@ -59,17 +64,19 @@ class ResidualsPlotObject(PlotObject):
         """
         simple_foam_index = self.app.__dice_tasks__.index(self.app.__class__.run_simpleFoam)
         if ((progress < 0 or progress > simple_foam_index)
-            and (not self.__plot_data and os.path.exists(self.__plot_data_path))):
+                and (not self.__plot_data and os.path.exists(self.__plot_data_path))):
 
                 with open(self.__plot_data_path) as f:
                     self.__plot_data = json.load(f)
-                    self.__draw_plot()
+                    if not self.__plot_data:
+                        self.__draw_plot()
 
     def __w_prepare(self):
-        self.__plot_data = {}
+        self.__f_name = None
+        self.__current_block = None
+        self.__plot_data = dict()
         self.__init_residual = {}
         self.__time_value = None
-        self.__plot_time_value = None
         self.__lines = {}
         self.__plot_time = 0
 
@@ -78,10 +85,10 @@ class ResidualsPlotObject(PlotObject):
         self.__update_plot_scale()
 
     def __draw_plot(self, force=False):
-        if not self.visible and not force:
+        if not self.visible:
             return
         now = time.time()
-        if force or (now - self.__plot_time) > 0.5:
+        if force or (now - self.__plot_time) > 1.0:
             for field_name, xy_values in self.__plot_data.items():
                 if field_name not in [line_name for line_name in self.__lines]:
                     self.__lines[field_name], = self.__plot_ax.plot(*xy_values, label=field_name)
@@ -93,41 +100,68 @@ class ResidualsPlotObject(PlotObject):
 
     def __w_log(self, line):
         """
-        Parse logs to plot the initial residuals and iteration/time step.
+        Parse logs for plot.
         """
-        res = self.__expression.match(line)
-        if res is not None:
-            linear_solver_name = res.groups()[0]
-            field_var_name = res.groups()[1]
-            init_residual = res.groups()[2]
-            final_residual = res.groups()[3]
-            iterations = res.groups()[4]
-            self.__init_residual[field_var_name] = float(init_residual)
+        # TODO: Monitor post processing files instead of logs
 
+        # Time step
+        # =========
         res_time = self.__res_time_expression.match(line)
         if res_time is not None:
             self.__time_value = float(res_time.groups()[0])
-            for field_name, field_value in self.__init_residual.items():
-                if field_name not in self.__plot_data:
-                    self.__plot_data[field_name] = [[], []]
-                self.__plot_data[field_name][0].append(self.__time_value)
-                self.__plot_data[field_name][1].append(field_value)
-            self.__draw_plot()
+
+        # Forces name
+        # ===========
+        res_f_name = self.__force_coeffs_name_expression.match(line)
+        if res_f_name is not None:
+            self.__f_name = res_f_name.groups()[0]
+
+            # get only the correct block
+            if self.__f_name != self.name:
+                return
+
+        # Actual data
+        # ===========
+        res_c_m = self.__c_m_expression.match(line)
+        if res_c_m is not None and self.__f_name == self.name:
+            c_m = res_c_m.groups()[0]
+            self.__add_field_data('Cm', c_m)
+
+        res_c_d = self.__c_d_expression.match(line)
+        if res_c_d is not None and self.__f_name == self.name:
+            c_d = res_c_d.groups()[0]
+            self.__add_field_data('Cd', c_d)
+
+        res_c_l = self.__c_l_expression.match(line)
+        if res_c_l is not None and self.__f_name == self.name:
+            c_l = res_c_l.groups()[0]
+            self.__add_field_data('Cl', c_l)
+
+        self.__draw_plot()
+
+    def __add_field_data(self, field_name='', value=None):
+        if field_name not in self.__plot_data:
+            self.__plot_data[field_name] = [[], []]
+        self.__plot_data[field_name][0].append(self.__time_value)
+        self.__plot_data[field_name][1].append(value)
 
     def __set_init_plot_style(self):
         self.__plot.figure.patch.set_alpha(0)
+        box = self.__plot_ax.get_position()
+        self.__plot_ax.set_position([box.x0, box.y0 + box.height * 0.10,
+                                     box.width, box.height * 0.90])
         self.__plot_ax.set_facecolor('None')
-        self.__plot_ax.set_yscale('log')
-        self.__plot_ax.grid(True)
         self.__plot_ax.set_ylim(ymax=1)
-        self.__plot_ax.set_ylabel("Residuals (Log Scale)")
-        self.__plot_ax.set_xlabel("Time (s) / Iterations")
+        self.__plot_ax.set_title("Force/moment coefficients")
+        self.__plot_ax.set_ylabel("Coefficients [-]")
+        self.__plot_ax.set_xlabel("Time(s)/Iterations")
+        self.__plot_ax.grid(True)
         self.__plot_ax.set_autoscale_on(True)
-        # self.__plot.figure.tight_layout()
 
     def __update_plot_scale(self):
-        self.__plot_ax.legend(loc='upper right')
-        self.__plot_ax.relim()
+        self.__plot_ax.legend(loc='upper center',
+                              bbox_to_anchor=(0.5, -0.10), ncol=2)
+        self.__plot_ax.relim(visible_only=True)
         self.__plot_ax.autoscale_view(True, True, True)
 
     def finalize_plot(self):

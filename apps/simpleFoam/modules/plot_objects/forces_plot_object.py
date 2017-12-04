@@ -17,9 +17,8 @@ class ForcesPlotObject(PlotObject):
         super().__init__(name=name, **kwargs)
 
         self.__plot = Plot(plt.figure())
-        self.__plot_ax = self.__plot.figure.add_subplot(111)
-        # self.__plot_ax_2 = self.__plot.figure.add_subplot(122)
-        self.__set_plot_style()
+        self.__plot_ax = self.__plot.figure.add_subplot(121)
+        self.__plot_ax_2 = self.__plot.figure.add_subplot(122)
 
         self.__plot_data_directory_path = self.app.run_path('data', 'plots')
         self.__plot_data_path = os.path.join(
@@ -69,34 +68,48 @@ class ForcesPlotObject(PlotObject):
         """
         simple_foam_index = self.app.__dice_tasks__.index(self.app.__class__.run_simpleFoam)
         if ((progress < 0 or progress > simple_foam_index)
-            and (not self.__plot_data and os.path.exists(self.__plot_data_path))):
+            and (not self.__plot_data['forces'] and not self.__plot_data['moments']
+                 and os.path.exists(self.__plot_data_path))):
+
                 with open(self.__plot_data_path) as f:
                     self.__plot_data = json.load(f)
-                    self.__draw_plot(force=True)
+                    if not self.__plot_data['forces'] or not self.__plot_data['moments']:
+                        self.__draw_plot()
 
     def __w_prepare(self):
         self.__f_name = None
         self.__current_block = None
-        self.__plot.figure.patch.set_alpha(0)
-        self.__plot_data = {}
+        self.__plot_data = dict()
+        self.__plot_data['forces'] = {}
+        self.__plot_data['moments'] = {}
         self.__init_residual = {}
         self.__time_value = None
         self.__lines = {}
+        self.__lines_2 = {}
         self.__plot_time = 0
 
         self.__plot_ax.cla()
-        self.__set_plot_style()
+        self.__plot_ax_2.cla()
+        self.__set_init_plot_style()
+        self.__update_plot_scale()
 
     def __draw_plot(self, force=False):
+        if not self.visible:
+            return
         now = time.time()
-        if (force or (now - self.__plot_time) > 1.0) and self.visible:
-            for field_name, xy_values in self.__plot_data.items():
+        if force or (now - self.__plot_time) > 1.0:
+            for field_name, xy_values in self.__plot_data['forces'].items():
                 if field_name not in [line_name for line_name in self.__lines]:
                     self.__lines[field_name], = self.__plot_ax.plot(*xy_values, label=field_name)
                 else:
                     self.__lines[field_name].set_data(*xy_values)
+            for field_name, xy_values in self.__plot_data['moments'].items():
+                if field_name not in [line_name for line_name in self.__lines_2]:
+                    self.__lines_2[field_name], = self.__plot_ax_2.plot(*xy_values, label=field_name)
+                else:
+                    self.__lines_2[field_name].set_data(*xy_values)
+            self.__update_plot_scale()
             self.__plot.draw()
-            self.__set_plot_style()
             self.__plot_time = now
 
     def __w_log(self, line):
@@ -110,7 +123,6 @@ class ForcesPlotObject(PlotObject):
         res_time = self.__res_time_expression.match(line)
         if res_time is not None:
             self.__time_value = float(res_time.groups()[0])
-            # print(">> time ", self.__time_value)
 
         # Forces name
         # ===========
@@ -136,7 +148,6 @@ class ForcesPlotObject(PlotObject):
         if res_sum_of_moments_start is not None and self.__f_name == self.name:
             sum_of_moments_start = res_sum_of_moments_start.group()
             self.__current_block = 'moments'
-            # print(">> sum of moments ", sum_of_moments_start)
 
         # Actual data
         # ===========
@@ -148,12 +159,11 @@ class ForcesPlotObject(PlotObject):
             if self.__current_block == 'forces':
                 # print(">> forces pressure ", pressure)
                 field_names = ('Pressure force [X]', 'Pressure force [Y]', 'Pressure force [Z]')
-                self.__add_field_data(field_names, pressure)
+                self.__add_field_data(field_names, pressure, 'forces')
             else:
                 # print(">> moments pressure ", pressure)
-                # field_names = ('Moment (Pressure) [X]', 'Moment (Pressure)  [Y]', 'Moment (Pressure) [Z]')
-                # self.__add_field_data(field_names, pressure)
-                pass
+                field_names = ('Pressure moment [X]', 'Pressure moment [Y]', 'Pressure moment [Z]')
+                self.__add_field_data(field_names, pressure, 'moments')
 
         res_viscous = self.__forces_viscous_expression.match(line)
         if res_viscous is not None and self.__f_name == self.name:
@@ -162,44 +172,73 @@ class ForcesPlotObject(PlotObject):
 
             if self.__current_block == 'forces':
                 # print(">> forces viscous ", viscous)
-
                 field_names = ('Viscous force [X]', 'Viscous force [Y]', 'Viscous force [Z]')
-                self.__add_field_data(field_names, viscous)
+                self.__add_field_data(field_names, viscous, 'forces')
             else:
                 # print(">> moments viscous ", viscous)
-                pass
+                field_names = ('Viscous moment [X]', 'Viscous moment [Y]', 'Viscous moment [Z]')
+                self.__add_field_data(field_names, viscous, 'moments')
 
         self.__draw_plot()
 
-    def __add_field_data(self, field_names=(), value=None):
-        # field_names = ('Pressure [X]', 'Pressure [Y]', 'Pressure [Z]')
+    def __add_field_data(self, field_names=(), value=None, block_type='forces'):
         for field_name in field_names:
-            if field_name not in self.__plot_data:
-                self.__plot_data[field_name] = [[], []]
-            self.__plot_data[field_name][0].append(self.__time_value)
-            self.__plot_data[field_name][1].append(
-                value[field_names.index(field_name)])
+            if field_name not in self.__plot_data[block_type]:
+                self.__plot_data[block_type][field_name] = [[], []]
+            self.__plot_data[block_type][field_name][0].append(self.__time_value)
+            self.__plot_data[block_type][field_name][1].append(value[field_names.index(field_name)])
 
-    def __set_plot_style(self):
+    def __set_init_plot_style(self):
+        self.__plot.figure.patch.set_alpha(0)
+
+        # Plot 1 (Forces)
+        # ===============
+        box = self.__plot_ax.get_position()
+        self.__plot_ax.set_position([box.x0, box.y0 + box.height * 0.10,
+                                     box.width, box.height * 0.90])
         self.__plot_ax.set_facecolor('None')
-        # self.__plot_ax.set_yscale('log')
         self.__plot_ax.set_ylim(ymax=1)
+        self.__plot_ax.set_title("Pressure/viscous forces")
         self.__plot_ax.set_ylabel("Forces [N]")
         self.__plot_ax.set_xlabel("Time(s)/Iterations")
-        # self.__plot_ax.legend(bbox_to_anchor=(1.04, 1), borderaxespad=0)
-        # self.__plot_ax.legend(bbox_to_anchor=(0, 1), loc='upper left', ncol=1)
-        # self.__plot.figure.tight_layout(rect=[0, 0, 0.75, 1])
-        self.__plot_ax.legend(loc='best')
         self.__plot_ax.grid(True)
-        self.__plot_ax.relim(visible_only=True)
         self.__plot_ax.set_autoscale_on(True)
+
+        # Plot 2 (Moments)
+        # ================
+        box_2 = self.__plot_ax_2.get_position()
+        self.__plot_ax_2.set_position([box_2.x0, box_2.y0 + box_2.height * 0.10,
+                                       box_2.width, box_2.height * 0.90])
+        self.__plot_ax_2.set_facecolor('None')
+        self.__plot_ax_2.set_ylim(ymax=1)
+        self.__plot_ax_2.set_title("Moments")
+        self.__plot_ax_2.set_ylabel("Moments [Nm]")
+        self.__plot_ax_2.set_xlabel("Time(s)/Iterations")
+        self.__plot_ax_2.yaxis.set_label_position("right")
+        self.__plot_ax_2.grid(True)
+        self.__plot_ax_2.set_autoscale_on(True)
+
+    def __update_plot_scale(self):
+        # Plot 1 (Forces)
+        # ===============
+        self.__plot_ax.legend(loc='upper center',
+                              bbox_to_anchor=(0.5, -0.10), ncol=2)
+        self.__plot_ax.relim(visible_only=True)
         self.__plot_ax.autoscale_view(True, True, True)
+
+        # Plot 2 (Moments)
+        # ================
+        self.__plot_ax_2.legend(loc='upper center',
+                                bbox_to_anchor=(0.5, -0.10), ncol=2)
+        self.__plot_ax_2.relim(visible_only=True)
+        self.__plot_ax_2.autoscale_view(True, True, True)
 
     def finalize_plot(self):
         """
         Execute plot at the end because of the plot interval in draw_plot
         and save data.
         """
+        # print("--->>Finalizing", self)
         self.__draw_plot(force=True)
         self.__save_data()
         self.__save_figure()

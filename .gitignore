@@ -12,3 +12,5 @@ Makefile
 .venv
 install/dist/
 *.zip
+.cache
+dist/

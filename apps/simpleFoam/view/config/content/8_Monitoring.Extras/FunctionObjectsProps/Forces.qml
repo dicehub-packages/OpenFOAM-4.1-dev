@@ -26,6 +26,7 @@ Column {
         }
         MonitoredPatchesDialog {
             id: monitoredPatchesDialog
+            objectPath: "functionObjects:ForcesMonitor"
         }
     }
 

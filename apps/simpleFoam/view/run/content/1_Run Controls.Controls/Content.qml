@@ -8,6 +8,8 @@ import DICE.App 1.0
 QC1.SplitView {
     anchors.fill: parent
     Rectangle {
+        id: controls
+
         Layout.fillHeight: true
         Layout.minimumWidth: 350
         width: parent.width/4
@@ -21,5 +23,8 @@ QC1.SplitView {
             }
         }
     }
-    ResidualsPlot {}
+    RunTimePlots {
+        width: parent.width - controls.width
+        height: parent.height
+    }
 }

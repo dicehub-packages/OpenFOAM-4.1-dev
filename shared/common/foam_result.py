@@ -89,7 +89,7 @@ class Result(DICEObject):
         wizard.subscribe(self, self.__scene)
         wizard.subscribe("prepare", self.__w_prepare)
 
-        # self.update()
+        self.update()
 
     def __w_prepare(self):
         self.result_loaded = False
@@ -433,10 +433,6 @@ class Result(DICEObject):
     @result_is_loading.setter
     def result_is_loading(self, value):
         self.__result_is_loading = value
-        print("-->>", value)
-        # if not value:
-        #     for obj in self.scene.objects:
-        #         self.set_component_names(obj)
         self.result_is_loading_changed()
 
     result_loaded_changed = diceSignal(name="resultLoadedChanged")

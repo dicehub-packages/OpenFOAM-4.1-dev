@@ -21,7 +21,8 @@ class PlotsApp(DICEObject):
         self.__model = standard_model(
             PlotObject,
             ResidualsPlotObject,
-            ForcesPlotObject
+            ForcesPlotObject,
+            ForceCoeffsPlotObject
         )
 
         self.__model.root_elements.append(
@@ -40,6 +41,8 @@ class PlotsApp(DICEObject):
         if item.name not in plot_names:
             if item.type == "forces":
                 plot = ForcesPlotObject(item.name, app=self.__app)
+            elif item.type == "forceCoeffs":
+                plot = ForceCoeffsPlotObject(item.name, app=self.__app)
             else:
                 plot = PlotObject(item.name, app=self.__app)
             self.__model.root_elements.append(plot)

@@ -10,6 +10,8 @@ DC.DiceDialog {
     id: root
     title: "Select Monitored Patches"
 
+    property string objectPath: ""
+
     parent: appWindow.overlay
 
     x: Math.round((appWindow.width - width) / 2)
@@ -20,7 +22,7 @@ DC.DiceDialog {
 
     DiceValueConnector {
         id: patchesValueConnector
-        path: "functionObjects:ForcesMonitor.patches_model"
+        path: root.objectPath + ".patches_model"
     }
 
     contentItem: Column {
@@ -76,7 +78,7 @@ DC.DiceDialog {
                         enabled: canAddPatches.value
                         DiceValueConnector {
                             id: canAddPatches
-                            path: "functionObjects:ForcesMonitor.can_add_patches"
+                            path: root.objectPath + ".can_add_patches"
                         }
                     }
                     DiceIconButton {
@@ -86,7 +88,7 @@ DC.DiceDialog {
                         enabled: canRemovePatches.value
                         DiceValueConnector {
                             id: canRemovePatches
-                            path: "functionObjects:ForcesMonitor.can_remove_patches"
+                            path: root.objectPath + ".can_remove_patches"
                         }
                     }
                 }

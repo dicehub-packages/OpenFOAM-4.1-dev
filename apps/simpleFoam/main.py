@@ -391,7 +391,22 @@ class simpleFoamApp(
             )
         return result == 0
 
-    @diceTask('simpleFoam', run_potentialFoam)
+    @diceTask('postProcess', run_potentialFoam)
+    def run_post_process(self):
+        self.read_settings()
+        path = self.run_path(relative=True)
+        if "win" in sys.platform and self.__use_docker:
+            path = path.replace('\\', '/')
+        return 0 == self.execute_command(
+                "postProcess",
+                "-func",
+                "\"mag(U)\"",
+                "-case",
+                path,
+                allow_mpi=True
+            )
+
+    @diceTask('simpleFoam', run_post_process)
     def run_simpleFoam(self):
         self.read_settings()
         application = self['foam:system/controlDict application']
@@ -409,26 +424,11 @@ class simpleFoamApp(
 
         return result == 0
 
-    @diceTask('postProcess', run_simpleFoam)
-    def run_process(self):
-        self.read_settings()
-        path = self.run_path(relative=True)
-        if "win" in sys.platform and self.__use_docker:
-            path = path.replace('\\', '/')
-        return 0 == self.execute_command(
-                "postProcess",
-                "-func",
-                "\"mag(U)\"",
-                "-case",
-                path,
-                allow_mpi=True
-            )
-
     def reconstruct_par_enabled(self):
         self.read_settings()
         return self.__use_mpi
 
-    @diceTask('reconstructPar', run_process,
+    @diceTask('reconstructPar', run_simpleFoam,
         enabled=reconstruct_par_enabled)
     def run_reconstruct_par(self):
         """ Execute mesher command. """

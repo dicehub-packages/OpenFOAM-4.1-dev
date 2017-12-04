@@ -13,6 +13,23 @@ Column {
         horizontalAlignment: "AlignHCenter"
     }
 
+    DiceButton {
+        text: "Select Monitored Patches"
+        enabled: canOpenSelectPatchesDialog.value
+        visible: canOpenSelectPatchesDialog.value
+        DiceValueConnector {
+            id: canOpenSelectPatchesDialog
+            path: "functionObjects:ForceCoeffsMonitor.can_open_select_patches_dialog"
+        }
+        onClicked: {
+            monitoredPatchesDialog.open()
+        }
+        MonitoredPatchesDialog {
+            id: monitoredPatchesDialog
+            objectPath: "functionObjects:ForceCoeffsMonitor"
+        }
+    }
+
     Subheader {
         text: "Centre of rotation"
     }

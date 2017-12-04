@@ -56,7 +56,7 @@ class FunctionObjectsApp(DICEObject):
             "dragDir": [1, 0, 0],
             "CofR": [0, 0, 0],
             "pitchAxis": [0, 1, 0],
-            "magUInf": 0,
+            "magUInf": 1,
             "lRef": 1,
             "Aref": 1
         }
@@ -103,9 +103,10 @@ class FunctionObjectsApp(DICEObject):
 
     def load_model(self):
         for f_name in self.__function_objects_dict:
-            function_object_type = self.__function_objects_dict[f_name]['type']
-            if function_object_type in self.function_obj_types:
-                self.function_obj_types[function_object_type](f_name, app=self.app)
+            if 'type' in self.__function_objects_dict[f_name]:
+                function_object_type = self.__function_objects_dict[f_name]['type']
+                if function_object_type in self.function_obj_types:
+                    self.function_obj_types[function_object_type](f_name, app=self.app)
 
     @diceProperty('QVariant', name='properties')
     def properties(self):
@@ -204,7 +205,6 @@ class FunctionObjectsApp(DICEObject):
         p = path.split('.')
         prop_class, prop = globals()[p[0]], p[1]
         for s in self.__model.selection:
-            print(s, path, prop_class, prop)
             if isinstance(s, prop_class):
                 try:
                     v = getattr(s, prop)
@@ -213,7 +213,6 @@ class FunctionObjectsApp(DICEObject):
                             v[i] = value[i]
                     setattr(s, prop, v)
                 except TypeError:
-                    # print('invoke set', getattr(s, prop))
                     setattr(s, prop, value)
         signal('functionObjects:*')
         return False

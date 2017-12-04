@@ -25,7 +25,7 @@ QC1.SplitView {
             }
         }
 
-        DiceIconButton {
+        DiceButton {
             text: "Open in paraview"
             Layout.fillWidth: true
             onClicked: {
