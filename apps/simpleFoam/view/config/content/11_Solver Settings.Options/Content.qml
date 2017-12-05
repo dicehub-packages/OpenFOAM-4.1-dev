@@ -4,7 +4,7 @@ Body {
     TabsCard3 {
         title: qsTr("Discretization")
         model:  {
-            switch (app.turbulenceModel) {
+            switch (app.turbulence.model) {
                 case 'laminar':
                     return [
                         'Pressure',

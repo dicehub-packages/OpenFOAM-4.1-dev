@@ -9,7 +9,7 @@ Column {
 
     TabsCard3 {
         model: {
-            switch (app.turbulenceModel) {
+            switch (app.turbulence.model) {
             case 'laminar':
                 return [
                         'Default',

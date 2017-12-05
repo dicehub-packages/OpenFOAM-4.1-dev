@@ -45,6 +45,7 @@ class BoundaryItem:
             self.parent.boundary[value] = v
             self.vis_obj.name = value
             self.parent.boundary.writeFile()
+            self.parent.app.update_output()
 
     @modelRole('type')
     def type(self):
@@ -89,7 +90,12 @@ class Result(DICEObject):
         wizard.subscribe(self, self.__scene)
         wizard.subscribe("prepare", self.__w_prepare)
 
-        self.update()
+        if self.__app.config["autoLoadResult"]:
+            self.update()
+
+    @property
+    def app(self):
+        return self.__app
 
     def __w_prepare(self):
         self.result_loaded = False

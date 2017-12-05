@@ -1,3 +1,5 @@
-// Function objects
+// -*- C++ -*-
 
-#includeFunc  mag(U)
+#includeFunc mag(U)
+
+// EOF

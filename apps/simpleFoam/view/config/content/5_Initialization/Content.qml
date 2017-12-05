@@ -2,9 +2,9 @@ import DICE.App 1.0
 
 Body {
     TabsCard3 {
-        title: qsTr("Discretization")
+        title: qsTr("Initialize")
         model:  {
-            switch (app.turbulenceModel) {
+            switch (app.turbulence.model) {
                 case 'laminar':
                     return [
                         'Pressure',

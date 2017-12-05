@@ -299,11 +299,11 @@ class DivSchemesApp:
         k_epsilon_schemes = main_schemes + ["div(phi,k)", "div(phi,epsilon)"]
         k_omega_schemes = main_schemes + ["div(phi,k)", "div(phi,omega)"]
 
-        if self.turbulence_model == "laminar":
+        if self.turbulence.model == "laminar":
             schemes = main_schemes
-        elif self.turbulence_model == "kEpsilon":
+        elif self.turbulence.model == "kEpsilon":
             schemes = k_epsilon_schemes
-        elif self.turbulence_model == "kOmegaSST":
+        elif self.turbulence.model == "kOmegaSST":
             schemes = k_omega_schemes
 
         return schemes

@@ -5,12 +5,12 @@ DICE incomrepssible solver app based on steady-state solver for
 incompressible flows with turbulence modelling in OpenFOAM. 
 (http://www.openfoam.org)
 
-Copyright (c) 2014-2017 by DICE Developers
+Copyright (c) 2014-2017 by DICEhub Developers
 All rights reserved.
 """
 
-# External modules
-# ================
+# Standard Python modules
+# =======================
 import os
 import sys
 from concurrent.futures import ThreadPoolExecutor
@@ -34,6 +34,7 @@ from common.foam_app import FoamApp
 from common.boundary_model import *
 from common.foam_result import Result
 from common.basic_app import BasicApp
+from common.turbulence_app import TurbulenceApp
 from common.div_schemes_model import DivSchemesApp
 from modules.cell_zones_model import CellZonesApp
 from modules.function_objects_model import FunctionObjectsApp
@@ -46,12 +47,12 @@ def logs_worker(line):
 
 class simpleFoamApp(
     Application,
-    VisApp,
-    FoamApp,
     BasicApp,
+    FoamApp,
+    VisApp,
+    BoundaryApp,
     CellZonesApp,
-    DivSchemesApp,
-    BoundaryApp
+    DivSchemesApp
     ):
 
     def __init__(self, **kwargs):
@@ -59,13 +60,12 @@ class simpleFoamApp(
 
         self.__load_config_files()
 
+        self.__turbulence = TurbulenceApp(self)
         self.__plots = PlotsApp(self)
         self.__function_objects = FunctionObjectsApp(self)
         self.__result = Result(self)
 
         wizard.subscribe(self.w_foam)
-        # self.update_result()
-
         wizard.subscribe("w_log", self.__w_log)
 
     def w_foam(self, path):
@@ -86,18 +86,9 @@ class simpleFoamApp(
                 dst = self.run_path(file_path)
                 self.copy(src, dst)
 
-    @diceProperty('QVariant', name='auto_load_result')
-    def auto_load_result(self):
-        return self.config['autoLoadResult']
-
-    @auto_load_result.setter
-    def auto_load_result(self, value):
-        if self.auto_load_result != value:
-            self.config['autoLoadResult'] = value
-
     @diceSlot(name='updateResult')
     def update_result(self):
-        if self.auto_load_result:
+        if self.config['autoLoadResult']:
             self.__result.update()
 
     @diceProperty('QVariant', name='result')
@@ -120,67 +111,19 @@ class simpleFoamApp(
     def plots(self):
         return self.__plots
 
-    turbulence_model_changed = diceSignal(name='turbulenceModelChanged')
+    @diceProperty('QVariant')
+    def turbulence(self):
+        return self.__turbulence
 
-    @diceProperty('QString', name='turbulenceModel', notify=turbulence_model_changed)
-    def turbulence_model(self):
-        if self["foam:constant/turbulenceProperties simulationType"] == "laminar":
-            return "laminar"
-        elif self["foam:constant/turbulenceProperties simulationType"] == "RAS":
-            return self["foam:constant/turbulenceProperties RAS RASModel"]
-
-    @turbulence_model.setter
-    def turbulence_model(self, value):        
-        if self.turbulence_model != value:
-            if value == "laminar":
-                self["foam:constant/turbulenceProperties simulationType"] = "laminar"
-                self["foam:constant/turbulenceProperties RAS"] = {}
-            elif value == "kOmegaSST":
-                self["foam:constant/turbulenceProperties simulationType"] = "RAS"
-                self["foam:constant/turbulenceProperties RAS"] = {
-                         'RASModel': 'kOmegaSST',
-                         'kOmegaSSTCoeffs': {
-                            'F3': False,
-                            'a1': 0.31,
-                            'alphaK1': 0.85,
-                            'alphaK2': 1.0,
-                            'alphaOmega1': 0.5,
-                            'alphaOmega2': 0.856,
-                            'b1': 1.0,
-                            'beta1': 0.075,
-                            'beta2': 0.0828,
-                            'betaStar': 0.09,
-                            'c1': 10.0,
-                            'gamma1': 0.5532,
-                            'gamma2': 0.4403
-                          },
-                         'printCoeffs': True,
-                         'turbulence': True
-                     }
-            elif value == "kEpsilon":
-                self["foam:constant/turbulenceProperties simulationType"] = "RAS"
-                self["foam:constant/turbulenceProperties RAS"] = {
-                         'RASModel': 'kEpsilon',
-                         'kEpsilonCoeffs': {
-                            "Cmu": 0.09,
-                            "C1": 1.44,
-                            "C2": 1.92,
-                            "C3": -0.33,
-                            "sigmak": 1,
-                            "sigmaEps": 1.3
-                         },
-                         'printCoeffs': True,
-                         'turbulence': True
-                     }
-            self.turbulence_model_changed()
-            wizard.w_turbulence_model_changed()
+    @property
+    def main_fields(self):
+        return self.__main_fields
 
     def input_changed(self, input_data):
         """
         Loads input from other applications.
         """
-
-        boundary_props = {
+        default_boundary_props = {
             'foam:0/p boundaryField':{
                     'type': 'fixedValue',
                     'value': Field(0)
@@ -188,29 +131,10 @@ class simpleFoamApp(
             'foam:0/U boundaryField': {
                     "type": "fixedValue",
                     "value": Field(Vector(0, 0, 0))
-                },
-            'foam:0/k boundaryField': {
-                    "type": "turbulentIntensityKineticEnergyInlet",
-                    "value": Field(1.0),
-                    "intensity": 0.05
-                },
-            'foam:0/nut boundaryField': {
-                    "type": "calculated",
-                    "value": Field(1.0)
-                },
-            'foam:0/omega boundaryField': {
-                    "type": "turbulentMixingLengthFrequencyInlet",
-                    "value": Field(1.0),
-                    "mixingLength": 0.001
-                },
-            'foam:0/epsilon boundaryField': {
-                    "type": "turbulentMixingLengthDissipationRateInlet",
-                    "value": Field(1.0),
-                    "mixingLength": 0.001
                 }
         }
 
-        self.load_boundary(boundary_props, input_data)
+        self.load_boundary(default_boundary_props, input_data)
         self.load_schemes()
         self.load_cell_zone_model()
         self.load_mrf_zones()
@@ -224,14 +148,9 @@ class simpleFoamApp(
         # ==========================
 
         # Main Fields
+        self.__main_fields = ('U', 'p')
         p_dict = ParsedParameterFile(self.config_path('0/p'))
         U_dict = ParsedParameterFile(self.config_path('0/U'))
-
-        # Turbulence model fields
-        k_dict = ParsedParameterFile(self.config_path('0/k'))
-        omega_dict = ParsedParameterFile(self.config_path('0/omega'))
-        nut_dict = ParsedParameterFile(self.config_path('0/nut'))
-        epsilon_dict = ParsedParameterFile(self.config_path('0/epsilon'))
 
         turbulence_props = ParsedParameterFile(
             self.config_path('constant/turbulenceProperties')
@@ -265,11 +184,7 @@ class simpleFoamApp(
         # ================
         self.foam_file('0/p', p_dict)
         self.foam_file('0/U', U_dict)
-        self.foam_file('0/k', k_dict)
-        self.foam_file('0/nut', nut_dict)
-        self.foam_file('0/omega', omega_dict)
-        self.foam_file('0/epsilon', epsilon_dict)
-        
+
         self.foam_file('system/fvSolution', self.fv_solutions)
         self.foam_file('system/fvSchemes', fv_schemes)
         self.foam_file('system/controlDict', self.control_dict)
@@ -325,7 +240,7 @@ class simpleFoamApp(
 
     def execute_command(self, *args, allow_mpi=False, **kwargs):
         args = list(args)
-        cmd_name = args[0] 
+        cmd_name = args[0]
         if allow_mpi and self.__use_mpi:
             args.insert(1, '-parallel')
             args.insert(0, '-np %i'%self.__cpu_count)
@@ -450,8 +365,11 @@ class simpleFoamApp(
         if self.__use_mpi:
             for i in range(self.__cpu_count):
                 self.rmtree(self.run_path("processor"+str(i)))
-        self.set_output('foam_mesh', [self.run_path(relative=True)])
+        self.update_output()
         return True
+
+    def update_output(self):
+        self.set_output('foam_fields', [self.run_path(relative=True)])
 
     @diceSlot(name='selectMaterial')
     def select_material(self):

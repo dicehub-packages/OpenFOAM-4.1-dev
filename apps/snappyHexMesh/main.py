@@ -3,22 +3,26 @@ snappyHexMesh
 =============
 DICE meshing app based on snappyHexMesh in OpenFOAM (http://www.openfoam.org)
 
-Copyright (c) 2014-2017 by DICE Developers
+Copyright (c) 2014-2017 by DICEhub Developers
 All rights reserved.
 """
 
-# External modules
-# ================
+# Standard Python modules
+# =======================
 import os
 import sys
 import shutil
 import sys
 import traceback
 from concurrent.futures import ThreadPoolExecutor
+from time import time
+from collections.abc import Sequence
 
 # External modules
 # ================
 import yaml
+from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile
+from PyFoam.Basics.DataStructures import Vector
 
 # App modules
 # ============
@@ -35,14 +39,11 @@ from dice_tools.helpers import run_process
 # =========
 from dice_vtk import VisApp, VtkScene
 from common.foam_app import FoamApp
-from PyFoam.Basics.DataStructures import Vector
+
 from modules.bounding_box import BoundingBox
 from modules.material_point import MaterialPoint
 from modules.refinement import Refinement
 from common.foam_result import Result
-from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile
-from time import time
-from collections.abc import Sequence
 from modules.api.app_api import AppApi
 from common.basic_app import BasicApp
 
@@ -51,7 +52,7 @@ def logs_worker(line):
     wizard.w_log(line)
 
 
-class snappyHexMesh(
+class snappyHexMeshApp(
     Application,
     BasicApp,
     FoamApp,
@@ -154,18 +155,9 @@ class snappyHexMesh(
     def api(self):
         return self.__api
 
-    @diceProperty('QVariant', name='auto_load_result')
-    def auto_load_result(self):
-        return self.config['autoLoadResult']
-
-    @auto_load_result.setter
-    def auto_load_result(self, value):
-        self.config['autoLoadResult'] = value
-        self.update_result()
-
     @diceSlot(name='updateResult')
     def update_result(self):
-        if self.auto_load_result:
+        if self.config['autoLoadResult']:
             self.__result.update()
 
     def progress_changed(self, progress):
@@ -582,8 +574,11 @@ class snappyHexMesh(
         if self.__use_mpi:
             for i in range(self.__cpu_count):
                 self.rmtree(self.run_path("processor"+str(i)))
-        self.set_output('foam_mesh', [self.run_path(relative=True)])
+        self.update_output()
         return True
+
+    def update_output(self):
+        self.set_output('foam_mesh', [self.run_path(relative=True)])
 
     def post_run_script_enabled(self):
         return os.path.exists(self.config_path('post_run.py'))
@@ -593,7 +588,6 @@ class snappyHexMesh(
         return self.run_script(self.config_path('post_run.py'))
 
     def print_log(self, line):
-        # self.log(line)
         with ThreadPoolExecutor(max_workers=3) as executor:
             executor.submit(logs_worker, line)
 

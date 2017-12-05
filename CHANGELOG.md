@@ -1,3 +1,4 @@
+- [Shared, solvers] Improved turbulence model treatment.
 - [FoamResults] Addition of paraview option for results visualization in a seperate thread.
 - [snappyHexMesh, simpleFoam] Fixes for renaming boundary names.
 - [simpleFoam] Option to rename functionObjects.

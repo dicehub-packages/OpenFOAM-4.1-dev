@@ -1,12 +1,19 @@
-from dice_tools import *
-from dice_tools.helpers.xmodel import *
-from PyFoam.Basics.DataStructures import Field, Vector, DictProxy
-from dice_vtk.utils.foam_reader import FoamReader
-from PyFoam.RunDictionary.ParsedParameterFile import ParsedBoundaryDict
-
+# Standard Python modules
+# =======================
 import os
 import random
 import shutil
+
+# External modules
+# ================
+from PyFoam.Basics.DataStructures import Field, Vector, DictProxy
+from PyFoam.RunDictionary.ParsedParameterFile import ParsedBoundaryDict
+
+# DICE Libs
+# =========
+from dice_tools import *
+from dice_tools.helpers.xmodel import *
+from dice_vtk.utils.foam_reader import FoamReader
 
 
 class BoundaryGroup(ModelItem):
@@ -536,13 +543,18 @@ class BoundaryApp:
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.__boundary = None
         self.__boundaries_model = standard_model(Boundary, BoundaryGroup)
         self.__boundary_items = []
         self.__boundary_names = []
         self.__boundaries_props = []
         self.__reader = None
+        self.__input_data = None
         wizard.subscribe(self, self.__boundaries_model)
         wizard.subscribe(self.w_geometry_object_clicked)
+
+    def __load_turbulence_props(self, boundary_props):
+        pass
 
     def load_boundary(self, boundary_props, input_data):
 

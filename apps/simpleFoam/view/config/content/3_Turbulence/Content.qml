@@ -7,9 +7,19 @@ Body {
     Card {
         title: qsTr("Turbulence model")
 
+//        DiceComboBox {
+//            target: app
+//            property: "turbulenceModel"
+//            model: [
+//                "laminar",
+//                "kOmegaSST",
+//                "kEpsilon"
+//            ]
+//        }
+
         DiceComboBox {
-            target: app
-            property: "turbulenceModel"
+            target: app.turbulence
+            property: "model"
             model: [
                 "laminar",
                 "kOmegaSST",
@@ -20,7 +30,7 @@ Body {
         Card {
             title: "kEpsilonCoeffs"
             width: parent.width
-            visible: app.turbulenceModel === "kEpsilon"
+            visible: app.turbulence.model === "kEpsilon"
             spacing: 20
             expanded: false
             backgroundBorder: 0
