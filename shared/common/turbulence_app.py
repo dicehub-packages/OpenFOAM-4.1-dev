@@ -200,5 +200,16 @@ class TurbulenceApp(DICEObject):
             return {
                 "type": "symmetry"
             }
+        elif 'wall' in boundary_name:
+            if field_name == 'k':
+                return {
+                    "type": "kqRWallFunction",
+                    "value": Field(1.0)
+                }
+            elif field_name == 'omega':
+                return {
+                    "type": "omegaWallFunction",
+                    "value": Field(1.0)
+                }
         else:
             return prop

@@ -15,7 +15,7 @@ Column {
         id: epsilonType
         model: ["Fixed Value",
                 "Turbulent Mixing Length Inlet",
-                "Zero Gradient", "Symmetry", "Slip"]
+                "Zero Gradient", "Symmetry", "Slip", "epsilonWallFunction"]
         path: "boundary:epsilon_boundary_condition_type"
     }
 

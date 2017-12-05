@@ -14,6 +14,7 @@ from PyFoam.RunDictionary.ParsedParameterFile import ParsedBoundaryDict
 from dice_tools import *
 from dice_tools.helpers.xmodel import *
 from dice_vtk.utils.foam_reader import FoamReader
+from .fields import *
 
 
 class BoundaryGroup(ModelItem):
@@ -54,6 +55,8 @@ class Boundary:
         self.vis = vis
         self.app = app
         wizard.subscribe(self, self.vis)
+
+        # self.__pressure = Pressure(self)
 
     def w_geometry_object_clicked(self, obj, *args, **kwargs):
         self.app.boundaries_model.current_item = self
@@ -165,6 +168,13 @@ class Boundary:
             elif not value and  self.low_weight_correction_enable:
                 self.app[self.path + ' lowWeightCorrection'] = None
 
+    # Pressure
+    # ========
+
+    # @diceProperty
+    # def pressure(self):
+    #     return self.__pressure
+
     @property
     def pressure_boundary_condition_type(self):
         path = 'foam:0/p boundaryField ' + self.name + ' type'
@@ -223,6 +233,9 @@ class Boundary:
         path = 'foam:0/p boundaryField ' + self.name + ' value'
         if self.app[path] is not None:
             self.app[path] = Field(value)
+
+    # Velocity
+    # ========
 
     @property
     def velocity_boundary_condition_type(self):
@@ -289,6 +302,9 @@ class Boundary:
         if self.app[path] is not None:
             self.app[path] = Field(Vector(*value))
 
+    # Omega - turbulnce specific dissipation
+    # ======================================
+
     @property
     def omega_boundary_condition_type(self):
         path = 'foam:0/omega boundaryField ' + self.name + ' type'
@@ -354,6 +370,9 @@ class Boundary:
         if self.app[path] is not None:
             self.app[path] = value
 
+    # k - Turbulent kinetic energy
+    # ============================
+
     @property
     def k_boundary_condition_type(self):
         path = 'foam:0/k boundaryField ' + self.name + ' type'
@@ -368,6 +387,8 @@ class Boundary:
             return 'Symmetry'
         elif condition_type == 'slip':
             return 'Slip'
+        elif condition_type == 'kqRWallFunction':
+            return 'kqRWallFunction'
 
     @k_boundary_condition_type.setter
     def k_boundary_condition_type(self, value):
@@ -396,6 +417,10 @@ class Boundary:
             self.app[path] = {
                 'type': 'slip'
             }
+        elif value == 'kqRWallFunction':
+            self.app[path] = {
+                'type': 'kqRWallFunction'
+            }
 
     @property
     def k_field_value(self):
@@ -419,6 +444,9 @@ class Boundary:
         if self.app[path] is not None:
             self.app[path] = value
 
+    # epsilon - turbulence dissipation
+    # ================================
+
     @property
     def epsilon_boundary_condition_type(self):
         path = 'foam:0/epsilon boundaryField ' + self.name + ' type'
@@ -433,6 +461,8 @@ class Boundary:
             return 'Symmetry'
         elif condition_type == 'slip':
             return 'Slip'
+        elif condition_type == 'omegaWallFunction':
+            return 'omegaWallFunction'
 
     @epsilon_boundary_condition_type.setter
     def epsilon_boundary_condition_type(self, value):
@@ -484,6 +514,9 @@ class Boundary:
         if self.app[path] is not None:
             self.app[path] = value
 
+    # T - Temperature
+    # ===============
+
     @property
     def temperature_boundary_condition_type(self):
         path = 'foam:0/T boundaryField ' + self.name + ' type'
@@ -530,7 +563,6 @@ class Boundary:
     def temperature_field_value(self):
         path = 'foam:0/T boundaryField ' + self.name + ' value'
         return self.app[path]
-
 
     @temperature_field_value.setter
     def temperature_field_value(self, value):
