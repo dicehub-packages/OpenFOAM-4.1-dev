@@ -296,7 +296,7 @@ class snappyHexMeshApp(
         for i, name in enumerate(self['foam:system/surfaceFeatureExtractDict']):
             print(i, name, name not in geometry_names)
             print(self['foam:system/surfaceFeatureExtractDict ' + name])
-            if v not in geometry_names:
+            if name not in geometry_names:
                 self['foam:system/surfaceFeatureExtractDict ' + name] = None
 
 
