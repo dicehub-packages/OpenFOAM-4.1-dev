@@ -240,7 +240,7 @@ class Refinement(DICEObject):
             ('Disk', SearchableDisk, 'SearchableDisk.qml'),
             ('Plane (3P)', SearchablePlane3P, 'SearchablePlane3P.qml'),
             ('Plane (PaN)', SearchablePlanePaN, 'SearchablePlanePaN.qml'),
-            ('Surface', RefinementObject, 'RefinementObjectSurface.qml')
+            ('Ref-Obj Surface', RefinementObject, 'RefinementObjectSurface.qml')
         ]
 
         result_props = []
@@ -248,8 +248,7 @@ class Refinement(DICEObject):
         for title, tp, source in properties:
             for s in self.__model.selection:
                 if isinstance(s, tp):
-                    result_props.append(PropertyItem(
-                        title, source))
+                    result_props.append(PropertyItem(title, source))
                     break
         for v in self.__props_model.root_elements[:]:
             for p in result_props:

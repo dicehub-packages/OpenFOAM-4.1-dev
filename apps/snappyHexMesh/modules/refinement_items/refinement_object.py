@@ -68,20 +68,35 @@ class RefinementObject(RegionRefinement):
         return 'foam:system/snappyHexMeshDict castellatedMeshControls refinementSurfaces ' + self.name
 
     def __load(self):
-        if self.app[self.refinement_path] is None:
-            self.app[self.refinement_path] = {
-                'level': [0, 0]
-            }
+        # if self.app[self.refinement_path] is None:
+        #     self.app[self.refinement_path] = {
+        #         'level': [0, 0]
+        #     }
 
         self.setup_region(["inside", "outside", "distance"], "inside")
 
     @property
+    def refinement_surface_is_enabled(self):
+        return self.app[self.refinement_path] is not None
+
+    @refinement_surface_is_enabled.setter
+    def refinement_surface_is_enabled(self, value):
+        if self.app[self.refinement_path] is None and value:
+            self.app[self.refinement_path] = {
+                'level': [0, 0]
+            }
+        elif self.app[self.refinement_path] is not None and not value:
+            self.app[self.refinement_path] = None
+
+    @property
     def surface_level(self):
-        return list(self.app[self.refinement_path + ' level'])
+        if self.refinement_surface_is_enabled:
+            return list(self.app[self.refinement_path + ' level'])
 
     @surface_level.setter
     def surface_level(self, value):
-        self.app[self.refinement_path + ' level'] = [value[0], int(value[1])]
+        if self.refinement_surface_is_enabled:
+            self.app[self.refinement_path + ' level'] = [value[0], int(value[1])]
 
     @property
     def cell_zone_inside(self):
