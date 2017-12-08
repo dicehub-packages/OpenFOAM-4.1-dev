@@ -8,7 +8,7 @@ Column {
     height: childrenRect.height
 
     Subheader {
-        text: "type"
+        text: "Type"
     }
     DiceComboBox {
         id: typeDropDown

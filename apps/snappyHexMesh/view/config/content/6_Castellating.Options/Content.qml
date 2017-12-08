@@ -19,7 +19,7 @@ Body {
         }
         Row {
             width: parent.width
-            CheckBox{
+            DiceCheckBox{
                 id: gapLevelIncrementOption
                 checked: typeof gapLevelIncrement.value !== 'undefined'
                 onClicked: gapLevelIncrement.setValue(checked? 0: undefined)
@@ -36,7 +36,7 @@ Body {
         Row {
             width: parent.width
 
-            CheckBox {
+            DiceCheckBox {
                 id: planarAngleOption
                 checked: typeof planarAngle.value !== 'undefined'
                 onClicked: planarAngle.setValue(checked? 0: undefined)

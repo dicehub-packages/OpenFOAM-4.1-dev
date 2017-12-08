@@ -18,19 +18,15 @@ Column {
         path: 'boundary:neighbour_patch'
     }
 
-    DiceInlineComboBox {
+    Subheader {
+        text: "Type"
+    }
+
+    DiceComboBox {
         id: typeDropDown
-        label: "Type"
         enabled: !isCyclic.value
         visible: enabled
-        model: [
-            "patch",
-            "wall",
-            "symmetryPlane",
-            "symmetry",
-            "empty",
-            "wedge"
-        ] 
+        modelPath: "boundary:boundary_types_model"
         path: "boundary:boundary_type"
     }
 

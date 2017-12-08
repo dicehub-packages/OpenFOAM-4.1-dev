@@ -80,6 +80,10 @@ class Boundary:
             self.vis.name = value
             self.app[self.path] = v
 
+    @property
+    def boundary_types_model(self):
+        return ["patch", "wall", "symmetry", "empty", "wedge"]
+
     @modelRole('boundaryType')
     def boundary_type(self):
         type_path = self.path + ' type'

@@ -10,8 +10,9 @@ Item {
     property bool isCurrent: ListView.isCurrentItem
 
     width: ListView.view.width
-    height: Math.max(25, buttonLabel.height + 20)
+    height: isVisible ? Math.max(25, buttonLabel.height + 20) : 0
     clip: true
+    visible: isVisible
 
     onIsCurrentChanged: {
         isCurrent ? state = "ACTIVE" : state = "NORMAL";
@@ -108,7 +109,6 @@ Item {
             name: "NORMAL"
             PropertyChanges {
                 target: background
-//                color: colors.theme["base_background_color"]
                 color: "transparent"
             }
             PropertyChanges {

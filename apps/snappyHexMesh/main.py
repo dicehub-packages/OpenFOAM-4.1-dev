@@ -292,13 +292,9 @@ class snappyHexMeshApp(
         for i, v in enumerate(self['foam:system/snappyHexMeshDict castellatedMeshControls features']):
             if os.path.splitext(v["file"])[0] not in geometry_names:
                 self['foam:system/snappyHexMeshDict castellatedMeshControls features %i'%i] = None
-        feature_extract_dict_names = [name for name in self['foam:system/surfaceFeatureExtractDict']]
         for i, name in enumerate(self['foam:system/surfaceFeatureExtractDict']):
-            print(i, name, name not in geometry_names)
-            print(self['foam:system/surfaceFeatureExtractDict ' + name])
             if name not in geometry_names:
                 self['foam:system/surfaceFeatureExtractDict ' + name] = None
-
 
         # Delete regions which no longer exist in stl files
         for k, v in list(self['foam:system/snappyHexMeshDict geometry'].items()):

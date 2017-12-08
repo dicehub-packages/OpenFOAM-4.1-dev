@@ -25,19 +25,28 @@ Column {
 
     ListView {
         id: interpolationSchemesList
+
+        property var intSchemesModel: interpolationSchemesModel
+
+        onIntSchemesModelChanged: {
+            listModelInterpolationSchemes.load_model()
+        }
         enabled: !useDefaultScheme
         visible: enabled
         model: ListModel {
+            id: listModelInterpolationSchemes
             Component.onCompleted: {
+                load_model()
+            }
+            function load_model() {
+                clear()
                 for (var i = 0; i < interpolationSchemesModel.length; i++) {
                     append(interpolationSchemesModel[i])
                 }
-                interpolationSchemesList.currentIndex = currentInterpolationSchemeListIndex
+                interpolationSchemesList.currentIndex = Qt.binding(function(){return currentInterpolationSchemeListIndex})
             }
         }
-        delegate: InterpolationSchemeDelegate {
-
-        }
+        delegate: InterpolationSchemeDelegate {}
         section.property: "sectionName"
         section.delegate: DC.HighlightBasicText {
             text: section
@@ -50,14 +59,15 @@ Column {
         clip: true
         interactive: false
         onEnabledChanged: {
-            if (currentIndex != currentInterpolationSchemeListIndex )
-                currentIndex = currentInterpolationSchemeListIndex
+            if (currentIndex != currentInterpolationSchemeListIndex) {
+                currentIndex = Qt.binding(function(){return currentInterpolationSchemeListIndex})
+            }
         }
     }
 
     Item {
         width: 1
-        height: 20
+        height: 5
     }
 
     DiceInputField {
@@ -95,10 +105,28 @@ Column {
         }
     }
 
+    Item {
+        width: parent.width
+        height: 5
+    }
+
+    Rectangle {
+        width: parent.width
+        height: 1
+        color: colors.theme["base_border_color"]
+    }
+
     DC.HighlightBasicText {
         text: name + " " + schemeValue
         width: parent.width
         height: 50
         type: "highlight"
+    }
+    DiceSwitch {
+        text: expertViewVisible ? "Show less schemes" : "Show more schemes"
+        checked: expertViewVisible
+        onCheckedChanged: {
+            expertViewVisible = !expertViewVisible
+        }
     }
 }

@@ -11,6 +11,8 @@ class DivScheme:
         self.app = app
         self.__name = name
 
+        self.__expert_view_visible = False
+
         self.__centred_schemes = [
             "linear",
             "cubic",
@@ -19,13 +21,13 @@ class DivScheme:
 
         self.__upwinded_convection_schemes = [
             "upwind",
-            "linearUpwind", #grad(U)
+            "linearUpwind",
             # "filteredLinear2",
             "filteredLinear3",
             "cubicUpwindFit",
-            "linearPureUpwindFit", #phi
-            "quadraticLinearUpwindFit", #phi
-            "quadraticUpwindFit", #phi
+            "linearPureUpwindFit",
+            "quadraticLinearUpwindFit",
+            "quadraticUpwindFit",
             "LUST"
         ]
 
@@ -43,7 +45,7 @@ class DivScheme:
         # Normalised Variable Diminishing (NVD)
         self.__nvd_schemes = [
             "SFCD",
-            "Gamma" #phi
+            "Gamma"
         ]
 
         # Improved limitedSchemes for vector fields
@@ -74,6 +76,16 @@ class DivScheme:
             "quadraticUpwindFit",
             "Gamma",
             "limitedCubic"
+        ]
+
+        self.__most_used_schemes = [
+            "linear",
+            "upwind",
+            "linearUpwind",
+            "limitedLinear",
+            "vanLeer",
+            "Minmod",
+            "SFCD"
         ]
 
     @property
@@ -161,17 +173,50 @@ class DivScheme:
             div_schemes[self.name] = TupleProxy(["bounded", "Gauss", "linear"])
             self.app["foam:system/fvSchemes divSchemes"] = div_schemes
 
+    @modelRole('expertViewVisible')
+    def expert_view_visible(self):
+        return self.__expert_view_visible
+
+    @expert_view_visible.setter
+    def expert_view_visible(self, value):
+        if self.__expert_view_visible != value:
+            self.__expert_view_visible = value
+
     @modelRole('interpolationSchemesModel')
     def interpolation_schemes_model(self):
         model = []
-        for scheme in self.__centred_schemes:
-            model.append({"sectionName": "Centred Schemes", "name": scheme})
-        for scheme in self.__upwinded_convection_schemes:
-            model.append({"sectionName": "Upwinded Convection", "name": scheme})
-        for scheme in self.__tvd_schemes:
-            model.append({"sectionName": "TVD", "name": scheme})
-        for scheme in self.__nvd_schemes:
-            model.append({"sectionName": "NVD", "name": scheme})
+
+        if self.__expert_view_visible:
+            for scheme in self.__centred_schemes:
+                model.append({"sectionName": "Centred Schemes", "name": scheme, "isVisible": True})
+            for scheme in self.__upwinded_convection_schemes:
+                model.append({"sectionName": "Upwinded Convection", "name": scheme, "isVisible": True})
+            for scheme in self.__tvd_schemes:
+                model.append({"sectionName": "TVD", "name": scheme, "isVisible": True})
+            for scheme in self.__nvd_schemes:
+                model.append({"sectionName": "NVD", "name": scheme, "isVisible": True})
+        else:
+            for scheme in self.__centred_schemes:
+                if scheme in self.__most_used_schemes or scheme == self.interpolation_scheme.replace("V",""):
+                    model.append({"sectionName": "Centred Schemes", "name": scheme, "isVisible": True})
+                else:
+                    model.append({"sectionName": "Centred Schemes", "name": scheme, "isVisible": False})
+            for scheme in self.__upwinded_convection_schemes:
+                if scheme in self.__most_used_schemes or scheme == self.interpolation_scheme.replace("V",""):
+                    model.append({"sectionName": "Upwinded Convection", "name": scheme, "isVisible": True})
+                else:
+                    model.append({"sectionName": "Upwinded Convection", "name": scheme, "isVisible": False})
+            for scheme in self.__tvd_schemes:
+                if scheme in self.__most_used_schemes or scheme == self.interpolation_scheme.replace("V",""):
+                    model.append({"sectionName": "TVD", "name": scheme, "isVisible": True})
+                else:
+                    model.append({"sectionName": "TVD", "name": scheme, "isVisible": False})
+            for scheme in self.__nvd_schemes:
+                if scheme in self.__most_used_schemes or scheme == self.interpolation_scheme.replace("V",""):
+                    model.append({"sectionName": "NVD", "name": scheme, "isVisible": True})
+                else:
+                    model.append({"sectionName": "NVD", "name": scheme, "isVisible": False})
+
         return model
 
     @modelRole('currentInterpolationSchemeListIndex')

@@ -1,3 +1,4 @@
+- [schemes, solvers] Simple and expert view for discretization schemes.
 - [turbulence] Start of the implementation for better turbulence fields.
 - [Shared, solvers] Improved turbulence model treatment.
 - [FoamResults] Addition of paraview option for results visualization in a seperate thread.
