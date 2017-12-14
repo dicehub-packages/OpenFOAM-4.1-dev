@@ -1,3 +1,5 @@
+## 17.12.0 (2017-12-14)
+
 - [solvers] Updated boundary types model.
 - [schemes, solvers] Simple and expert view for discretization schemes.
 - [turbulence] Start of the implementation for better turbulence fields.
