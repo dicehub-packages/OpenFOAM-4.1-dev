@@ -19,14 +19,15 @@ from contextlib import contextmanager
 import stl
 from .refinement_items import *
 
+
 class BoundingBox(DICEObject):
     """
     Initial background Mesh of hexahedral cells that fills a region
     consisting of geometries.
     """
-    bm_vertices_path = 'foam:constant/polyMesh/blockMeshDict vertices'
-    bm_blocks_path = 'foam:constant/polyMesh/blockMeshDict blocks'
-    bm_boundary_path = 'foam:constant/polyMesh/blockMeshDict boundary'
+    bm_vertices_path = 'foam:system/blockMeshDict vertices'
+    bm_blocks_path = 'foam:system/blockMeshDict blocks'
+    bm_boundary_path = 'foam:system/blockMeshDict boundary'
 
     def __init__(self, app, **kwargs):
         super().__init__(base_type='QObject', **kwargs)

@@ -1,7 +1,6 @@
 import QtQuick 2.5
 
 import DICE.App 1.0
-import DICE.Components 1.0
 
 Column {
     width: parent.width
@@ -9,22 +8,24 @@ Column {
 
     spacing: 20
 
-    DropDown2 {
+    Subheader {
+        text: "Type"
+    }
+    DiceComboBox {
         id: epsilonType
-        label: "Type"
         model: ["Fixed Value",
                 "Turbulent Mixing Length Inlet",
-                "Zero Gradient"]
+                "Zero Gradient", "Symmetry", "Slip", "epsilonWallFunction"]
         path: "boundary:epsilon_boundary_condition_type"
     }
 
-    ValueField {
+    DiceValueField {
         enabled: (["Fixed Value"]).indexOf(epsilonType.currentText) >= 0
         label: "Value [m^2/s^3]"
         path: "boundary:epsilon_field_value"
     }
 
-    ValueField {
+    DiceValueField {
         enabled: (["Turbulent Mixing Length Inlet"
             ]).indexOf(epsilonType.currentText) >= 0
         label: "Mixing Length [m]"

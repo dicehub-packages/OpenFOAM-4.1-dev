@@ -1,7 +1,7 @@
 import QtQuick 2.5
 
 import DICE.App 1.0
-import DICE.Components 1.0
+//import DICE.Components 1.0
 
 Column {
     width: parent.width
@@ -9,22 +9,24 @@ Column {
 
     spacing: 20
 
-    DropDown2 {
+    Subheader {
+        text: "Type"
+    }
+    DiceComboBox {
         id: omegaType
-        label: "Type"
         model: ["Fixed Value",
                 "Turbulent Mixing Length Frequency Inlet",
-                "Zero Gradient"]
+                "Zero Gradient", "Symmetry", "Slip", "omegaWallFunction"]
         path: "boundary:omega_boundary_condition_type"
     }
 
-    ValueField {
+    DiceValueField {
         enabled: (["Fixed Value"]).indexOf(omegaType.currentText) >= 0
         label: "Value [1/s]"
         path: "boundary:omega_field_value"
     }
 
-    ValueField {
+    DiceValueField {
         enabled: (["Turbulent Mixing Length Frequency Inlet"
             ]).indexOf(omegaType.currentText) >= 0
         label: "Mixing Length [m]"

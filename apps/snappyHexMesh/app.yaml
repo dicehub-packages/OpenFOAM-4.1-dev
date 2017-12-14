@@ -11,8 +11,9 @@ outputs:
 settings:
   "use_docker": true
   "docker_cmd": "docker run --name {docker_name} --rm -v {dice_workflow}:/usr/share/openfoam/data:Z dicehub/openfoam:4.1 \"{command}\""
-  "foam_cmd": "/usr/bin/foamExec"
+  "foam_cmd": "/bin/bash -c \"source $OpenFOAM_BashRC && {command}"
   "use_mpi": false
-  "docker_cmd_mpi": "docker run --name {docker_name} --rm -v {dice_workflow}:/usr/share/openfoam/data:Z dicehub/openfoam:4.1 \"mpirun -np $NP {command} -parallel\""
-  "foam_cmd_mpi": "/usr/bin/foamExec"
+  "docker_cmd_mpi": "docker run --name {docker_name} --rm -v {dice_workflow}:/usr/share/openfoam/data:Z dicehub/openfoam:4.1 \"mpirun {command}\""
+  "foam_cmd_mpi": "/bin/bash -c \"source $OpenFOAM_BashRC && mpirun {command} -parallel\""
   "mpi_cpu_count": 1
+  "paraview_cmd": "paraview"

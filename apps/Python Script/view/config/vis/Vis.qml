@@ -1,54 +1,76 @@
 import QtQuick 2.4
-import QtWebEngine 1.3
+import QtWebEngine 1.5
 import QtQuick.Layouts 1.3
 import DICE.Components 1.0
 import DICE.App 1.0
 
-WebEngineView {
-    id: codeView
-
+Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-    settings.localContentCanAccessFileUrls: true
-    settings.errorPageEnabled: true
+    WebEngineView {
+        id: codeView
 
-    Connections {
-        target: app
-        onSaveRequest: {
-            codeView.runJavaScript("editor.getValue()", function(result) { app.save(result); });
-        } 
-    }
+        anchors.fill: parent
 
-    Component.onCompleted: {
-        loadHtml('\
+        settings.localContentCanAccessFileUrls: true
+        settings.errorPageEnabled: true
+
+        Connections {
+            target: app
+            onSaveRequest: {
+                codeView.runJavaScript("editor.getValue()", function(result) { app.save(result); });
+            }
+        }
+
+        Component.onCompleted: {
+            loadHtml('\
             <!DOCTYPE html>\
             <html>\
             <head>\
-                <link rel="stylesheet" href="lib/codemirror.css">\
-                <link rel="stylesheet" href="theme/elegant.css"> \
-                <link rel="stylesheet" href="theme/monokai.css"> \
-                <style media="screen" type="text/css">\
-                    html { height:100%; width: 100%; }\
-                    body { position:absolute; top:0; bottom:0; right:0; left:0; margin: 0; }\
-                    .CodeMirror { height: 100%; width: 100%; }\
-                </style>\
+              <meta charset="UTF-8">\
+              <style type="text/css" media="screen">\
+                #editor {\
+                    position: absolute;\
+                    top: 0;\
+                    bottom: 0;\
+                    left: 0;\
+                    right: 0;\
+                }\
+              </style>\
             </head>\
             <body>\
-            <script src="lib/codemirror.js"></script>\
-            <script src="mode/python/python.js"></script>\
+            <div id="editor">
+            </div>
+            <script src="src-min/ace.js" type="text/javascript" charset="utf-8"></script>\
             <script>\
-                var editor = CodeMirror(document.body, {\
-                    lineNumbers: true,\
-                    readOnly: false,\
-                    lineWrapping: false,\
-                    mode: "python",\
-                    theme: "monokai",\
-                    value: '+JSON.stringify(app.script)+',\
-                    });\
+                var editor = ace.edit("editor");\
+                editor.setTheme("ace/theme/monokai");\
+                editor.session.setMode("ace/mode/python");\
+                editor.setValue('+JSON.stringify(app.script)+', 1);\
+                editor.setShowPrintMargin(false);\
             </script>\
             </body>\
             </html>\
-        ', Qt.resolvedUrl('CodeMirror/'));
+        ', Qt.resolvedUrl('ace/'));
+        }
+    }
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.NoButton
+        propagateComposedEvents: true
+        onWheel: {
+            if (wheel.modifiers & Qt.ControlModifier) {
+                var angle = wheel.angleDelta.y
+                if (angle>0) {
+                    codeView.zoomFactor += 0.1;
+                }
+                else {
+                    codeView.zoomFactor -= 0.1;
+                }
+            } else {
+                wheel.accepted = false;
+            }
+        }
     }
 }

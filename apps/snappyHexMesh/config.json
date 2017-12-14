@@ -2,6 +2,5 @@
   "blockMesh-useCellSize": false,
   "blockMesh-spacing": [0, 0, 0],
   "parallelRun": false,
-  "dockerCmd": "docker run --rm openfoamplus/of_v1606plus_centos66 /opt/OpenFOAM/OpenFOAM-v1606+/bin/foamExec",
-  "openFOAMCmd": "/usr/bin/foamExec"
+  "autoLoadResult": true
 }

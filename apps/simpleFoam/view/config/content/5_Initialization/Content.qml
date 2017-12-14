@@ -1,31 +1,26 @@
-import QtQuick 2.4
-import QtQuick.Layouts 1.3
-import QtQuick.Controls 1.4
-
 import DICE.App 1.0
-import DICE.Components 1.0
 
 Body {
     TabsCard3 {
-        title: qsTr("Discretization")
+        title: qsTr("Initialize")
         model:  {
-            switch (app.turbulenceModel) {
-                case 'none':
+            switch (app.turbulence.model) {
+                case 'laminar':
                     return [
-                        'p - Pressure',
-                        'U - Velocity'
+                        'Pressure',
+                        'Velocity'
                     ]
                 case 'kOmegaSST':
                     return [
-                        'p - Pressure',
-                        'U - Velocity',
+                        'Pressure',
+                        'Velocity',
                         'k',
                         'Omega',
                         'nut'
                     ]
                 case 'kEpsilon': [
-                        'p - Pressure',
-                        'U - Velocity',
+                        'Pressure',
+                        'Velocity',
                         'k',
                         'Epsilon',
                         'nut'

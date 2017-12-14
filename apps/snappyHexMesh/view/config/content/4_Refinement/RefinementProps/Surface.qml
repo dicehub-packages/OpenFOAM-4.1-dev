@@ -1,27 +1,25 @@
-import QtQuick 2.5
-import QtQuick.Controls 2.0
+import QtQuick 2.9
+
 import DICE.App 1.0
-import QtQuick.Controls.Material 2.0
-import QtQuick.Controls.Styles 1.3
-import QtQuick.Controls.Private 1.0
 
 
 Column {
-    
+    id: root
+
     spacing: 10
     height: childrenRect.height
     width: parent.width
 
-    VectorField2D2 {
+    DiceVectorField2D2 {
         xLabel: "Min Level"
         yLabel: "Max Level"
         dataType: "int"
         path: "refinement:Surface.surface_level"
     }
 
-    ToggleButton {
+    DiceSwitch {
         id: convertToRegion
-        label: qsTr("Convert to Region")
+        text: qsTr("Convert to Region")
         path: "refinement:Surface.is_region"
     }
 
@@ -32,14 +30,18 @@ Column {
         height: enabled ? childrenRect.height : 0
         width: parent.width
 
-        DropDown2 {
-            label: qsTr("Cell Zone")
+        Subheader {
+            text: "Cell Zone Type"
+        }
+        DiceComboBox {
             model: ["inside", "outside"]
             path: "refinement:Surface.cell_zone_inside"
         }
 
-        DropDown2 {
-            label: qsTr("Face Type")
+        Subheader {
+            text: "Face Zone Type"
+        }
+        DiceComboBox {
             model: ["internal", "baffle", "boundary"]
             path: "refinement:Surface.face_type"
         }

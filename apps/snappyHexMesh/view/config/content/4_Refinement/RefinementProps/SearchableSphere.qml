@@ -1,21 +1,20 @@
-import QtQuick 2.5
+import QtQuick 2.9
 
 import DICE.App 1.0
 
 Column {
     width: parent.width
     height: childrenRect.height
-
     spacing: 20
     
-    VectorField {
+    DiceVectorField {
         path: "refinement:SearchableSphere.centre"
         xLabel: "Centre X"
         yLabel: "Centre Y"
         zLabel: "Centre Z"
     }
 
-    ValueField {
+    DiceValueField {
         path: "refinement:SearchableSphere.radius"
         width: parent.width/2
         label: "Radius [m]"

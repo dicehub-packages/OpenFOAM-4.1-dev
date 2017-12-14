@@ -1,6 +1,7 @@
+import QtQuick 2.7
+
 import DICE.App 1.0
 import DICE.App.Foam 1.0
-import QtQuick 2.7
 
 Column {
     id: root
@@ -9,13 +10,16 @@ Column {
     property alias model: linearMatrixSolver.model
     spacing: 20
 
-    DropDown2 {
+    DiceInlineComboBox {
         id: linearMatrixSolver
         path: root.path + " solver"
         label: qsTr("Solver")
     }
 
-    Subheader { text: qsTr("Options") }
+    Subheader {
+        text: qsTr("Options")
+        horizontalAlignment: "AlignHCenter"
+    }
 
     PCGoptions {}
     GAMGoptions {}

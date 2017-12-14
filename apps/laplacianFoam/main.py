@@ -154,7 +154,7 @@ class laplacianFoam(
     @prepare.after('laplacianFoam')
     def run_laplacianFoam(self):
         self.read_settings()
-        application = self.control_dict['application']
+        application = self['foam:system/controlDict application']
         result = 0 == self.execute_command(
                 application,
                 "-case",

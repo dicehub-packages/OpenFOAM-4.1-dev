@@ -5,6 +5,7 @@ from PyFoam.Basics.DataStructures import Vector, TupleProxy, Field
 # ============
 from dice_tools import diceSync, signal, wizard
 
+
 class FoamApp:
 
     def __init__(self, **kwargs):
@@ -44,7 +45,10 @@ class FoamApp:
             key = int(key)
 
         if value is None:
-            del item[key]
+            try:
+                del item[key]
+            except (IndexError, KeyError):
+                pass
         else:
             item[key] = self.__convert_to(value, value_type)
             

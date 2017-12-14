@@ -3,7 +3,6 @@ import DICE.App 1.0
 import DICE.App.Foam 1.0
 
 Column {
-
     width: parent.width
     spacing: 20
 
@@ -22,21 +21,21 @@ Column {
         }
     }
 
-    DropDown2 {
+    DiceInlineComboBox {
         id: agglomerator
         label: qsTr("Agglomerator")
         model: ["faceAreaPair"]
         path: root.path + " agglomerator"
     }
 
-    ValueField {
+    DiceValueField {
         id: mergeLevels
         label: qsTr("Merge Levels")
         path: root.path + " mergeLevels"
         dataType: "int"
     }
 
-    DropDown2 {
+    DiceInlineComboBox {
         id: gamgPreconditioner
         label: qsTr("Preconditioner")
         model: [
@@ -48,7 +47,7 @@ Column {
         ]
         path: root.path + " preconditioner"
         function valueFromText(txt) {
-            if (txt == 'GAMG') {
+            if (txt === 'GAMG') {
                 return {
                     "agglomerator": "faceAreaPair",
                     "cacheAgglomeration": true,
@@ -70,11 +69,20 @@ Column {
                     "directSolveCoarsest": false
                 };
             }
+            function textFromValue(val) {
+                if (typeof val === 'object') {
+                    return 'GAMG';
+                }
+                return val;
+            }
             return txt;
         }
         function textFromValue(val) {
             if (typeof val === 'object') {
                 return 'GAMG';
+            }
+            if (val === false) {
+                return 'none'
             }
             return val;
         }
@@ -87,23 +95,23 @@ Column {
         path: root.path + " preconditioner"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Tolerance")
         path: root.path + " tolerance"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Relative Tolerance")
         path: root.path + " relTol"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Minimum Iterations")
         path: root.path + " minIter"
         dataType: "int"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Maximum Iterations")
         path: root.path + " maxIter"
         dataType: "int"

@@ -10,7 +10,7 @@ Column {
     enabled: linearMatrixSolver.currentText === "smoothSolver"
     visible: enabled
 
-    DropDown2 {
+    DiceInlineComboBox {
         id: smoothSolverPreconditioner
         label: qsTr("Preconditioner")
         model: [
@@ -22,7 +22,7 @@ Column {
         ]
         path: root.path + " preconditioner"
         function valueFromText(txt) {
-            if (txt == 'GAMG') {
+            if (txt === 'GAMG') {
                 return {
                     "agglomerator": "faceAreaPair",
                     "cacheAgglomeration": true,
@@ -44,11 +44,20 @@ Column {
                     "directSolveCoarsest": false
                 };
             }
+            function textFromValue(val) {
+                if (typeof val === 'object') {
+                    return 'GAMG';
+                }
+                return val;
+            }
             return txt;
         }
         function textFromValue(val) {
             if (typeof val === 'object') {
                 return 'GAMG';
+            }
+            if (val === false) {
+                return 'none'
             }
             return val;
         }
@@ -60,7 +69,7 @@ Column {
         path: root.path + " preconditioner"
     }
 
-    DropDown2 {
+    DiceInlineComboBox {
         id: smoother
         label: qsTr("Smoother")
         model: ["DIC",
@@ -72,22 +81,22 @@ Column {
         path: root.path + " smoother"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Tolerance")
         path: root.path + " tolerance"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Relative Tolerance")
         path: root.path + " relTol"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Minimum Iterations")
         path: root.path + " minIter"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Maximum Iterations")
         path: root.path + " maxIter"
     }

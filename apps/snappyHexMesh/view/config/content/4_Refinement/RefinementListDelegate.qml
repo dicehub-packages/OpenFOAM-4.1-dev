@@ -1,9 +1,8 @@
-import QtQuick 2.5
-import QtQuick.Controls 1.4
+import QtQuick 2.9
 import QtQuick.Layouts 1.3
 
-import DICE.App 1.0
 import DICE.Components 1.0
+
 
 Item {
     height: 20
@@ -22,11 +21,32 @@ Item {
             Layout.minimumWidth: 20
             height: 20
             anchors.verticalCenter: parent.verticalCenter
-            FontAwesomeIcon {
+            property Component fileIcon: DiceFontAwesomeIcon {
                 size: 12
                 anchors.centerIn: parent
-                name: {
-                    return "File";
+                name: "Folder"
+            }
+            property Component boundaryIcon: DiceIconSVG {
+                source: "images/" + boundaryOrientation + ".svg"
+                size: 16
+            }
+            property Component refinementObjectIcon: DiceIconSVG {
+                source: "../../menus/images/" + templateName + ".svg"
+                size: 16
+            }
+            Loader {
+                anchors.centerIn: parent
+                sourceComponent: {
+                    if (boundaryOrientation != undefined){
+                        return parent.boundaryIcon
+                    }
+                    if (type === "RefinementObject" && templateName != undefined) {
+                        return parent.refinementObjectIcon
+                    }
+
+                    else {
+                        return parent.fileIcon
+                    }
                 }
             }
         }
@@ -35,7 +55,43 @@ Item {
             Layout.fillWidth: true
             anchors.margins: 5
             anchors.verticalCenter: parent.verticalCenter
-            text: label
+            text: label //+ " [" + boundaryOrientation + "]"
+        }
+
+        Item {
+            Layout.minimumWidth: 20
+            height: 20
+            anchors.verticalCenter: parent.verticalCenter
+
+            property Component boundaryTypeIcon: DiceIconSVG {
+                source: boundaryType !== undefined
+                        ? "images/" + boundaryType + ".svg" :
+                          ""
+                size: 16
+                color: {
+                    switch (boundaryType) {
+                    case "patch":
+                        return "#00007f"
+                    case "wall":
+                        return "#000"
+                    case "symmetryPlane":
+                        return "#5500ff"
+                    case "symetry":
+                        return "#005500"
+                    case "empty":
+                        return "#aaaaff"
+                    case "wedge":
+                        return "#550000"
+                    default:
+                        return "#000"
+                    }
+                }
+            }
+            Loader {
+                anchors.centerIn: parent
+                sourceComponent: parent.boundaryTypeIcon
+                enabled: boundaryType != undefined
+            }
         }
 
         MouseArea {
@@ -44,11 +100,13 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             enabled: type === "RefinementObject"
             visible: enabled
+            cursorShape: "PointingHandCursor"
 
-            FontAwesomeIcon {
-                size: 12
+            DiceFontAwesomeIcon {
+                size: 10
                 anchors.centerIn: parent
                 name: "Remove"
+                color: colors.theme["text_color_info"]
             }
             onClicked: {
                 remove()
@@ -61,7 +119,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             enabled: isVisible !== undefined
             visible: enabled
-            FontAwesomeIcon {
+            DiceFontAwesomeIcon {
                 size: 12
                 anchors.centerIn: parent
                 name: isVisible ? "Eye" : "EyeSlash"

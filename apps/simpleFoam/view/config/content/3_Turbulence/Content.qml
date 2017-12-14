@@ -1,90 +1,126 @@
-import QtQuick 2.4
-import QtQuick.Layouts 1.3
-import QtQuick.Controls 1.4
+import QtQuick 2.9
 
 import DICE.App 1.0
+
 
 Body {
     Card {
         title: qsTr("Turbulence model")
 
-        DropDown2 {
-            target: app
-            visible: turbToggle.checked
-            property: "turbulenceModel"
+//        DiceComboBox {
+//            target: app
+//            property: "turbulenceModel"
+//            model: [
+//                "laminar",
+//                "kOmegaSST",
+//                "kEpsilon"
+//            ]
+//        }
+
+        DiceComboBox {
+            target: app.turbulence
+            property: "model"
             model: [
-                "none",
+                "laminar",
                 "kOmegaSST",
                 "kEpsilon"
             ]
         }
 
-        Column {
+        Card {
+            title: "kEpsilonCoeffs"
             width: parent.width
-            visible: app.turbulenceModel == "kOmegaSST"
+            visible: app.turbulence.model === "kEpsilon"
             spacing: 20
+            expanded: false
+            backgroundBorder: 0
 
-            Subheader {
-                text: "kOmegaSSTCoeffs"
+            DiceValueField {
+                label: "Cmu"
+                path: "foam:constant/turbulenceProperties RAS kEpsilonCoeffs Cmu"
             }
+            DiceValueField {
+                label: "C1"
+                path: "foam:constant/turbulenceProperties RAS kEpsilonCoeffs C1"
+            }
+            DiceValueField {
+                label: "C2"
+                path: "foam:constant/turbulenceProperties RAS kEpsilonCoeffs C2"
+            }
+            DiceValueField {
+                label: "C3"
+                path: "foam:constant/turbulenceProperties RAS kEpsilonCoeffs C3"
+            }
+            DiceValueField {
+                label: "sigmak"
+                path: "foam:constant/turbulenceProperties RAS kEpsilonCoeffs sigmak"
+            }
+            DiceValueField {
+                label: "sigmaEps"
+                path: "foam:constant/turbulenceProperties RAS kEpsilonCoeffs sigmaEps"
+            }
+        }
 
-            ValueField {
+        Card {
+            title: "kOmegaSSTCoeffs"
+            width: parent.width
+            visible: app.turbulenceModel === "kOmegaSST"
+            spacing: 20
+            expanded: false
+            backgroundBorder: 0
+
+            DiceValueField {
                 label: "alphaK1"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs alphaK1"
             }
-            ValueField {
+            DiceValueField {
                 label: "alphaOmega2"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs alphaOmega2"
             }
-            ValueField {
+            DiceValueField {
                 label: "gamma2"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs gamma2"
             }
-            ValueField {
+            DiceValueField {
                 label: "alphaK2"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs alphaK2"
             }
-            ValueField {
+            DiceValueField {
                 label: "alphaOmega1"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs alphaOmega1"
             }
-            ValueField {
+            DiceValueField {
                 label: "gamma1"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs gamma1"
             }
-            ToggleButton {
-                label: "F3"
+            DiceSwitch {
+                text: "F3"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs F3"
             }
-            ValueField {
+            DiceValueField {
                 label: "c1"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs c1"
             }
-            ValueField {
+            DiceValueField {
                 label: "b1"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs b1"
             }
-            ValueField {
+            DiceValueField {
                 label: "a1"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs a1"
             }
-            ValueField {
+            DiceValueField {
                 label: "beta1"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs beta1"
             }
-            ValueField {
+            DiceValueField {
                 label: "beta2"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs beta2"
             }
-            ValueField {
+            DiceValueField {
                 label: "betaStar"
                 path: "foam:constant/turbulenceProperties RAS kOmegaSSTCoeffs betaStar"
             }
         }
-
     }
-
-
-
-
 }

@@ -7,18 +7,16 @@ Body {
 
         spacing: 20
 
-        FlatButton {
+        DiceButton {
             text: qsTr('Select Material')
             onClicked: {
                 app.selectMaterial();
             }
         } 
 
-        InputField2 {
+        DiceValueField {
             label: "nu"
             path: "foam:constant/transportProperties nu 2"
         }
-
     }
-
 }

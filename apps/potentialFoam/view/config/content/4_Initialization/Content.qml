@@ -12,7 +12,7 @@ Body {
     }
     Card {
         title: "Velocity [m/s]"
-        VectorField {
+        DiceVectorField {
             path: "foam:0/U internalField %field_vector"
         }
     }

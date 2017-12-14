@@ -9,13 +9,14 @@ Column {
     height: childrenRect.height
     width: parent.width
 
-    ToggleButton {
-        label: qsTr("Enable layers addition")
+    DiceSwitch {
+        id: addLayersSwitch
+        text: qsTr("Add Layers")
         path: "refinement:SurfaceRegion.has_layers_addition"
     }
 
-    ValueField {
-        enabled: modelData.hasLayersAddition
+    DiceValueField {
+        enabled: addLayersSwitch.checked
         width: parent.width
         label: qsTr("Number of Layers")
         path: "refinement:SurfaceRegion.layers_addition"

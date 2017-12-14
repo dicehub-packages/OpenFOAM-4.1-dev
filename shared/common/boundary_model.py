@@ -1,11 +1,21 @@
-from dice_tools import *
-from dice_tools.helpers.xmodel import *
-from PyFoam.Basics.DataStructures import Field, Vector, DictProxy
-from dice_vtk.utils.foam_reader import FoamReader
-from PyFoam.RunDictionary.ParsedParameterFile import ParsedBoundaryDict
-
+# Standard Python modules
+# =======================
 import os
 import random
+import shutil
+
+# External modules
+# ================
+from PyFoam.Basics.DataStructures import Field, Vector, DictProxy
+from PyFoam.RunDictionary.ParsedParameterFile import ParsedBoundaryDict
+
+# DICE Libs
+# =========
+from dice_tools import *
+from dice_tools.helpers.xmodel import *
+from dice_vtk.utils.foam_reader import FoamReader
+from .fields import *
+
 
 class BoundaryGroup(ModelItem):
 
@@ -38,12 +48,15 @@ class BoundaryGroup(ModelItem):
         a.neighbour_patch = b.name
         b.neighbour_patch = a.name
 
+
 class Boundary:
 
     def __init__(self, vis, app):
         self.vis = vis
         self.app = app
         wizard.subscribe(self, self.vis)
+
+        # self.__pressure = Pressure(self)
 
     def w_geometry_object_clicked(self, obj, *args, **kwargs):
         self.app.boundaries_model.current_item = self
@@ -58,10 +71,18 @@ class Boundary:
 
     @name.setter
     def name(self, value):
-        v = self.app[self.path]
-        self.app[self.path] = None
-        self.vis.name = value
-        self.app[self.path] = v
+        for v in self.app.boundaries_model.elements_of(Boundary):
+            if v.name == value:
+                return
+        if self.name != value:
+            v = self.app[self.path]
+            self.app[self.path] = None
+            self.vis.name = value
+            self.app[self.path] = v
+
+    @property
+    def boundary_types_model(self):
+        return ["patch", "wall", "symmetry", "empty", "wedge"]
 
     @modelRole('boundaryType')
     def boundary_type(self):
@@ -86,8 +107,7 @@ class Boundary:
                 self.app[self.path + ' lowWeightCorrection'] = 0.2
                 self.app[self.path + ' neighbourPatch'] = ''
 
-        self.app[self.path + 'type'] = value
-
+        self.app[self.path + ' type'] = value
 
     @modelRole('isVisible')
     def visible(self):
@@ -152,6 +172,13 @@ class Boundary:
             elif not value and  self.low_weight_correction_enable:
                 self.app[self.path + ' lowWeightCorrection'] = None
 
+    # Pressure
+    # ========
+
+    # @diceProperty
+    # def pressure(self):
+    #     return self.__pressure
+
     @property
     def pressure_boundary_condition_type(self):
         path = 'foam:0/p boundaryField ' + self.name + ' type'
@@ -164,7 +191,9 @@ class Boundary:
             return 'Zero Gradient'
         elif condition_type == 'slip':
             return 'Slip'
-            
+        elif condition_type == 'symmetry':
+            return 'Symmetry'
+
     @pressure_boundary_condition_type.setter
     def pressure_boundary_condition_type(self, value):
         path = 'foam:0/p boundaryField ' + self.name
@@ -193,6 +222,10 @@ class Boundary:
             self.app[path] = {
                 'type': 'slip'
             }
+        elif value == 'Symmetry':
+            self.app[path] = {
+                'type': 'symmetry'
+            }
 
     @property
     def pressure_field_value(self):
@@ -204,6 +237,9 @@ class Boundary:
         path = 'foam:0/p boundaryField ' + self.name + ' value'
         if self.app[path] is not None:
             self.app[path] = Field(value)
+
+    # Velocity
+    # ========
 
     @property
     def velocity_boundary_condition_type(self):
@@ -217,6 +253,8 @@ class Boundary:
             return 'Inlet Outlet'
         elif condition_type == 'slip':
             return 'Slip'
+        elif condition_type == 'symmetry':
+            return 'Symmetry'
 
     @velocity_boundary_condition_type.setter
     def velocity_boundary_condition_type(self, value):
@@ -241,6 +279,10 @@ class Boundary:
             self.app[path] = {
                 'type': 'slip'
             }
+        elif value == 'Symmetry':
+            self.app[path] = {
+                'type': 'symmetry'
+            }
 
     @property
     def velocity_field_value(self):
@@ -264,6 +306,9 @@ class Boundary:
         if self.app[path] is not None:
             self.app[path] = Field(Vector(*value))
 
+    # Omega - turbulnce specific dissipation
+    # ======================================
+
     @property
     def omega_boundary_condition_type(self):
         path = 'foam:0/omega boundaryField ' + self.name + ' type'
@@ -274,7 +319,11 @@ class Boundary:
             return 'Zero Gradient'
         elif condition_type == 'turbulentMixingLengthFrequencyInlet':
             return 'Turbulent Mixing Length Frequency Inlet'
-
+        elif condition_type == 'symmetry':
+            return 'Symmetry'
+        elif condition_type == 'slip':
+            return 'Slip'
+            
     @omega_boundary_condition_type.setter
     def omega_boundary_condition_type(self, value):
         path = 'foam:0/omega boundaryField ' + self.name
@@ -293,6 +342,14 @@ class Boundary:
                 'type': 'turbulentMixingLengthFrequencyInlet',
                 'value': Field(default_value),
                 'mixingLength': 0.001
+            }
+        elif value == 'Symmetry':
+            self.app[path] = {
+                'type': 'symmetry'
+            }
+        elif value == 'Slip':
+            self.app[path] = {
+                'type': 'slip'
             }
 
     @property
@@ -317,6 +374,9 @@ class Boundary:
         if self.app[path] is not None:
             self.app[path] = value
 
+    # k - Turbulent kinetic energy
+    # ============================
+
     @property
     def k_boundary_condition_type(self):
         path = 'foam:0/k boundaryField ' + self.name + ' type'
@@ -327,7 +387,13 @@ class Boundary:
             return 'Zero Gradient'
         elif condition_type == 'turbulentIntensityKineticEnergyInlet':
             return 'Turbulent Intensity Kinetic Energy Inlet'
-            
+        elif condition_type == 'symmetry':
+            return 'Symmetry'
+        elif condition_type == 'slip':
+            return 'Slip'
+        elif condition_type == 'kqRWallFunction':
+            return 'kqRWallFunction'
+
     @k_boundary_condition_type.setter
     def k_boundary_condition_type(self, value):
         path = 'foam:0/k boundaryField ' + self.name
@@ -346,6 +412,18 @@ class Boundary:
                 'type': 'turbulentIntensityKineticEnergyInlet',
                 'value': Field(default_value),
                 'intensity': 0.05
+            }
+        elif value == 'Symmetry':
+            self.app[path] = {
+                'type': 'symmetry'
+            }
+        elif value == 'Slip':
+            self.app[path] = {
+                'type': 'slip'
+            }
+        elif value == 'kqRWallFunction':
+            self.app[path] = {
+                'type': 'kqRWallFunction'
             }
 
     @property
@@ -370,6 +448,9 @@ class Boundary:
         if self.app[path] is not None:
             self.app[path] = value
 
+    # epsilon - turbulence dissipation
+    # ================================
+
     @property
     def epsilon_boundary_condition_type(self):
         path = 'foam:0/epsilon boundaryField ' + self.name + ' type'
@@ -380,6 +461,12 @@ class Boundary:
             return 'Zero Gradient'
         elif condition_type == 'turbulentMixingLengthDissipationRateInlet':
             return 'Turbulent Mixing Length Inlet'
+        elif condition_type == 'symmetry':
+            return 'Symmetry'
+        elif condition_type == 'slip':
+            return 'Slip'
+        elif condition_type == 'omegaWallFunction':
+            return 'omegaWallFunction'
 
     @epsilon_boundary_condition_type.setter
     def epsilon_boundary_condition_type(self, value):
@@ -399,6 +486,14 @@ class Boundary:
                 'type': 'turbulentMixingLengthDissipationRateInlet',
                 'value': Field(default_value),
                 'mixingLength': 0.001
+            }
+        elif value == 'Symmetry':
+            self.app[path] = {
+                'type': 'symmetry'
+            }
+        elif value == 'Slip':
+            self.app[path] = {
+                'type': 'slip'
             }
 
     @property
@@ -423,6 +518,9 @@ class Boundary:
         if self.app[path] is not None:
             self.app[path] = value
 
+    # T - Temperature
+    # ===============
+
     @property
     def temperature_boundary_condition_type(self):
         path = 'foam:0/T boundaryField ' + self.name + ' type'
@@ -433,6 +531,8 @@ class Boundary:
             return "Zero Gradient"
         elif condition_type == "empty":
             return "Empty"
+        elif condition_type == 'symmetry':
+            return 'Symmetry'
 
     @temperature_boundary_condition_type.setter
     def temperature_boundary_condition_type(self, value):
@@ -451,7 +551,11 @@ class Boundary:
             self.app[path] = {
                 "type": "empty"
             }
-
+        elif value == 'Symmetry':
+            self.app[path] = {
+                'type': 'symmetry'
+            }
+            
     @property
     def temperature_boundary_condition_type_list(self):
         if self.boundary_type == "empty":
@@ -464,7 +568,6 @@ class Boundary:
         path = 'foam:0/T boundaryField ' + self.name + ' value'
         return self.app[path]
 
-
     @temperature_field_value.setter
     def temperature_field_value(self, value):
         path = 'foam:0/T boundaryField ' + self.name + ' value'
@@ -476,13 +579,18 @@ class BoundaryApp:
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.__boundary = None
         self.__boundaries_model = standard_model(Boundary, BoundaryGroup)
         self.__boundary_items = []
         self.__boundary_names = []
         self.__boundaries_props = []
         self.__reader = None
+        self.__input_data = None
         wizard.subscribe(self, self.__boundaries_model)
         wizard.subscribe(self.w_geometry_object_clicked)
+
+    def __load_turbulence_props(self, boundary_props):
+        pass
 
     def load_boundary(self, boundary_props, input_data):
 
@@ -535,7 +643,7 @@ class BoundaryApp:
 
         wizard.w_idle()
         
-        self.__reader = FoamReader(self.config_path())
+        self.__reader = FoamReader(self.config_path(), cells=False)
 
         for v in self.__reader.patches:
             self.vis_add_object(v)
@@ -645,7 +753,6 @@ class BoundaryApp:
                     setattr(s, path, value)
         signal('boundary:*')
         return True
-
 
     def w_model_selection_changed(self, model, selected, deselected):
         for v in deselected:

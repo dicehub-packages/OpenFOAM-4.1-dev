@@ -3,7 +3,7 @@ snappyHexMesh
 =============
 DICE meshing app based on snappyHexMesh in OpenFOAM (http://www.openfoam.org)
 
-Copyright (c) 2014-2015 by DICE Developers
+Copyright (c) 2014-2017 by DICEhub Developers
 All rights reserved.
 """
 
@@ -14,10 +14,15 @@ import sys
 import shutil
 import sys
 import traceback
+from concurrent.futures import ThreadPoolExecutor
+from time import time
+from collections.abc import Sequence
 
 # External modules
 # ================
 import yaml
+from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile
+from PyFoam.Basics.DataStructures import Vector
 
 # App modules
 # ============
@@ -34,18 +39,20 @@ from dice_tools.helpers import run_process
 # =========
 from dice_vtk import VisApp, VtkScene
 from common.foam_app import FoamApp
-from PyFoam.Basics.DataStructures import Vector
+
 from modules.bounding_box import BoundingBox
 from modules.material_point import MaterialPoint
 from modules.refinement import Refinement
 from common.foam_result import Result
-from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile
-from time import time
-from collections.abc import Sequence
 from modules.api.app_api import AppApi
 from common.basic_app import BasicApp
 
-class snappyHexMesh(
+
+# def logs_worker(line):
+#     wizard.w_log(line)
+
+
+class snappyHexMeshApp(
     Application,
     BasicApp,
     FoamApp,
@@ -92,6 +99,7 @@ class snappyHexMesh(
 
         wizard.subscribe(self.w_idle)
         wizard.subscribe(self.w_modified)
+        # wizard.subscribe("w_log", self.__w_log)
 
         # Load input (STL)
         # ================
@@ -147,8 +155,10 @@ class snappyHexMesh(
     def api(self):
         return self.__api
 
+    @diceSlot(name='updateResult')
     def update_result(self):
-        self.__result.update()
+        if self.config['autoLoadResult']:
+            self.__result.update()
 
     def progress_changed(self, progress):
         super().progress_changed(progress)
@@ -194,7 +204,7 @@ class snappyHexMesh(
         items = [
             'foam:system/snappyHexMeshDict castellatedMeshControls refinementRegions ',
             'foam:system/snappyHexMeshDict geometry ',
-            'foam:system/snappyHexMeshDict castellatedMeshControls refinementSurfaces',
+            'foam:system/snappyHexMeshDict castellatedMeshControls refinementSurfaces ',
             'foam:system/surfaceFeatureExtractDict '
         ]
 
@@ -244,7 +254,26 @@ class snappyHexMesh(
                 # ====================================
                 Surface(app=self, path=self.workflow_path(file))
 
-        # delete files which not exist now
+        self.__clean_up()
+
+
+        # Get parameters from input
+        # =========================
+        for parameters in self.__input_data.get('parameters', {}).values():
+            self.__parameters = parameters
+            break
+        else:
+            self.__parameters = []
+
+        # Run custom initialization script
+        self.run_script(self.config_path('initialization.py'))
+
+    def __clean_up(self):
+        """
+        Clean up old stl files, refinement surfaces, features and layers.
+        :return:
+        """
+        # Delete files which no longer exist in geometry
         for k, v in list(self['foam:system/snappyHexMeshDict geometry'].items()):
             if v.get('type') == 'triSurfaceMesh':
                 for i in self.refinement.model.elements_of(Surface):
@@ -253,6 +282,21 @@ class snappyHexMesh(
                 else:
                     self.remove_stl(k)
 
+        # Delete refinementSurfaces which have no corresponding geometry
+        for k, v in list(self['foam:system/snappyHexMeshDict castellatedMeshControls refinementSurfaces'].items()):
+            if k not in self['foam:system/snappyHexMeshDict geometry']:
+                self['foam:system/snappyHexMeshDict castellatedMeshControls refinementSurfaces ' + k] = None
+
+        # Delete features with no corresponding geometry
+        geometry_names = [os.path.splitext(name)[0] for name in self['foam:system/snappyHexMeshDict geometry']]
+        for i, v in enumerate(self['foam:system/snappyHexMeshDict castellatedMeshControls features']):
+            if os.path.splitext(v["file"])[0] not in geometry_names:
+                self['foam:system/snappyHexMeshDict castellatedMeshControls features %i'%i] = None
+        for i, name in enumerate(self['foam:system/surfaceFeatureExtractDict']):
+            if name not in geometry_names:
+                self['foam:system/surfaceFeatureExtractDict ' + name] = None
+
+        # Delete regions which no longer exist in stl files
         for k, v in list(self['foam:system/snappyHexMeshDict geometry'].items()):
             if v.get('type') == 'triSurfaceMesh':
                 for kk, vv in list(v['regions'].items()):
@@ -262,26 +306,18 @@ class snappyHexMesh(
                     else:
                         del v['regions'][kk]
 
+        # Delete layers for regions which no longer exist in stl files
         for k, v in list(self[
-                'foam:system/snappyHexMeshDict addLayersControls layers'].items()):
+                             'foam:system/snappyHexMeshDict addLayersControls layers'].items()):
             for i in self.refinement.model.elements_of(SurfaceRegion):
                 if i.name == k:
                     break
             else:
                 self['foam:system/snappyHexMeshDict addLayersControls layers '+k] = None
 
-        for parameters in self.__input_data.get('parameters', {}).values():
-            self.__parameters = parameters
-            break
-        else:
-            self.__parameters = []
-
-        self.run_script(self.config_path('initialization.py'))
-
     @property
     def parameters(self):
         return self.__parameters
-
 
     def __load_config_files(self):
         """
@@ -290,7 +326,7 @@ class snappyHexMesh(
         # Parsed configuration files
         # ==========================
         self._block_mesh_dict = ParsedParameterFile(
-            self.config_path('constant/polyMesh/blockMeshDict')
+            self.config_path('system/blockMeshDict')
         )
         self._snappy_hex_mesh_dict = ParsedParameterFile(
             self.config_path('system/snappyHexMeshDict')
@@ -308,11 +344,12 @@ class snappyHexMesh(
             self.config_path('system/controlDict')
         )
 
-        self.foam_file('constant/polyMesh/blockMeshDict', self._block_mesh_dict)
+        self.foam_file('system/blockMeshDict', self._block_mesh_dict)
         self.foam_file('system/snappyHexMeshDict', self._snappy_hex_mesh_dict)
         self.foam_file('system/controlDict', self.__control_dict)
         self.foam_file('system/meshQualityDict', self.__mesh_quality_dict)
         self.foam_file('system/decomposeParDict', self._decompose_par_dict)
+        self.foam_file('system/surfaceFeatureExtractDict', self._surface_feature_extract_dict)
 
     @diceSync('refinement:')
     def __refinement_sync(self, path):
@@ -374,10 +411,8 @@ class snappyHexMesh(
         if successfull.
         :return: True/False
         """
-
         # Save everything
         self.save()
-
 
         # Clear %APP_RUN in %WORKFLOW_DIR
         # ==================================
@@ -396,6 +431,10 @@ class snappyHexMesh(
         for v in self.refinement.model.elements_of(Surface):
             shutil.copy(v.path, self.run_path('constant', 'triSurface'))
 
+        # For paraview post-processing
+        self.copy(self.config_path('p.foam'),
+                  self.run_path())
+
         return True
 
     def read_settings(self):
@@ -410,6 +449,7 @@ class snappyHexMesh(
             self.__cmd_pattern = settings['foam_cmd']
         self.__cpu_count = self._decompose_par_dict['numberOfSubdomains']
         self.__use_mpi = self.config['parallelRun']
+        self.paraview_cmd = settings['paraview_cmd']
         return True
 
     def stop(self):
@@ -432,16 +472,15 @@ class snappyHexMesh(
                 user=os.environ.get('USER'),
                 user_name=os.environ.get('USERNAME'),
                 command=' '.join(args))
-
         if "win" not in sys.platform:
             params['user_id'] = os.getuid()
 
         result = run_process(command=cmd_pattern,
             cwd=self.workflow_path(),
-            stdout=self.log,
-            stderr=self.log,
+            stdout=self.print_log,
+            stderr=self.print_log,
             format_kwargs=params,
-            stop=lambda: not self.running)
+            stop=self.stopped)
 
         return result
 
@@ -457,7 +496,6 @@ class snappyHexMesh(
                 "-case",
                 path
             )
-
 
     @diceTask('blockMesh', run_feature_extract)
     def run_block_mesh(self):
@@ -531,9 +569,12 @@ class snappyHexMesh(
         self.read_settings()
         if self.__use_mpi:
             for i in range(self.__cpu_count):
-                self.rmtree(self.current_run_path("processor"+str(i)))
-        self.set_output('foam_mesh', [self.run_path(relative=True)])
+                self.rmtree(self.run_path("processor"+str(i)))
+        self.update_output()
         return True
+
+    def update_output(self):
+        self.set_output('foam_mesh', [self.run_path(relative=True)])
 
     def post_run_script_enabled(self):
         return os.path.exists(self.config_path('post_run.py'))
@@ -541,3 +582,11 @@ class snappyHexMesh(
     @diceTask('post run script', run_cleanup, enabled=post_run_script_enabled)
     def post_run_script(self):
         return self.run_script(self.config_path('post_run.py'))
+
+    def print_log(self, line):
+        self.log(line)
+        # with ThreadPoolExecutor(max_workers=3) as executor:
+        #     executor.submit(logs_worker, line)
+
+    # def __w_log(self, line):
+    #     self.log(line, callback=None)

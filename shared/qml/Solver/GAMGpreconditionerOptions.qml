@@ -1,6 +1,7 @@
 import QtQuick 2.7
+
 import DICE.App 1.0
-import DICE.App.Foam 1.0
+
 
 Column {
     id: root
@@ -12,51 +13,51 @@ Column {
 
     Subheader { text: qsTr("GAMG Preconditioner Options") }
 
-    DropDown2 {
+    DiceInlineComboBox {
         label: qsTr("Agglomerator")
         model: ["faceAreaPair"]
         path: root.path + " agglomerator"
     }
 
-    ToggleButton {
-        label: qsTr("Cache Agglomeration")
+    DiceSwitch {
+        text: qsTr("Cache Agglomeration")
         path: root.path + " cacheAgglomeration"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Merge Levels")
         path: root.path + " mergeLevels"
         dataType: "int"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Tolerance")
         path: root.path + " nCellsInCoarsestLevel"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Relative Tolerance")
         path: root.path + " tolerance"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Relative Tolerance")
         path: root.path + " relTol"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Minimum Iterations")
         path: root.path + " minIter"
         dataType: "int"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Maximum Iterations")
         path: root.path + " maxIter"
         dataType: "int"
     }
 
-    DropDown2 {
+    DiceInlineComboBox {
         label: qsTr("Smoother")
         model: [
             "DIC",
@@ -69,49 +70,48 @@ Column {
         path: root.path + " smoother"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Pre Sweeps")
         path: root.path + " nPreSweeps"
         dataType: "int"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Pre Sweeps Level Multiplier")
         path: root.path + " preSweepsLevelMultiplier"
         dataType: "int"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Post Sweeps")
         path: root.path + " nPostSweeps"
         dataType: "int"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Post Sweeps Level Multiplier")
         path: root.path + " postSweepsLevelMultiplier"
         dataType: "int"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Max Post Sweeps")
         path: root.path + " maxPostSweeps"
         dataType: "int"
     }
 
-    ValueField {
+    DiceValueField {
         label: qsTr("Finest Sweeps")
         path: root.path + " nFinestSweeps"
         dataType: "int"
     }
 
-    ToggleButton {
-        label: qsTr("Interpolate Correction")
+    DiceSwitch {
+        text: "Interpolate Correction"
         path: root.path + " interpolateCorrection"
     }
-
-    ToggleButton {
-        label: qsTr("Direct Solve Coarsest")
+    DiceSwitch {
+        text: "Direct Solve Coarsest"
         path: root.path + " directSolveCoarsest"
     }
 }

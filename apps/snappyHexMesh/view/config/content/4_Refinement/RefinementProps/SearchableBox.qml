@@ -1,22 +1,23 @@
-import QtQuick 2.5
+import QtQuick 2.9
 
 import DICE.App 1.0
 
 Column {
     width: parent.width
     height: childrenRect.height
-    
-    VectorField {
+    spacing: 20
+
+    DiceVectorField {
         path: "refinement:SearchableBox.min"
-        xLabel: "minX"
-        yLabel: "minY"
-        zLabel: "minZ"
+        xLabel: "min_X"
+        yLabel: "min_Y"
+        zLabel: "min_Z"
     }
     
-    VectorField {
+    DiceVectorField {
         path: "refinement:SearchableBox.max"
-        xLabel: "maxX"
-        yLabel: "maxY"
-        zLabel: "maxZ"
+        xLabel: "max_X"
+        yLabel: "max_Y"
+        zLabel: "max_Z"
     }
 }

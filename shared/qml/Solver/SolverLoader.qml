@@ -1,17 +1,9 @@
-import QtQuick.Controls 1.4
-import QtQuick 2.5
-import QtQml.Models 2.2
-import QtQuick.Layouts 1.3
-
-import DICE.App 1.0
-import DICE.Components 1.0
-
 SolverControl {
     path: {
         switch (modelData.modelData) {
-            case 'p - Pressure':
+            case 'Pressure':
                 return "foam:system/fvSolution solvers p"
-            case 'U - Velocity':
+            case 'Velocity':
                 return "foam:system/fvSolution solvers U"
             case 'k':
                 return "foam:system/fvSolution solvers k"
@@ -21,11 +13,19 @@ SolverControl {
                 return "foam:system/fvSolution solvers omega"
         }
     }
-    model: [
-      "PCG",
-      "GAMG",
-      "smoothSolver",
-      "ICCG"
-    ]
+    model: {
+        switch (modelData.modelData) {
+           case 'Pressure':
+               return ["PCG", "GAMG", "smoothSolver", "ICCG"]
+           case 'Velocity':
+               return ["PCG", "smoothSolver", "ICCG"]
+           case 'k':
+               return ["PCG", "smoothSolver", "ICCG"]
+           case 'Epsilon':
+               return ["PCG", "smoothSolver", "ICCG"]
+           case 'Omega':
+               return ["PCG", "smoothSolver", "ICCG"]
+       }
+    }
 }
 

@@ -9,7 +9,7 @@ Column {
     visible: enabled
     spacing: 20
 
-    DropDown2 {
+    DiceInlineComboBox {
         id: pcgPreconditioner
         label: qsTr("Preconditioner")
         model: [
@@ -21,7 +21,7 @@ Column {
         ]
         path: root.path + " preconditioner"
         function valueFromText(txt) {
-            if (txt == 'GAMG') {
+            if (txt === 'GAMG') {
                 return {
                     "agglomerator": "faceAreaPair",
                     "cacheAgglomeration": true,
@@ -58,20 +58,20 @@ Column {
         visible: enabled
         path: root.path + " preconditioner"
     }
-    ValueField {
+    DiceValueField {
         label: qsTr("Tolerance")
         path: root.path + " tolerance"
     }
-    ValueField {
+    DiceValueField {
         label: qsTr("Relative Tolerance")
         path: root.path + " relTol"
     }
-    ValueField {
+    DiceValueField {
         label: qsTr("Minimum Iterations")
         path: root.path + " minIter"
         dataType: "int"
     }
-    ValueField {
+    DiceValueField {
         label: qsTr("Maximum Iterations")
         path: root.path + " maxIter"
         dataType: "int"

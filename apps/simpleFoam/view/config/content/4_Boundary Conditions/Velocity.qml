@@ -1,7 +1,6 @@
 import QtQuick 2.5
 
 import DICE.App 1.0
-import DICE.Components 1.0
 
 Column {
     width: parent.width
@@ -9,14 +8,16 @@ Column {
     
     spacing: 20
 
-    DropDown2 {
+    Subheader {
+        text: "Type"
+    }
+    DiceComboBox {
         id: velocityType
-        label: "Type"
-        model: ["Fixed Value", "Zero Gradient", "Inlet Outlet", "Slip"]
+        model: ["Fixed Value", "Zero Gradient", "Inlet Outlet", "Slip", "Symmetry"]
         path: "boundary:velocity_boundary_condition_type"
     }
 
-    VectorField {
+    DiceVectorField {
         enabled: (["Fixed Value"]).indexOf(velocityType.currentText) >= 0
         visible: enabled
         xLabel: "Velocity X"
@@ -25,7 +26,7 @@ Column {
         path: "boundary:velocity_field_value"
     }
 
-    VectorField {
+    DiceVectorField {
         enabled: (["Inlet Outlet"]).indexOf(velocityType.currentText) >= 0
         visible: enabled
         xLabel: "Velocity X"

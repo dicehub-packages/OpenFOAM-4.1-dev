@@ -1,0 +1,16 @@
+__pycache__
+*.pyc
+*.pyo
+.directory
+*.qmlc
+*.jsc
+.qmake.stash
+*_FoamFileParser_parsetab.py
+.idea/
+*.user
+Makefile
+.venv
+install/dist/
+*.zip
+.cache
+dist/

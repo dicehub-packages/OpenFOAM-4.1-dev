@@ -6,5 +6,5 @@ outputs:
 
 settings:
   "use_docker": true
-  "docker_cmd": "docker run --rm -v {dice_workflow}:/dice_workflow:Z -w /dice_workflow openfoamplus/of_v1606plus_centos66 /bin/bash -c \"source /opt/OpenFOAM/OpenFOAM-v1606+/etc/bashrc && foamExec {command}\""
+  "docker_cmd": "docker run --name {docker_name} --rm -v {dice_workflow}:/usr/share/openfoam/data:Z dicehub/openfoam:4.1 \"{command}\""
   "foam_cmd": "/usr/bin/foamExec"

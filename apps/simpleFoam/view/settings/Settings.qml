@@ -1,9 +1,6 @@
 import QtQuick 2.7
-import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.3
 
 import DICE.Components 1.0
-// import DICE.Components 1.0 as DC
 
 Item {
     id: root
@@ -30,13 +27,10 @@ Item {
                     anchors.right: parent.right
                     spacing: 10
 
-                    ToggleButton {
+                    DiceSwitch {
                         id: useDocker
-                        width: parent.width/2
-                        label: qsTr('Use OpenFOAM in Docker')
+                        text: qsTr('Use OpenFOAM in Docker')
                         checked: settings.use_docker
-                        uncheckedText: qsTr("no")
-                        checkedText: qsTr("Yes")
                         onCheckedChanged: settings.use_docker = checked
                     }
                 }
@@ -52,16 +46,20 @@ Item {
                         visible: useDocker.checked
                         spacing: 20
 
-                        InputField {
-                            label: "Docker command to start container with OpenFOAM"
-                            Layout.fillWidth: true
+                        SubheaderText {
+                            text: "Docker command to start container with OpenFOAM"
+                        }
+                        DiceTextField {
+                            width: parent.width
                             text: settings.docker_cmd
                             onTextChanged: settings.docker_cmd = text
                         }
 
-                        InputField {
-                            label: "Docker command to start container with MPI"
-                            Layout.fillWidth: true
+                        SubheaderText {
+                            text: "Docker command to start container with OpenFOAM and MPI"
+                        }
+                        DiceTextField {
+                            width: parent.width
                             text: settings.docker_cmd_mpi
                             onTextChanged: settings.docker_cmd_mpi = text
                         }
@@ -72,23 +70,35 @@ Item {
                         visible: !useDocker.checked
                         spacing: 20
 
-                        InputField {
-                            label: "Path to $OpenFOAM/bin/foamExec"
-                            Layout.fillWidth: true
+                        BasicText {
+                            text: "Path to $OpenFOAM/bin/foamExec"
+                        }
+                        DiceTextField {
+                            width: parent.width
                             text: settings.foam_cmd
                             onTextChanged: settings.foam_cmd = text
                         }
 
-                        InputField {
-                            label: "Path to mpirun"
-                            Layout.fillWidth: true
+                        SubheaderText {
+                            text: "Path to mpirun"
+                        }
+                        DiceTextField {
+                            width: parent.width
                             text: settings.foam_cmd_mpi
                             onTextChanged: settings.foam_cmd_mpi = text
+                        }
+                        SubheaderText {
+                            text: "Paraview"
+                        }
+                        DiceTextField {
+                            width: parent.width
+                            text: settings.paraview_cmd
+                            onTextChanged: settings.paraview_cmd = text
                         }
 
                     }
                 }
-            }  
+            }
         }
     }
 

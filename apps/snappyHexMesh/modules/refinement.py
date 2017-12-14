@@ -8,6 +8,7 @@ from dice_tools.helpers.xmodel import standard_model, modelRole
 from .refinement_items import *
 import copy
 
+
 class PropertyItem:
     def __init__(self, title, source):
         self.__title = title
@@ -21,15 +22,17 @@ class PropertyItem:
     def source(self):
         return self.__source
 
+
 class Refinement(DICEObject):
 
     ref_obj_types = {
         "searchableBox": SearchableBox,
         "searchableSphere": SearchableSphere,
-        # "searchableCylinder": Tube,
-        # "searchablePlate": Plane,
-        # "searchablePlane": Plane,
-        # "searchableDisk": Disk
+        "searchableCylinder": SearchableCylinder,
+        "searchablePlate": SearchablePlate,
+        "searchableDisk": SearchableDisk,
+        "searchablePlane3P": SearchablePlane3P,
+        "searchablePlanePaN": SearchablePlanePaN
     }
 
     ref_object_templates = {
@@ -97,6 +100,11 @@ class Refinement(DICEObject):
             SurfaceRegion,
             SearchableBox,
             SearchableSphere,
+            SearchableCylinder,
+            SearchablePlate,
+            SearchableDisk,
+            SearchablePlane3P,
+            SearchablePlanePaN,
             RegionLevel,
             Boundary,
             BoundariesNode,
@@ -106,7 +114,7 @@ class Refinement(DICEObject):
         self.__props_model = standard_model(PropertyItem)
 
         self.__geometry_node = TreeNode('Geometry')
-        self.__refinement_node = TreeNode('Refinement')
+        self.__refinement_node = TreeNode('Refinement Objects')
         self.__boundaries_node = BoundariesNode('Boundary', self.__app)
 
         for v in self.__app.bounding_box.boundaries_model.root_elements:
@@ -124,8 +132,24 @@ class Refinement(DICEObject):
         wizard.subscribe(self, self.__model)
         wizard.subscribe(self, self.__app.bounding_box.vis_obj)
 
+        self.load_model()
+
+    def load_model(self):
+        """
+        Refinement objects are loaded here.
+        STL files are imported on_input_changed.
+        :return:
+        """
         for k, v in self.app[self.geometry_path].items():
-            if v['type'] in self.ref_obj_types:
+            if v['type'] == "searchablePlane" \
+                    and v['planeType'] == "embeddedPoints":
+                refinement_type = "searchablePlane3P"
+                self.ref_obj_types[refinement_type](k, app=self.__app)
+            elif v['type'] == "searchablePlane" \
+                    and v['planeType'] == "pointAndNormal":
+                refinement_type = "searchablePlanePaN"
+                self.ref_obj_types[refinement_type](k, app=self.__app)
+            elif v['type'] in self.ref_obj_types:
                 refinement_type = v['type']
                 self.ref_obj_types[refinement_type](k, app=self.__app)
 
@@ -205,12 +229,18 @@ class Refinement(DICEObject):
             ('Surface', Surface, 'Surface.qml'),
             ('Region', SurfaceRegion, 'SurfaceRegion.qml'),
             ('Layers', SurfaceRegion, 'Layers.qml'),
-            ('Levels', RegionRefinement, 'RegionRefinement.qml'),
+            ('Regions', RegionRefinement, 'RegionRefinement.qml'),
             ('Feature', Surface, 'Feature.qml'),
             ('Region Level', RegionLevel, 'RegionLevel.qml'),
             ('Boundary', Boundary, 'Boundary.qml'),
-            ('SearchableBox', SearchableBox, 'SearchableBox.qml'),
-            ('SearchableSphere', SearchableSphere, 'SearchableSphere.qml'),
+            ('Box', SearchableBox, 'SearchableBox.qml'),
+            ('Sphere', SearchableSphere, 'SearchableSphere.qml'),
+            ('Cylinder', SearchableCylinder, 'SearchableCylinder.qml'),
+            ('Plate', SearchablePlate, 'SearchablePlate.qml'),
+            ('Disk', SearchableDisk, 'SearchableDisk.qml'),
+            ('Plane (3P)', SearchablePlane3P, 'SearchablePlane3P.qml'),
+            ('Plane (PaN)', SearchablePlanePaN, 'SearchablePlanePaN.qml'),
+            ('Ref-Obj Surface', RefinementObject, 'RefinementObjectSurface.qml')
         ]
 
         result_props = []
@@ -218,8 +248,7 @@ class Refinement(DICEObject):
         for title, tp, source in properties:
             for s in self.__model.selection:
                 if isinstance(s, tp):
-                    result_props.append(PropertyItem(
-                        title, source))
+                    result_props.append(PropertyItem(title, source))
                     break
         for v in self.__props_model.root_elements[:]:
             for p in result_props:
@@ -250,7 +279,14 @@ class Refinement(DICEObject):
             raise Exception("can't create refinement object")
         template = self.ref_object_templates[type_name]
         self.app[self.geometry_path + ' ' + obj_name] = copy.deepcopy(template)
-        self.ref_obj_types[template['type']](obj_name, app=self.__app)
+        if template['type'] == "searchablePlane" \
+                and template['planeType'] == "embeddedPoints":
+            self.ref_obj_types["searchablePlane3P"](obj_name, app=self.__app)
+        elif template['type'] == "searchablePlane" \
+                and template['planeType'] == "pointAndNormal":
+            self.ref_obj_types["searchablePlanePaN"](obj_name, app=self.__app)
+        else:
+            self.ref_obj_types[template['type']](obj_name, app=self.__app)
         wizard.w_modified('snappy_hex_mesh_dict')
         return obj_name
 
@@ -316,7 +352,6 @@ class Refinement(DICEObject):
         return result
 
     def refinement_set(self, path, value):
-        print('zzzzzzzzzzzzzzzzzzzzzzz')
         if path.startswith('RegionRefinement.level.'):
             level = int(path.rsplit('.', maxsplit=1)[-1])
             for s in self.__model.selection:
@@ -332,17 +367,17 @@ class Refinement(DICEObject):
         p = path.split('.')
         prop_class, prop = globals()[p[0]], p[1]
         for s in self.__model.selection:
-            print (s, path, prop_class, prop)
             if isinstance(s, prop_class):
                 try:
                     v = getattr(s, prop)
-                    for i, x in enumerate(value):
-                        if value[i] is not None:
-                            v[i] = value[i]
+                    if isinstance(value, bool):
+                        v = value
+                    else:
+                        for i, x in enumerate(value):
+                            if value[i] is not None:
+                                v[i] = value[i]
                     setattr(s, prop, v)
                 except TypeError:
-                    print('invoke set',getattr(s, prop))
                     setattr(s, prop, value)
-                    print('gfhfgh->>',getattr(s, prop))
         signal('refinement*')
         return False

@@ -11,10 +11,11 @@ SplitBody {
         title: "Boundaries"
         width: parent.width
         height: parent.height/2
-        InputField {
+
+        DiceInputField {
             id: filterKeyword
             Layout.fillWidth: true
-            label: "Filter"
+            placeholderText: "Filter"
             onTextChanged: {
                 app.filterBoundaries(text)
             }
@@ -36,8 +37,8 @@ SplitBody {
         model: {
             if (!app.hasProps)
                 return []
-            switch (app.turbulenceModel) {
-                case 'none':
+            switch (app.turbulence.model) {
+                case 'laminar':
                     return [
                         'Pressure',
                         'Velocity'

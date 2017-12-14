@@ -1,9 +1,11 @@
-from .region_refinement import RegionRefinement
+import os
+
 from dice_tools import wizard
 from dice_tools.helpers.xmodel import modelRole, modelMethod, ModelItem
-import os
 from stl.mesh import Mesh
+from .region_refinement import RegionRefinement
 from .surface_region import SurfaceRegion
+
 
 class Surface(RegionRefinement):
 
@@ -56,6 +58,7 @@ class Surface(RegionRefinement):
         self.setup_region(["inside", "outside", "distance"], "inside")
 
         for m in Mesh.from_multi_file(self.__path):
+
             # Add regions as children to this element
             # =======================================
             self.elements.append(SurfaceRegion(self, m, app=self.app))
@@ -155,10 +158,10 @@ class Surface(RegionRefinement):
 
     @property
     def file_index(self):
-        file_dict_value = '"{0}.eMesh"'.format(self.file_name)
+        file_name_e_mesh = '"{0}.eMesh"'.format(self.file_name)
         features = self.app['foam:system/snappyHexMeshDict castellatedMeshControls features']
         for index, feature_dict in enumerate(features):
-            if f_dict["file"] == file_dict_value:
+            if feature_dict["file"] == file_name_e_mesh:
                 return index
 
     @modelRole('featureLevel')
@@ -178,7 +181,6 @@ class Surface(RegionRefinement):
                 p = 'foam:system/snappyHexMeshDict castellatedMeshControls features %i level'%index
                 self.app[p] = value
 
-
     @property
     def has_feature(self):
         file_name_e_mesh = '"{0}.eMesh"'.format(self.file_name)
@@ -190,7 +192,7 @@ class Surface(RegionRefinement):
 
     @has_feature.setter
     def has_feature(self, value):
-        file_dict_value = '"{0}.eMesh"'.format(self.file_name)
+        file_name_e_mesh = '"{0}.eMesh"'.format(self.file_name)
         features_path = 'foam:system/snappyHexMeshDict castellatedMeshControls features'
         extract_path = 'foam:system/surfaceFeatureExtractDict ' + self.name
         features = self.app[features_path]
@@ -248,13 +250,11 @@ class Surface(RegionRefinement):
             path = 'foam:system/surfaceFeatureExtractDict ' + self.name + ' extractionMethod'
             return self.app[path]
 
-
     @extraction_method.setter
     def extraction_method(self, value):
         if self.has_feature:
             path = 'foam:system/surfaceFeatureExtractDict ' + self.name + ' extractionMethod'
             self.app[path] = value
-
 
     @property
     def write_obj(self):

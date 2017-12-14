@@ -46,7 +46,7 @@ Item {
                         visible: useDocker.checked
                         spacing: 20
 
-                        BasicText {
+                        SubheaderText {
                             text: "Docker command to start container with OpenFOAM"
                         }
                         DiceTextField {
@@ -55,7 +55,7 @@ Item {
                             onTextChanged: settings.docker_cmd = text
                         }
 
-                        BasicText {
+                        SubheaderText {
                             text: "Docker command to start container with OpenFOAM and MPI"
                         }
                         DiceTextField {
@@ -70,7 +70,7 @@ Item {
                         visible: !useDocker.checked
                         spacing: 20
 
-                        BasicText {
+                        SubheaderText {
                             text: "Path to $OpenFOAM/bin/foamExec"
                         }
                         DiceTextField {
@@ -79,7 +79,7 @@ Item {
                             onTextChanged: settings.foam_cmd = text
                         }
 
-                        BasicText {
+                        SubheaderText {
                             text: "Path to mpirun"
                         }
                         DiceTextField {
@@ -87,7 +87,14 @@ Item {
                             text: settings.foam_cmd_mpi
                             onTextChanged: settings.foam_cmd_mpi = text
                         }
-
+                        SubheaderText {
+                            text: "Paraview"
+                        }
+                        DiceTextField {
+                            width: parent.width
+                            text: settings.paraview_cmd
+                            onTextChanged: settings.paraview_cmd = text
+                        }
                     }
                 }
             }  

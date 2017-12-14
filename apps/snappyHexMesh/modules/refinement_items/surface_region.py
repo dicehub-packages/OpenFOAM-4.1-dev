@@ -1,7 +1,9 @@
+import random
+
 from dice_tools import wizard
 from dice_tools.helpers.xmodel import modelRole, modelMethod
-import random
 from dice_vtk.geometries import VtkNumpySTL
+
 
 class SurfaceRegion:
 
@@ -60,7 +62,7 @@ class SurfaceRegion:
     def parent_level(self, value):
         if value and not self.parent_level:
             self.app[self.__parent.refinement_path + ' regions ' + self.name] = None
-            del self.__parent.refinement['regions'][self.name]
+            # del self.__parent.refinement['regions'][self.name]
         elif not value and self.parent_level:
             self.app[self.__parent.refinement_path + ' regions ' + self.name] = {
                 'level': self.__parent.surface_level

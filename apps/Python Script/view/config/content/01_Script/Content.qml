@@ -17,20 +17,20 @@ Body {
             }
         }
 
-        InputField2 {
+        DiceInputField {
             target: app
             property: 'inputType'
             label: 'Input type'
         }
 
-        InputField2 {
+        DiceInputField {
             target: app
             property: 'outputType'
             label: 'Output type'
         }
 
 
-        DropDown2 {
+        DiceComboBox {
             id: behaviour
             target: app
             property: 'behaviour'
@@ -41,14 +41,14 @@ Body {
             ]
         }
 
-        InputField2 {
+        DiceInputField {
             visible: behaviour.currentText === 'loop'
             target: app
             property: 'internalOutputType'
             label: 'Internal output type'
         }
 
-        InputField2 {
+        DiceInputField {
             visible: behaviour.currentText === 'loop'
             target: app
             property: 'internalInputType'

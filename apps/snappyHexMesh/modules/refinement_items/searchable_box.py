@@ -3,6 +3,7 @@ from dice_tools import wizard
 from dice_tools.helpers.xmodel import modelRole, modelMethod
 from dice_vtk.geometries import Cube
 
+
 class SearchableBox(RefinementObject):
 
     default_region_mode = "inside"
@@ -12,7 +13,7 @@ class SearchableBox(RefinementObject):
         super().__init__(name=name, **kwargs)
         self.setup()
 
-    @property
+    @modelRole('templateName')
     def template_name(self):
         return "refinementBox"
 
