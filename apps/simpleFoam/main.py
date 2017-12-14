@@ -66,7 +66,7 @@ class simpleFoamApp(
         self.__result = Result(self)
 
         wizard.subscribe(self.w_foam)
-        wizard.subscribe("w_log", self.__w_log)
+        # wizard.subscribe("w_log", self.__w_log)
 
     def w_foam(self, path):
         """
@@ -389,9 +389,9 @@ class simpleFoamApp(
         with ThreadPoolExecutor(max_workers=3) as executor:
             executor.submit(logs_worker, line)
 
-    def __w_log(self, line):
+    # def __w_log(self, line):
         # self.log(line, callback=None)
-        pass
+        # pass
 
     @diceSlot(name="runCheckMesh")
     def run_check_mesh(self):

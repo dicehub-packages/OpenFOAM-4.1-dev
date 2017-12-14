@@ -30,17 +30,17 @@ class Boundary:
 
     @modelRole("boundaryOrientation")
     def boundary_orientation(self):
-        if (self.boundary_faces == [0, 4, 7, 3]):
+        if self.boundary_faces == [0, 4, 7, 3]:
             return "X-"
-        elif (self.boundary_faces == [1, 2, 6, 5]):
+        elif self.boundary_faces == [1, 2, 6, 5]:
             return "X+"
-        elif (self.boundary_faces == [0, 1, 5, 4]):
+        elif self.boundary_faces == [0, 1, 5, 4]:
             return "Y-"
-        elif (self.boundary_faces == [3, 7, 6, 2]):
+        elif self.boundary_faces == [3, 7, 6, 2]:
             return "Y+"
-        elif (self.boundary_faces == [0, 3, 2, 1]):
+        elif self.boundary_faces == [0, 3, 2, 1]:
             return "Z-"
-        elif (self.boundary_faces == [4, 5, 6, 7]):
+        elif self.boundary_faces == [4, 5, 6, 7]:
             return "Z+"
 
     @property
@@ -68,3 +68,7 @@ class Boundary:
     @modelMethod('showInScene')
     def show_in_scene(self):
         wizard.w_reset_camera_to_object([self.app.bounding_box.vis_obj])
+
+    @property
+    def boundary_types_model(self):
+        return ["patch", "wall", "symmetry", "empty", "wedge"]

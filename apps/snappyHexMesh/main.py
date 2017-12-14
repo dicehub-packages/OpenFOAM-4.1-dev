@@ -48,8 +48,8 @@ from modules.api.app_api import AppApi
 from common.basic_app import BasicApp
 
 
-def logs_worker(line):
-    wizard.w_log(line)
+# def logs_worker(line):
+#     wizard.w_log(line)
 
 
 class snappyHexMeshApp(
@@ -99,7 +99,7 @@ class snappyHexMeshApp(
 
         wizard.subscribe(self.w_idle)
         wizard.subscribe(self.w_modified)
-        wizard.subscribe("w_log", self.__w_log)
+        # wizard.subscribe("w_log", self.__w_log)
 
         # Load input (STL)
         # ================
@@ -584,8 +584,9 @@ class snappyHexMeshApp(
         return self.run_script(self.config_path('post_run.py'))
 
     def print_log(self, line):
-        with ThreadPoolExecutor(max_workers=3) as executor:
-            executor.submit(logs_worker, line)
+        self.log(line)
+        # with ThreadPoolExecutor(max_workers=3) as executor:
+        #     executor.submit(logs_worker, line)
 
-    def __w_log(self, line):
-        self.log(line, callback=None)
+    # def __w_log(self, line):
+    #     self.log(line, callback=None)

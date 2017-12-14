@@ -16,21 +16,6 @@ Column {
         label: "Type"
         width: parent.width
         path: "refinement:Boundary.type"
-//        model: ListModel {
-//            ListElement { text: qsTr("patch") }
-//            ListElement { text: qsTr("wall") }
-//            ListElement { text: qsTr("symmetry") }
-//            ListElement { text: qsTr("empty") }
-//            ListElement { text: qsTr("wedge") }
-//            ListElement { text: qsTr("cyclic") }
-//            ListElement { text: qsTr("cyclicAMI") }
-//        }
-        model: ListModel {
-            Component.onCompleted: {
-                for (var i = 0; i < app.boundaryTypesModel.length; i++) {
-                    append({'text': app.boundaryTypesModel[i]})
-                }
-            }
-        }
+        modelPath: "refinement:Boundary.boundary_types_model"
     }
 }

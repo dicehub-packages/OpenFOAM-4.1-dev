@@ -1,3 +1,4 @@
+- [solvers] Updated boundary types model.
 - [schemes, solvers] Simple and expert view for discretization schemes.
 - [turbulence] Start of the implementation for better turbulence fields.
 - [Shared, solvers] Improved turbulence model treatment.
