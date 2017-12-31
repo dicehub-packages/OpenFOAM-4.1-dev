@@ -1,3 +1,7 @@
+## 18.01.0 (2017-01-01)
+
+- Fixed dependencies for the package.
+
 ## 17.12.0 (2017-12-14)
 
 - [solvers] Updated boundary types model.
