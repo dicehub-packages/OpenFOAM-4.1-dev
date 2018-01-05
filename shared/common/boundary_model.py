@@ -323,6 +323,8 @@ class Boundary:
             return 'Symmetry'
         elif condition_type == 'slip':
             return 'Slip'
+        elif condition_type == 'omegaWallFunction':
+            return 'omegaWallFunction'
             
     @omega_boundary_condition_type.setter
     def omega_boundary_condition_type(self, value):
@@ -350,6 +352,11 @@ class Boundary:
         elif value == 'Slip':
             self.app[path] = {
                 'type': 'slip'
+            }
+        elif value == 'omegaWallFunction':
+            self.app[path] = {
+                'type': 'omegaWallFunction',
+                'value': Field(default_value)
             }
 
     @property
@@ -423,7 +430,8 @@ class Boundary:
             }
         elif value == 'kqRWallFunction':
             self.app[path] = {
-                'type': 'kqRWallFunction'
+                'type': 'kqRWallFunction',
+                'value': Field(default_value)
             }
 
     @property
@@ -465,8 +473,8 @@ class Boundary:
             return 'Symmetry'
         elif condition_type == 'slip':
             return 'Slip'
-        elif condition_type == 'omegaWallFunction':
-            return 'omegaWallFunction'
+        elif condition_type == 'epsilonWallFunction':
+            return 'epsilonWallFunction'
 
     @epsilon_boundary_condition_type.setter
     def epsilon_boundary_condition_type(self, value):

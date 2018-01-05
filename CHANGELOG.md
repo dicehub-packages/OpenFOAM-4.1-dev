@@ -1,4 +1,8 @@
-## 18.01.0 (2017-01-01)
+## 18.01.1 (2018-01-05)
+
+- [solvers] Fix for missing omegaWallFunction in the boundary conditions for simpleFoam.
+
+## 18.01.0 (2018-01-01)
 
 - Fixed dependencies for the package.
 

@@ -8,7 +8,11 @@ Column {
 
     spacing: 20
 
-    DiceInlineComboBox {
+    Subheader {
+        text: "Type"
+    }
+
+    DiceComboBox {
         id: kType
         label: "Type"
         model: ["Fixed Value",
@@ -19,6 +23,7 @@ Column {
 
     DiceValueField {
         enabled: (["Fixed Value"]).indexOf(kType.currentText) >= 0
+        visible: enabled
         label: "Value [J/kg]"
         path: "boundary:k_field_value"
     }
@@ -26,6 +31,7 @@ Column {
     DiceValueField {
         enabled: (["Turbulent Intensity Kinetic Energy Inlet"
             ]).indexOf(kType.currentText) >= 0
+        visible: enabled
         label: "Intensity"
         path: "boundary:k_intensity_value"
     }

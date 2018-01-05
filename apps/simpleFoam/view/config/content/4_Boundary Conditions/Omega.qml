@@ -21,7 +21,7 @@ Column {
     }
 
     DiceValueField {
-        enabled: (["Fixed Value"]).indexOf(omegaType.currentText) >= 0
+        enabled: (["Fixed Value", "omegaWallFunction"]).indexOf(omegaType.currentText) >= 0
         label: "Value [1/s]"
         path: "boundary:omega_field_value"
     }
@@ -29,6 +29,7 @@ Column {
     DiceValueField {
         enabled: (["Turbulent Mixing Length Frequency Inlet"
             ]).indexOf(omegaType.currentText) >= 0
+        visible: enabled
         label: "Mixing Length [m]"
         path: "boundary:omega_mixing_length_value"
     }
