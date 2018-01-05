@@ -3,7 +3,7 @@ version: '1'
 name: 'OpenFOAM-4.1'
 description: |
   'OpenFOAM package'
-release: '18.01.0'
+release: '18.01.1
 
 python: '{package_dir}/.venv'
 
