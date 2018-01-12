@@ -14,7 +14,7 @@ build docker image for dev:
         CI_BUILD_TAG: "latest-dev"
     script:
         - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
-        - docker build -t $CI_REGISTRY_IMAGE:$CI_BUILD_TAG .
+        - docker build -t $CI_REGISTRY_IMAGE:$CI_BUILD_TAG --build-arg VERSION="dev" .
         - docker push $CI_REGISTRY_IMAGE:$CI_BUILD_TAG
     only:
         - dev
