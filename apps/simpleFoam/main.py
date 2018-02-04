@@ -278,7 +278,8 @@ class simpleFoamApp(
     def run_decompose_par(self):
         """ Execute decomposePar command. """
         path = self.run_path(relative=True)
-        if "win" in sys.platform and self.__use_docker:
+        if ("win" in sys.platform and self.__use_docker) or \
+                ("win" in sys.platform and "wsl" == path.split()[0]):
             path = path.replace('\\', '/')
         return 0 == self.execute_command(
                 "decomposePar",
@@ -296,7 +297,8 @@ class simpleFoamApp(
     def run_potentialFoam(self):
         self.read_settings()
         path = self.run_path(relative=True)
-        if "win" in sys.platform and self.__use_docker:
+        if ("win" in sys.platform and self.__use_docker) or \
+                ("win" in sys.platform and "wsl" == path.split()[0]):
             path = path.replace('\\', '/')
         result = self.execute_command(
                 "potentialFoam",
@@ -310,7 +312,8 @@ class simpleFoamApp(
     def run_post_process(self):
         self.read_settings()
         path = self.run_path(relative=True)
-        if "win" in sys.platform and self.__use_docker:
+        if ("win" in sys.platform and self.__use_docker) or \
+                ("win" in sys.platform and "wsl" == path.split()[0]):
             path = path.replace('\\', '/')
         return 0 == self.execute_command(
                 "postProcess",
@@ -326,7 +329,8 @@ class simpleFoamApp(
         self.read_settings()
         application = self['foam:system/controlDict application']
         path = self.run_path(relative=True)
-        if "win" in sys.platform and self.__use_docker:
+        if ("win" in sys.platform and self.__use_docker) or \
+                ("win" in sys.platform and "wsl" == path.split()[0]):
             path = path.replace('\\', '/')
         result = self.execute_command(
                 application,
@@ -349,7 +353,8 @@ class simpleFoamApp(
         """ Execute mesher command. """
         self.read_settings()
         path = self.run_path(relative=True)
-        if "win" in sys.platform and self.__use_docker:
+        if ("win" in sys.platform and self.__use_docker) or \
+                ("win" in sys.platform and "wsl" == path.split()[0]):
             path = path.replace('\\', '/')
         return 0 == self.execute_command(
                 "reconstructPar",

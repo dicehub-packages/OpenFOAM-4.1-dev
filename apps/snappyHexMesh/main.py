@@ -489,7 +489,8 @@ class snappyHexMeshApp(
         """ Execute surfaceFeatureExtract command. """
         self.read_settings()
         path = self.run_path(relative=True)
-        if "win" in sys.platform and self.__use_docker:
+        if ("win" in sys.platform and self.__use_docker) or \
+                ("win" in sys.platform and "wsl" == path.split()[0]):
             path = path.replace('\\', '/')
         return 0 == self.execute_command(
                 "surfaceFeatureExtract",
@@ -502,7 +503,8 @@ class snappyHexMeshApp(
         """ Execute blockMesh command. """
         self.read_settings()
         path = self.run_path(relative=True)
-        if "win" in sys.platform and self.__use_docker:
+        if ("win" in sys.platform and self.__use_docker) or \
+                ("win" in sys.platform and "wsl" == path.split()[0]):
             path = path.replace('\\', '/')
         return 0 == self.execute_command(
                 "blockMesh",
@@ -519,7 +521,8 @@ class snappyHexMeshApp(
     def run_decompose_par(self):
         """ Execute decomposePar command. """
         path = self.run_path(relative=True)
-        if "win" in sys.platform and self.__use_docker:
+        if ("win" in sys.platform and self.__use_docker) or \
+                ("win" in sys.platform and "wsl" == path.split()[0]):
             path = path.replace('\\', '/')
         return 0 == self.execute_command(
                 "decomposePar",
@@ -534,7 +537,8 @@ class snappyHexMeshApp(
         self.read_settings()
         mesher = self.__control_dict['application']
         path = self.run_path(relative=True)
-        if "win" in sys.platform and self.__use_docker:
+        if ("win" in sys.platform and self.__use_docker) or \
+                ("win" in sys.platform and "wsl" == path.split()[0]):
             path = path.replace('\\', '/')
         return 0 == self.execute_command(
                 mesher,
@@ -554,7 +558,8 @@ class snappyHexMeshApp(
         """ Execute mesher command. """
         self.read_settings()
         path = self.run_path(relative=True)
-        if "win" in sys.platform and self.__use_docker:
+        if ("win" in sys.platform and self.__use_docker) or \
+                ("win" in sys.platform and "wsl" == path.split()[0]):
             path = path.replace('\\', '/')
         return 0 == self.execute_command(
                 "reconstructParMesh",
